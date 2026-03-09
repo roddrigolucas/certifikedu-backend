@@ -1,0 +1,31 @@
+model UserPlans {
+  userPlanId String   @unique @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  pagarme           PagarmePlanSubscription?
+  basicSubscription BasicPlanSubscriptions?
+}
+
+model UserImports {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  importId String
+
+  userEmail     String
+  userDocument  String
+  userName      String?
+  userPhone     String?
+  schoolId      String
+  courseId      String?
+  errorOnImport Boolean @default(false)
+
+  pjId String
+  pj   PessoaJuridica @relation(fields: [pjId], references: [idPJ], onDelete: Cascade)
+}
+

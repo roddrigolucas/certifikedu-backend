@@ -1,0 +1,72 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x"]
+  previewFeatures = ["prismaSchemaFolder"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email           String @unique
+  numeroDocumento String @unique
+
+  type   UserType
+  status UserStatus @default(REVIEW)
+
+  tempName   String?
+  tempPhone  String?
+  tempSchool String?
+  tempCourse String?
+
+  freeCertificates Boolean @default(false)
+  freeEvents       Boolean @default(false)
+
+  certificates Certificates[]
+  habilidades  AbilityOnCertificate[]
+
+  pessoaFisica   PessoaFisica?
+  pessoaJuridica PessoaJuridica?
+
+  document DocumentsPictures[]
+
+  pagarmeCustomer PagarmeCustomers[]
+
+  userPlans UserPlans[]
+
+  apiEnabled Boolean   @default(false)
+  apiKey     ApiKeys[]
+
+  ltiEnabled Boolean @default(false)
+
+  fromCanvas Boolean @default(false)
+
+  eventOwner Events[]
+
+  sessions Session[]
+
+  @@unique([id, numeroDocumento, email])
+  @@map("users")
+}
+
+model Session {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  user            User      @relation(fields: [userId], references: [id])
+  token           String    @unique
+  loginAt         DateTime  @default(now()) @map("login_at")
+  lastActivityAt  DateTime  @default(now()) @map("last_activity_at")
+  logoutAt        DateTime? @map("logout_at")
+  durationSeconds Int       @default(0) @map("duration_seconds")
+  isActive        Boolean   @default(true) @map("is_active")
+
+  @@index([userId])
+  @@index([token])
+  @@map("sessions")
+}

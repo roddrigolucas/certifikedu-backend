@@ -1,0 +1,184 @@
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("admin", string.format("Bearer %s", token.access_token))
+--%}
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "testepj@email.com",
+    "password": "Teste123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("pj", string.format("Bearer %s", token.access_token))
+--%}
+
+###CREATE CERTIFICATE
+POST http://localhost:3000/api/v1/certificate
+content-type: application/json
+ce-api-key: ce_tests_73c65f2a6e21ba97
+
+{
+    "receptorDoc": "07455823037",
+    "name": "Certificado Teste",
+    "description": "Certificado Teste e2e",
+    "hoursWorkload": "10",
+    "abilities": [
+      {
+        "ability": "Abilidade Criada via certificado",
+        "category": "API"
+      }
+    ],
+    "issuedAt": "12/12/2000",
+    "expiresAt": "12/12/2010",
+    "schoolCnpj": "04989912000199"
+}
+
+###ENABLE USER API KEY FEATURE
+PATCH http://localhost:3000/api/v1/enable/71b60b16-29c4-4483-92cb-29e3393c70c8
+Authorization: Bearer {{admin}}
+
+###DISABLE USER API KEY FEATURE
+PATCH http://localhost:3000/api/disable/3
+Authorization: Bearer {{admin}}
+
+###CREATE USER API KEY
+POST http://localhost:3000/api/v1/create/key
+Authorization: Bearer {{pj}}
+
+###GET USER ACTIVE KEY
+GET http://localhost:3000/api/v1/user/key
+Authorization: Bearer {{pj}}
+
+
+###UPDATE SCHOOL
+PATCH http://localhost:3000/api/v1/update/school
+ce-api-key: ce_homolog_2686781e7140f8f4
+content-type: application/json
+
+{
+    "schoolCnpj": "22222222222222",
+    "homepageUrl": "stackoverflow.com.br",
+    "description": "Segunda Escola Estadual",
+    "teste": "aslkdjhasjdh"
+}
+
+###GET SCHOOL BY CNPJ
+GET http://localhost:3000/api/v1/schools/22222222222222
+ce-api-key: ce_homolog_2686781e7140f8f4
+
+####USERS
+###CREATE NEW USER
+POST http://localhost:3000/api/v1/create/user
+ce-api-key: ce_homolog_88a917da9bcedd49
+content-type: application/json
+
+{
+    "documentNumber": "",
+    "email": "testasndo@certifikedu.com",
+    "schoolCnpj": "22222222222222",
+    "pfInfo": {
+        "name": "Jose Da Silva",
+        "phoneNumber": "051991334455",
+        "DOB": "07/07/1981",
+        "cepNumber": "90690360",
+        "state": "RS",
+        "city": "Porto Alegre",
+        "region": "Bela Vista",
+        "street": "Lavras",
+        "houseNumber": "137",
+        "complement": "21"
+    }
+}
+
+###GET ASSOCIATED USERS 
+GET http://localhost:3000/api/v1/users
+ce-api-key: ce_homolog_2686781e7140f8f4
+
+###GET USER INFO
+GET http://localhost:3000/api/v1/user/91245003000
+ce-api-key: ce_homolog_1d484e324ccb1976
+
+###ADD USERS TO SCHOOL
+PATCH http://localhost:3000/api/add/user/school
+ce-api-key: ce_homolog_0618e3faffd0d34b
+content-type: application/json
+
+{
+    "documentNumbers":["00000000000","00000001000", "asldhasldk"],
+    "schoolCnpj": "12222222222222"
+}
+
+####ABILITIES
+###CREATE ABILITIE
+POST http://localhost:3000/api/create/ability
+ce-api-key: ce_homolog_0618e3faffd0d34b
+content-type: application/json
+
+{
+    "ability": "Testar Abilidades sem h",
+    "category": "Teste"
+}
+
+####CERTIFICATES
+###UPDATE CERTIFICATE
+PATCH http://localhost:3000/api/v1/update/certificate/ece91528-dcfa-49c3-b889-f48c78433384
+ce-api-key: ce_homolog_2686781e7140f8f4
+content-type: application/json
+
+{
+    "name": " Editado com sucesso!", 
+    "receptorDoc": "12312341241",
+    "issuedAt": "12/03/2024",
+    "expiresAt": "12/03/2030"
+}
+
+###GET USER CERTIFICATES
+GET http://localhost:3000/api/v1/certificates/21589625620
+ce-api-key: ce_homolog_2686781e7140f8f4
+
+###GET USER CERTIFICATES
+GET http://localhost:3000/api/v1/school/certificates/22222222222222
+ce-api-key: ce_homolog_1d484e324ccb1976
+
+###TESTE EVIDENCIA
+POST http://localhost:3000/api/create/evidence/1
+Content-Type: multipart/form-data; boundary=RequestBoundary
+ce-api-key: ce_homolog_0618e3faffd0d34b
+
+
+### ABILITIES
+###GET ABILITIES CATEGORIES
+GET http://localhost:3000/api/v1/abilities/categories
+ce-api-key: ce_homolog_3badf0fc03ad7bd3
+
+###GET ABILITIES BY CATEGORIES
+GET http://localhost:3000/api/v1/abilities/category/Persuasão
+ce-api-key: ce_homolog_3badf0fc03ad7bd3
+
+
+###GET COURSE BY ID
+GET http://localhost:3000/api/v1/courses/06c820b4-4cbc-4d4b-b5de-1e1d01ac80eb
+ce-api-key: ce_homolog_3badf0fc03ad7bd3
+
+###GET SCHOOL COURSES
+GET http://localhost:3000/api/v1/courses/school/116fb43a-9ab8-4ceb-b740-45c8ac212320
+ce-api-key: ce_homolog_3badf0fc03ad7bd3
+
+###DELETE COURSE
+DELETE http://localhost:3000/api/v1/courses/06c820b4-4cbc-4d4b-b5de-1e1d01ac80eb
+ce-api-key: ce_homolog_3badf0fc03ad7bd3
+

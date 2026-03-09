@@ -1,0 +1,50 @@
+model Abilities {
+  habilidadeId String   @unique @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  habilidade String
+  tema       String
+  isValid    Boolean @default(true)
+
+  source String @default("WGU")
+
+  createdByUser Boolean @default(false)
+  ownerId       String?
+
+  code String?
+
+  certificates AbilityOnCertificate[]
+  pdiNodes     PdiNodeAbilities[]
+  books        BookAbilities[]
+
+  associatedTemplates TemplateAbilities[]
+
+  studyFields StudyFieldAbilitites[]
+  institutionalEvents InstitutionalEventsAbilities[]
+
+  jobOpporunities              AbilityOnJobOpportunity[]
+  professionalProfileAbilities AbilitiesOnProfessionalProfile[]
+
+  events EventAbilities[]
+
+  @@unique([habilidade, tema])
+}
+
+model AbilityOnReview {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  habilidade String
+  tema       String
+  pdi        Boolean?
+
+  pdiNodes PdiNodeAbilitiesOnReview[]
+  books    BookAbilitiesOnReview[]
+
+  events EventAbilitiesOnReview[]
+
+  createdByUser Boolean @default(false)
+  ownerId       String?
+}

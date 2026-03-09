@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Resume" ADD COLUMN     "hasPdf" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "pdfPath" TEXT,
+ADD COLUMN     "pdfVersion" INTEGER NOT NULL DEFAULT 1;

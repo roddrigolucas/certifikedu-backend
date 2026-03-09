@@ -1,0 +1,132 @@
+model CourseStudents {
+  courseStudentId String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  idPF    String
+  student PessoaFisica @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+}
+
+model CurriculumStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed Boolean @default(false)
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [curriculumId], onDelete: Cascade)
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+}
+
+model SemesterStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  semesterId String
+  semester   Semester @relation(fields: [semesterId], references: [semesterId], onDelete: Cascade)
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+}
+
+model SubjectStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed Boolean @default(false)
+  completedAt DateTime?
+
+  subjectId String
+  subject   Subjects @relation(fields: [subjectId], references: [subjectId], onDelete: Cascade)
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+}
+
+model InternshipsStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed Boolean @default(false)
+  completedAt DateTime?
+
+  internshipId String
+  internship   Internships @relation(fields: [internshipId], references: [internshipId], onDelete: Cascade)
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+}
+
+model ActivitiesStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed Boolean @default(false)
+  completedAt DateTime?
+
+  activityId String
+  activity   Activities @relation(fields: [activityId], references: [activityId], onDelete: Cascade)
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+}
+
+model InstitutionalEventsStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+
+  institutionalEventId String
+  learningPath         InstitutionalEvents @relation(fields: [institutionalEventId], references: [institutionalEventId], onDelete: Cascade)
+}
+
+model LearningPathModulesStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+
+  moduleId    String
+  moduleIndex Int
+  module      LearningPathsModules @relation(fields: [moduleId, moduleIndex], references: [moduleId, moduleIndex], onDelete: Cascade)
+
+  pathStudentId String
+  pathStudent   LearningPathsStudents @relation(fields: [pathStudentId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, moduleIndex])
+}
+
+model LearningPathsStudents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completed Boolean @default(false)
+  completedAt DateTime? 
+
+  modules LearningPathModulesStudents[]
+
+  idPf    String
+  student PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+
+  pathId       String
+  learningPath LearningPaths @relation(fields: [pathId], references: [pathId], onDelete: Cascade)
+}

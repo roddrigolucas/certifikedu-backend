@@ -1,0 +1,44 @@
+model ProfessionalProfile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  description String
+
+  state String
+  city  String
+
+  yearsOfExperience Int
+  seniorityLevel    SeniorityLevel[]
+
+  educationLevel  ProfessionalEducationLevel[]
+  workModel       WorkModel[]
+  opportunityType JobOpportunityType[]
+
+  openToWork Boolean
+
+  isPcd Boolean @default(false)
+
+  usedAbilities AbilitiesOnProfessionalProfile[]
+
+  workFields WorkFieldOnProfessionalProfile[]
+
+  @@unique([idPF])
+}
+
+//Abilities Relation
+model AbilitiesOnProfessionalProfile {
+  abilityOnProfileId String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  abilityId String
+  abilities Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+
+  professionalProfileId String
+  professionalProfile   ProfessionalProfile @relation(fields: [professionalProfileId], references: [id], onDelete: Cascade)
+}
+

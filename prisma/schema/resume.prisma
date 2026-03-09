@@ -1,0 +1,131 @@
+model Resume {
+  resumeId  String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  description String?
+
+  experiences ResumeExperience[]
+  education   ResumeEducation[]
+  languages   ResumeLanguage[]
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  hasPdf     Boolean @default(false)
+  pdfPath    String?
+  pdfVersion Int     @default(1)
+
+  subscriptionId String?
+  subscription   PagarmePlanSubscription? @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  basicSubscriptionId String?
+  basicSubscription   BasicPlanSubscriptions? @relation(fields: [basicSubscriptionId], references: [userSubscriptionId])
+}
+
+model ResumeExperience {
+  resumeExperienceId String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  title       String
+  description String?
+
+  startYear  Int
+  startMonth Int
+  endYear    Int?
+  endMonth   Int?
+
+  employmentType EmploymentType
+  workModel      WorkModel
+
+  certificates ResumeExperienceCertificate[]
+
+  rawPJId String
+  rawPJ   RawPJ  @relation(fields: [rawPJId], references: [rawPJId])
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+}
+
+model ResumeLanguage {
+  resumeLanguageId String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  language String
+  level    ResumeLanguageLevel
+
+  certificates ResumeLanguageCertificate[]
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+}
+
+model ResumeEducation {
+  resumeEducationId String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  title       String
+  description String?
+
+  startYear  Int
+  startMonth Int
+  endYear    Int?
+  endMonth   Int?
+
+  certificates ResumeEducationCertificate[]
+
+  rawPJId String
+  rawPJ   RawPJ  @relation(fields: [rawPJId], references: [rawPJId])
+
+  resumeId String
+  resume   Resume @relation(fields: [resumeId], references: [resumeId], onDelete: Cascade)
+}
+
+//Relations
+model ResumeEducationCertificate {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumeEducationId String
+  resumeEducation   ResumeEducation @relation(fields: [resumeEducationId], references: [resumeEducationId], onDelete: Cascade)
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId], onDelete: Cascade)
+
+  @@unique([resumeEducationId, certificateId])
+}
+
+model ResumeExperienceCertificate {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumeExperienceId String
+  resumeExperience   ResumeExperience @relation(fields: [resumeExperienceId], references: [resumeExperienceId], onDelete: Cascade)
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId], onDelete: Cascade)
+
+  @@unique([resumeExperienceId, certificateId])
+}
+
+
+model ResumeLanguageCertificate {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumeLanguageId String
+  resumeLanguage   ResumeLanguage @relation(fields: [resumeLanguageId], references: [resumeLanguageId], onDelete: Cascade)
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId], onDelete: Cascade)
+
+  @@unique([resumeLanguageId, certificateId])
+}
+

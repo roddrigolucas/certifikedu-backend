@@ -1,0 +1,509 @@
+###ADMIN AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "testepj@email.com",
+    "password": "Teste123!"
+}
+
+###ENABLE USER API KEY FEATURE
+PATCH http://localhost:3000/api/v1/enable/3648e71f-e473-44f8-a866-bbb1819e7143
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3NWMyMWRmYS0yZDI2LTQ0MTktYmJiZi0yMDYzNTk3Y2I4ZDMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwiY29nbml0bzp1c2VybmFtZSI6Ijc1YzIxZGZhLTJkMjYtNDQxOS1iYmJmLTIwNjM1OTdjYjhkMyIsIm9yaWdpbl9qdGkiOiIzMzlkYmFiMC01MDJmLTQ4MDgtYWE0OS0zYmE4ZDQ3NzE2ZjUiLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiMmY4MTJlZjItOTUwZS00Yzg0LWI0N2YtOTZlYWQwYTljOGQxIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTA3ODM0MTYsImV4cCI6MTcxMDc4NzAxNiwiaWF0IjoxNzEwNzgzNDE2LCJqdGkiOiI2MjMwZmMwZC05OTIzLTQxMzYtYTBjMy05MDU2MmYwNDU4OGYiLCJlbWFpbCI6ImFkbWluQGNlcnRpZmlrZWR1LmNvbSJ9.Cm7ZuucjLtUuwZDZ1YtFnZggdfFm_gCsXm3RQjX4ZZvQ4txQwccSGiZ5Z0Uh6IIr1k6Y9yfz6sQZMpZKOgV8s8TWSm0Y0AoWBHwCnjRu2Nqip-De-_d5RE5DjVQ95XCkTVPQT2Xpenv4AOOEA29WomhwD5VxyYvlvghBOUg2XPMBCbeCABk4JcJujvfggQajCO5HGPhziMa-FLsa41-nPUInW6MttW6kxuO5qAbhSN8mDa8QTBDwNC8fh5TKGlErJRm1pkXkg6DJ6viCMbDyKBH6sea73d8iGYSx4_PssIb3aNvEpWnR1uqo9H2AIaUs5sdEeK1O2Kb9dCWCNc_lAw
+
+###CREATE USER API KEY
+POST http://localhost:3000/api/v1/create/key
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NDUzYzk0Yy1kOGNhLTQ0MzMtYTQ4Mi1lN2MzNzliMjBmNDAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwiY29nbml0bzp1c2VybmFtZSI6IjU0NTNjOTRjLWQ4Y2EtNDQzMy1hNDgyLWU3YzM3OWIyMGY0MCIsIm9yaWdpbl9qdGkiOiJjYWYyNzIzOS01YjBjLTQ2ZTAtYmFmYi00NjU0MTNlODFlZTciLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiNDgzMWIwMTEtNTZlMi00ZWVlLTk3OTAtOWQ5YjAxNTI5MWQyIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTA3ODM0NTgsImV4cCI6MTcxMDc4NzA1OCwiaWF0IjoxNzEwNzgzNDU4LCJqdGkiOiJlZmMzMGRiYi04ODIxLTQ3NWQtYWFhZC1mNWU3NDMyZDYzMWUiLCJlbWFpbCI6InRlc3RlcGpAZW1haWwuY29tIn0.e7qfgdCgNePBd8_1z6FkWYAGrKA-z9Jpsx5gvc-UjjysQHIDJoQQ4Qlo5tgPNS2U7E5DGxk5v2Q0pn24JY7RlrwAy5C3jijNpA1221H6_Du8h1ooShlgdliyO1HXqmlGGgmBf4Hh3Ds1jBtNYkW8WMFyXSBhYo9iNBqTy82qBcsALAXkbT7ELWdrZK6D-AD5H-dR6nJnBDgm3KoQr0nIbV2n49Ao3wPO2VEtvfu_x4MDJCRiJhAtBoExzDWAZqJoUYYfQWcau1K2It7Br9LdZvRRgrJgMYr5VPbEgW7Iamc4-eWC52LIlutPllcXMv_wSo0ZCXAVqzEadY-hPP0S_g
+
+###GET USER ACTIVE KEY
+GET http://localhost:3000/api/v1/user/key
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NDUzYzk0Yy1kOGNhLTQ0MzMtYTQ4Mi1lN2MzNzliMjBmNDAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwiY29nbml0bzp1c2VybmFtZSI6IjU0NTNjOTRjLWQ4Y2EtNDQzMy1hNDgyLWU3YzM3OWIyMGY0MCIsIm9yaWdpbl9qdGkiOiI4YWIzNzVhMS1jMTBiLTQwNjMtYWMxNC1mY2M5ZjNhYTU5NDEiLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiNTZhZWY3YmMtNTg5Ny00N2UwLTgyYWUtZTUyMDUwNDhmODA3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MDk5NDQ3MDMsImV4cCI6MTcwOTk0ODMwMywiaWF0IjoxNzA5OTQ0NzAzLCJqdGkiOiJkZjc1YWYyZi00NzcwLTQyNjAtODY2Yi1kZWY3NzdhNzZiZGIiLCJlbWFpbCI6InRlc3RlcGpAZW1haWwuY29tIn0.UzaIFU1kW1QOmue9HROOc4DA8hIpWoHpFuk1rSAWOwC-LWEgKMnrhU9S5cuwzYPlJNynDeRgT7SHOAT7AAKrW_GlI31AqVEXGl7zYKM_iAaXW8fvm7V1OPn1_tvQaNczxO_UaMNOkiyKbBO3Dx_kHY4ZmRdtCYBGdQcnVVf1y2USNFjuXs04iSvtFjdeo6GXCSGDFNKiQjeioGe4IdMHx8Gfj89l3l7I5Qn76nTxgTpwMWNVXmsYD2T1JLqX6rBT9tGJ5HBHePEGnTZooaVAdPu0vaPpVZjbH1_kSQ45iEgTTmr3iYHBcvRN7C_0y9RDOfTFLo6C_vawegcdk8t8zQ
+
+####CREATE A SCHOOL
+POST http://localhost:3000/api/v1/school
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "schoolCnpj": "23146356000133",
+    "phoneNumber": "3199803453",
+    "homepageUrl": "certifikedu.com",
+    "description": "Palestras Teste",
+    "email": "guilherme.dendena@certifikedu.com",
+    "name": "Teste"
+}
+
+####CREATE A COURSE 
+POST http://localhost:3000/api/v1/course/197ef61d-e074-4ef6-9dda-33a8e77263af
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Primeiro Curso sem credenciais",
+    "name": "Curso Teste",
+    "educationLevel": "Graduacao"
+}
+
+
+###GET ALL SCHOOL COURSES
+GET http://localhost:3000/api/v1/school/197ef61d-e074-4ef6-9dda-33a8e77263af/courses
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###GET COURSE
+GET http://localhost:3000/api/v1/course/41101e4c-f1b1-4f50-bc0d-79e6ee0aa03a
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###EDIT COURSE
+PATCH http://localhost:3000/api/v1/course/41101e4c-f1b1-4f50-bc0d-79e6ee0aa03a
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "name": "Curso Editado"
+}
+
+###DELETE COURSE
+DELETE http://localhost:3000/api/v1/course/42d0f89d-7423-4829-aadc-3bd0b00a1550
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+####CREATE A COURSE WITH CREDENTIALS
+POST http://localhost:3000/api/v1/course/197ef61d-e074-4ef6-9dda-33a8e77263af
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Primeiro Curso",
+    "name": "Curso Teste",
+    "educationLevel": "Grauacao",
+    "credentials": {
+        "emecCode": "0001",
+        "type": "PRESENCIAL",
+        "number": 123,
+        "description": "Curso de Teste",
+        "issuedAt": "12/12/2023",
+        "publishedDate": "12/12/2023",
+        "publishingVehicle": "Jornal",
+        "publishingSection": "12",
+        "publishingPage": "13",
+        "numberDOU": 789,
+        "credentialType": "PARECER"
+        }
+
+}
+
+###CREATE A CURRICULUM
+POST http://localhost:3000/api/v1/curriculum/41101e4c-f1b1-4f50-bc0d-79e6ee0aa03a
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Primeiro Curriculo",
+    "name": "Curriculo Teste",
+    "requiredHoursWorkload": 10,
+    "electivHoursWorkload": 2,
+    "complementaryHoursWorkload": 12,
+    "activities": [{
+        "description": "Primeiro atividade",
+        "name": "Atividade Teste",
+        "hoursWorkload": 60
+        }],
+    "internships": [{
+        "description": "Primeiro Estagio",
+        "name": "Estagio Teste",
+        "hoursWorkload": 60
+        }],
+    "semesters": [
+    { 
+        "semesterNumber": 1,
+        "requiredHoursWorkload": 10,
+        "electiveHoursWorkload": 2,
+        "complementaryHoursWorkload": 12,
+        "subjects": [
+        { "description": "Primeiro Disciplina",
+            "name": "Semestre 1 Teste 1",
+            "totalHoursWorkload": 60,
+            "praticalHoursWorkload": 60,
+            "teoricHoursWorkload": 60,
+            "eadHoursWorkload": 60,
+            "complementaryHoursWorkload": 60,
+            "type": "required" },
+        { "description": "Segundo Disciplina",
+            "name": "Semestre 1 Teste 2",
+            "totalHoursWorkload": 60,
+            "praticalHoursWorkload": 60,
+            "teoricHoursWorkload": 60,
+            "eadHoursWorkload": 60,
+            "complementaryHoursWorkload": 60,
+            "type": "required" }
+        ]
+    },
+    { 
+        "semesterNumber": 3,
+        "requiredHoursWorkload": 10,
+        "electiveHoursWorkload": 2,
+        "complementaryHoursWorkload": 12,
+        "subjects": [
+        { "description": "Primeiro Disciplina",
+            "name": "Semestre 2 Teste 1",
+            "totalHoursWorkload": 60,
+            "praticalHoursWorkload": 60,
+            "teoricHoursWorkload": 60,
+            "eadHoursWorkload": 60,
+            "complementaryHoursWorkload": 60,
+            "type": "required" },
+        { "description": "Segundo Disciplina",
+            "name": "Semestre 2 Teste 2",
+            "totalHoursWorkload": 60,
+            "praticalHoursWorkload": 60,
+            "teoricHoursWorkload": 60,
+            "eadHoursWorkload": 60,
+            "complementaryHoursWorkload": 60,
+            "type": "required" }
+        ]
+    }
+    ]
+
+}
+
+###GET COURSE CURRICULUMS
+GET http://localhost:3000/api/v1/course/41101e4c-f1b1-4f50-bc0d-79e6ee0aa03a/curriculums
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+
+###EDIT CURRICULUM
+PATCH http://localhost:3000/api/v1/curriculum/0fffb13e-8cb8-4e6e-b0b6-8b1078895729
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Primeiro Curriculo",
+    "name": "Curriculo Teste",
+    "requiredHoursWorkload": 10,
+    "electivHoursWorkload": 2,
+    "complementaryHoursWorkload": 12
+
+}
+
+###ADD ACTIVITY TO CURRICULUM
+PATCH http://localhost:3000/api/v1/curriculum/0fffb13e-8cb8-4e6e-b0b6-8b1078895729/activities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "ids": ["bce1deac-6f4d-47e6-840e-053f5b3a6eca"]
+}
+
+###REMOVE ACTIVITY TO CURRICULUM
+DELETE http://localhost:3000/api/v1/curriculum/0fffb13e-8cb8-4e6e-b0b6-8b1078895729/activities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "ids": ["bce1deac-6f4d-47e6-840e-053f5b3a6eca"]
+}
+
+###ADD INTERNSHIPS TO CURRICULUM
+PATCH http://localhost:3000/api/v1/curriculum/0fffb13e-8cb8-4e6e-b0b6-8b1078895729/internships
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "ids": ["33909a84-2010-4490-a8b3-b44d5e749a88"]
+}
+
+###REMOVE INTERNSHIPS TO CURRICULUM
+DELETE http://localhost:3000/api/v1/curriculum/0fffb13e-8cb8-4e6e-b0b6-8b1078895729/internships
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "ids": ["33909a84-2010-4490-a8b3-b44d5e749a88"]
+}
+
+###CREATE A SEMESTER
+POST http://localhost:3000/api/v1/semester/092f3196-60ca-43a6-9e6b-9bc5a54dffa6
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "semesterNumber": 4,
+    "requiredHoursWorkload": 10,
+    "electiveHoursWorkload": 2,
+    "complementaryHoursWorkload": 12,
+    "subjects": [
+    { "description": "Primeiro Disciplina",
+        "name": "Semestre 2 Teste 1",
+        "totalHoursWorkload": 60,
+        "praticalHoursWorkload": 60,
+        "teoricHoursWorkload": 60,
+        "eadHoursWorkload": 60,
+        "complementaryHoursWorkload": 60,
+        "type": "required" },
+    { "description": "Segundo Disciplina",
+        "name": "Semestre 2 Teste 2",
+        "totalHoursWorkload": 60,
+        "praticalHoursWorkload": 60,
+        "teoricHoursWorkload": 60,
+        "eadHoursWorkload": 60,
+        "complementaryHoursWorkload": 60,
+        "type": "required" }
+    ]
+}
+
+###GET COURSE SEMESTERS 
+GET http://localhost:3000/api/v1/semesters/092f3196-60ca-43a6-9e6b-9bc5a54dffa6
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###EDIT A SEMESTER
+PATCH http://localhost:3000/api/v1/semester/9c1686a8-8c58-44c3-acbb-de2a61875dbb
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "requiredHoursWorkload": 5,
+    "electiveHoursWorkload": 2,
+    "complementaryHoursWorkload": 12
+}
+
+###DELETE SEMESTER
+DELETE http://localhost:3000/api/v1/semester/51e3038e-a9b7-43dc-a7a5-93455c577822
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###ADD SUBJECTS TO SEMESTER
+PATCH http://localhost:3000/api/v1/semester/9c1686a8-8c58-44c3-acbb-de2a61875dbb/subjects
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "subjects": ["75634d7f-a52c-4d24-8caa-6f69c30f1e1f"]
+}
+
+###REMOVE SUBJECTS TO SEMESTER
+DELETE http://localhost:3000/api/v1/semester/9c1686a8-8c58-44c3-acbb-de2a61875dbb/subjects
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "subjects": ["75634d7f-a52c-4d24-8caa-6f69c30f1e1f"]
+}
+
+
+###CREATE A ACTIVITY
+POST http://localhost:3000/api/v1/activity
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Segunda atividade",
+    "name": "Atividade Curriculo",
+    "hoursWorkload": 12
+}
+
+####GET ACTIVITIES 
+GET http://localhost:3000/api/v1/activity
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+####GET ACTIVITIES BY ID
+GET http://localhost:3000/api/v1/activity/bce1deac-6f4d-47e6-840e-053f5b3a6eca
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+####DELETE ACTIVITIES BY ID
+DELETE http://localhost:3000/api/v1/activity/bce1deac-6f4-47e6-840e-053f5b3a6eca
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###CREATE A SUBJECT
+POST http://localhost:3000/api/v1/
+content-type: application/json
+
+{
+    "email": "testepj@email.com",
+    "password": "Teste123!"
+}
+
+###CREATE A INTERNSHIP
+POST http://localhost:3000/api/v1/internships
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Segundo estagio",
+    "name": "Etagio exemplo",
+    "hoursWorkload": 60
+}
+
+
+####GET INTERNSHIPS 
+GET http://localhost:3000/api/v1/internships
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+####GET INTERNSHIPS BY ID
+GET http://localhost:3000/api/v1/internship/33909a84-2010-4490-a8b3-b44d5e749a88
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###EDIT A INTERNSHIP
+PATCH http://localhost:3000/api/v1/internship/33909a84-2010-4490-a8b3-b44d5e749a88
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "name": "Estagio exemplo II"
+}
+
+####DELETE INTERNSHIPS BY ID
+DELETE http://localhost:3000/api/v1/internship/33909a84-2010-4490-a8b3-b44d5e749a88
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###CREATE A SUBJECT
+POST http://localhost:3000/api/v1/subject
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "description": "Disciplina Exemplo",
+    "name": "Disciplina de Exemplo",
+    "totalHoursWorkload": 60,
+    "praticalHoursWorkload": 60,
+    "teoricHoursWorkload": 60,
+    "eadHoursWorkload": 60,
+    "complementaryHoursWorkload": 60,
+    "type": "required" 
+}
+
+
+###GET SUBJECTS 
+GET http://localhost:3000/api/v1/subjects
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###GET SUBJECTS  BY ID
+GET http://localhost:3000/api/v1/subject/cc35ddfc-cdc4-443a-916d-cc7371f06c32
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###EDITANDO SUBJECT
+PATCH http://localhost:3000/api/v1/subject/0b7f1d86-bc15-452e-abbb-16942f91d8fa
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "name": "Disciplina Editada"
+}
+
+####DELETE INTERNSHIPS BY ID
+DELETE http://localhost:3000/api/v1/subject/0b7f1d86-bc15-452e-abbb-16942f91d8fa
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+
+###CREATE A STUDYFIELD
+POST http://localhost:3000/api/v1/fields
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "field": "Fisica",
+    "name": "Estudo de quimica I",
+    "abilities": ["002f96c0-f3f8-4e92-a5fc-7543b3ead208","001fb0ad-451d-4188-a7fc-0b88b2685445"],
+    "activities": ["33c3bad3-712c-480f-9e8b-86f62ecebad8"]
+}
+
+###GET FIELDS
+GET http://localhost:3000/api/v1/fields
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###GET FIELDS BY ID
+GET http://localhost:3000/api/v1/field/26f5ca90-1e01-413d-8431-34b6eba0679f
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###EDITANDO FIELDS
+PATCH http://localhost:3000/api/v1/field/26f5ca90-1e01-413d-8431-34b6eba0679f
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "field": "Quimica"
+}
+
+####DELETE FIELDS BY ID
+DELETE http://localhost:3000/api/v1/field/26f5ca90-1e01-413d-8431-34b6eba0679f
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+
+###ADD ACTIVITIES TO FIELD 
+PATCH http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/activities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "activities": ["33c3bad3-712c-480f-9e8b-86f62ecebad8", ""]
+}
+
+###REMOVE ACTIVITIES TO FIELD 
+DELETE http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/activities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "activities": ["33c3bad3-712c-480f-9e8b-86f62ecebad8", ""]
+}
+
+
+###ADD INTERNSHIPS TO FIELD 
+PATCH http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/internships
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "internships": ["d8bb2e7f-6bb6-437a-a58a-fa4752b3684e", ""]
+}
+
+###REMOVE ACTIVITIES TO FIELD 
+DELETE http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/activities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "activities": ["33c3bad3-712c-480f-9e8b-86f62ecebad8", ""]
+}
+
+###ADD SUBJECTS TO FIELD 
+PATCH http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/subjects
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "subjects": ["75634d7f-a52c-4d24-8caa-6f69c30f1e1f", ""]
+}
+
+###REMOVE SUBJECTS TO FIELD 
+DELETE http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/subjects
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "subjects": ["75634d7f-a52c-4d24-8caa-6f69c30f1e1f", ""]
+}
+
+
+###ADD ABILITIES TO FIELD 
+PATCH http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/abilities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "abilities": ["003056b6-37fd-4496-85fe-585f2ceae5c7", "002501e8-ce0c-47d5-bb8f-4faa6f80b5e3"]
+}
+
+###REMOVE ABILITIES TO FIELD 
+DELETE http://localhost:3000/api/v1/field/32cfd9e8-fae2-4d1c-b97f-53ea57a37fba/abilities
+ce-api-key: ce_homolog_77b6ce1dd6d02356
+content-type: application/json
+
+{
+    "abilities": ["003056b6-37fd-4496-85fe-585f2ceae5c7", "002501e8-ce0c-47d5-bb8f-4faa6f80b5e3"]
+}

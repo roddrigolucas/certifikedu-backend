@@ -1,0 +1,36 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - corepack enable
+      - corepack prepare yarn@4.5.1 --activate
+      - yarn install 
+      # - yarn global add prisma
+  
+  pre_build:
+    commands:
+      - echo "Running pre_build"
+      - secret=$(aws secretsmanager get-secret-value --secret-id PostgresSecret --query SecretString --output text)
+      - username=$(echo $secret | jq -r '.username')
+      - password=$(echo $secret | jq -r '.password')
+      - encoded_password=$(python -c "import urllib.parse; print(urllib.parse.quote('$password'))")
+      - host=$(echo $secret | jq -r '.host')
+      - port=$(echo $secret | jq -r '.port')
+      - export DATABASE_URL="postgresql://$username:$encoded_password@$host:$port/nest?schema=backend"
+
+  build:
+    commands:
+      - yarn build
+
+  post_build:
+    commands:
+      - npx prisma migrate deploy
+      - cp -R node_modules/ dist/node_modules # nodejs needs this
+      - cp -R .platform/ dist/.platform # Additional config to nginx
+      - cp Procfile dist/Procfile # EBS needs this
+
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: no
+  base-directory: dist

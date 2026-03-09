@@ -1,0 +1,315 @@
+model Schools {
+  schoolId  String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schoolCnpj  String  @unique
+  homepageUrl String?
+  phoneNumber String?
+  description String?
+  logoImage   String?
+  email       String
+  name        String
+
+  isCanvas  Boolean @default(false)
+  isDeleted Boolean @default(false)
+
+  ownerUserId String
+  userId      PessoaJuridica @relation(fields: [ownerUserId], references: [idPJ])
+
+  academicCredentials AcademicCredentials?
+
+  students PessoaFisica[] @relation("SchoolsToStudents")
+
+  certificates Certificates[]
+
+  templates Templates[]
+
+  courses SchoolsCourses[]
+
+  canvasConfigId String?                 @unique
+  canvasLTI      CanvasLTIConfiguration? @relation(fields: [canvasConfigId], references: [id])
+}
+
+model Course {
+  courseId  String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String?
+
+  isAcademic Boolean @default(false)
+
+  educationLevel EducationLevelEnum
+
+  templates CourseTemplates[]
+
+  academicCredentials AcademicCredentials?
+
+  schools SchoolsCourses[]
+
+  students CourseStudents[]
+
+  curriculum Curriculum[]
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+
+  canvasCourse   CanvasCourse?
+  canvasCourseId Int?
+}
+
+model Curriculum {
+  curriculumId String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  name        String
+  description String
+
+  requiredHoursWorkload      Int
+  electiveHoursWorkload      Int?
+  complementaryHoursWorkload Int?
+
+  activities  CurriculumActivities[]
+  internships CurriculumInternships[]
+  semesters   Semester[]
+
+  students CurriculumStudents[]
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+}
+
+model Semester {
+  semesterId String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  semesterNumber Int
+
+  requiredHoursWorkload      Int
+  electiveHoursWorkload      Int?
+  complementaryHoursWorkload Int?
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [curriculumId], onDelete: Cascade)
+
+  subjects SemesterSubjects[]
+
+  students SemesterStudents[]
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  @@unique([semesterNumber, curriculumId])
+}
+
+model Subjects {
+  subjectId String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String
+
+  semesters SemesterSubjects[]
+
+  totalHoursWorkload         Int
+  praticalHoursWorkload      Int?
+  teoricHoursWorkload        Int?
+  eadHoursWorkload           Int?
+  complementaryHoursWorkload Int?
+
+  type SubjectTypeEnum
+
+  learningPaths LearningPathsSubject[]
+
+  studyFieldId String?
+  studyFields  StudyField? @relation(fields: [studyFieldId], references: [studyFieldId])
+
+  students SubjectStudents[]
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+}
+
+model Internships {
+  internshipId String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  name        String
+  description String
+
+  hoursWorkload Int
+
+  curriculums CurriculumInternships[]
+
+  learningPaths LearningPathsInternships[]
+
+  students InternshipsStudents[]
+
+  studyFieldId String?
+  studyFields  StudyField? @relation(fields: [studyFieldId], references: [studyFieldId])
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+}
+
+model Activities {
+  activityId String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  name        String
+  description String
+
+  hoursWorkload Int
+
+  curriculum CurriculumActivities[]
+
+  learningPaths LearningPathsActivities[]
+
+  students ActivitiesStudents[]
+
+  studyFieldId String?
+  studyFields  StudyField? @relation(fields: [studyFieldId], references: [studyFieldId])
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+}
+
+model StudyField {
+  studyFieldId String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  name  String
+  field String
+
+  subjects    Subjects[]
+  activities  Activities[]
+  internships Internships[]
+
+  abilities StudyFieldAbilitites[]
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+}
+
+model InstitutionalEvents {
+  institutionalEventId String   @id @default(uuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  name        String
+  description String?
+  type        String?
+
+  hoursWorkload Int
+
+  educationLevel EducationLevelEnum
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  students InstitutionalEventsStudents[]
+
+  learningPaths LearningPathsInstitutionalEvents[]
+
+  abilities InstitutionalEventsAbilities[]
+
+  userId String
+  user   PessoaJuridica @relation(fields: [userId], references: [idPJ])
+}
+
+//Relations
+model SchoolsCourses {
+  schoolCourseId String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  schoolId String
+  school   Schools @relation(fields: [schoolId], references: [schoolId], onDelete: Cascade)
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+}
+
+model CurriculumInternships {
+  semesterEstagioId String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [curriculumId], onDelete: Cascade)
+
+  internshipId String
+  internship   Internships @relation(fields: [internshipId], references: [internshipId], onDelete: Cascade)
+}
+
+model CurriculumActivities {
+  semesterEstagioId String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  curriculumId String
+  curriculum   Curriculum @relation(fields: [curriculumId], references: [curriculumId], onDelete: Cascade)
+
+  activityId String
+  activity   Activities @relation(fields: [activityId], references: [activityId], onDelete: Cascade)
+}
+
+model SemesterSubjects {
+  semesterSubjectId String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  semesterId String
+  semester   Semester @relation(fields: [semesterId], references: [semesterId], onDelete: Cascade)
+
+  subjectId String
+  subject   Subjects @relation(fields: [subjectId], references: [subjectId], onDelete: Cascade)
+}
+
+//Abilities Relations
+model StudyFieldAbilitites {
+  studyFieldAbilityId String   @id @default(uuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  studyFieldId String
+  studyField   StudyField @relation(fields: [studyFieldId], references: [studyFieldId], onDelete: Cascade)
+
+  abilityId String
+  abilities Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+}
+
+model InstitutionalEventsAbilities {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  institutionalEventId String
+  institutionalEvents  InstitutionalEvents @relation(fields: [institutionalEventId], references: [institutionalEventId], onDelete: Cascade)
+
+  abilityId String
+  abilities Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+}

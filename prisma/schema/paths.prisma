@@ -1,0 +1,97 @@
+model LearningPaths {
+  pathId    String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name        String
+  description String
+
+  totalHoursWorkload Int?
+
+  participants LearningPathsStudents[]
+
+  modules LearningPathsModules[]
+
+  templateId String?    @unique
+  templates  Templates? @relation(fields: [templateId], references: [templateId])
+
+  pjId  String
+  owner PessoaJuridica @relation(fields: [pjId], references: [idPJ])
+}
+
+model LearningPathsModules {
+  moduleId  String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  moduleIndex Int
+
+  subjects            LearningPathsSubject[]
+  internships         LearningPathsInternships[]
+  activities          LearningPathsActivities[]
+  institutionalEvents LearningPathsInstitutionalEvents[]
+
+  templateId String?    @unique
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  pathId       String
+  learningPath LearningPaths @relation(fields: [pathId], references: [pathId], onDelete: Cascade)
+
+  studentsCompleted LearningPathModulesStudents[]
+
+  @@unique([pathId, moduleIndex])
+  @@unique([moduleId, moduleIndex])
+}
+
+//Relations
+model LearningPathsActivities {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  activityId String
+  activity   Activities @relation(fields: [activityId], references: [activityId], onDelete: Cascade)
+
+  moduleId            String
+  moduleIndex         Int
+  learningPathModules LearningPathsModules @relation(fields: [moduleId, moduleIndex], references: [moduleId, moduleIndex], onDelete: Cascade)
+}
+
+model LearningPathsInternships {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  internshipId String
+  internship   Internships @relation(fields: [internshipId], references: [internshipId], onDelete: Cascade)
+
+  moduleId            String
+  moduleIndex         Int
+  learningPathModules LearningPathsModules @relation(fields: [moduleId, moduleIndex], references: [moduleId, moduleIndex], onDelete: Cascade)
+}
+
+model LearningPathsSubject {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subjectId String
+  subject   Subjects @relation(fields: [subjectId], references: [subjectId], onDelete: Cascade)
+
+  moduleId            String
+  moduleIndex         Int
+  learningPathModules LearningPathsModules @relation(fields: [moduleId, moduleIndex], references: [moduleId, moduleIndex], onDelete: Cascade)
+}
+
+model LearningPathsInstitutionalEvents {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  institutionalEventsId String
+  institutionalEvents   InstitutionalEvents @relation(fields: [institutionalEventsId], references: [institutionalEventId], onDelete: Cascade)
+
+  moduleId            String
+  moduleIndex         Int
+  learningPathModules LearningPathsModules @relation(fields: [moduleId, moduleIndex], references: [moduleId, moduleIndex], onDelete: Cascade)
+}

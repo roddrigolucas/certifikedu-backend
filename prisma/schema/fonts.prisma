@@ -1,0 +1,27 @@
+model Fonts {
+  fontId    String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family   String
+  category String
+  ttfUrl   String
+  descDefault Boolean @default(false) 
+  nameDefault Boolean @default(false) 
+
+  version String?
+  style   String?
+  weight  String?
+  woffUrl String?
+
+  templateDescription Templates[] @relation(name: "fontDescription")
+  templateName        Templates[] @relation(name: "fontName")
+
+  certificatesDescription Certificates[] @relation(name: "fontDescription")
+  certificatesName        Certificates[] @relation(name: "fontName")
+
+  eventDescription Events[] @relation(name: "fontDescription")
+  eventName        Events[] @relation(name: "fontName")
+
+  @@unique([family, category])
+}

@@ -1,0 +1,89 @@
+model JobOpportunity {
+  jobId     String    @id @default(uuid())
+  jobCode   Int       @unique @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  endAt     DateTime?
+
+  title       String
+  description String
+  state       String?
+  city        String?
+  workModel   WorkModel
+  type        JobOpportunityType
+  status      JobOpportunityStatus @default(IN_PROGRESS)
+
+  abilities             AbilityOnJobOpportunity[]
+  recommendedCandidates PessoaFisicaOnJobOpportunity[]
+
+  workFields WorkFieldOnJobOpportunity[]
+
+  minimumExperienceLevel Int?
+  maximumExperienceLevel Int?
+  minimumSalaryRange     Float?
+  maximumSalaryRange     Float?
+  seniorityLevel         SeniorityLevel[]
+  educationLevel         ProfessionalEducationLevel[]
+
+  pcdInfo PCDInfo @default(PCD_ACCEPT)
+
+  pjId String
+  pj   PessoaJuridica @relation(fields: [pjId], references: [idPJ], onDelete: Cascade)
+
+  @@unique([pjId, jobId])
+}
+
+model WorkFields {
+  workFieldId String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workField String @unique
+
+  workFieldProfile        WorkFieldOnProfessionalProfile[]
+  workFieldJobOpportunity WorkFieldOnJobOpportunity[]
+}
+
+//Abilities Relation
+model AbilityOnJobOpportunity {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  habilidadeId String
+  ability      Abilities @relation(fields: [habilidadeId], references: [habilidadeId])
+
+  job   JobOpportunity @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  jobId String
+
+  @@unique([habilidadeId, jobId])
+}
+
+//Relations
+model WorkFieldOnProfessionalProfile {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workFieldId String
+  workField   WorkFields @relation(fields: [workFieldId], references: [workFieldId], onDelete: Cascade)
+
+  professionalProfileId String
+  professionalProfile   ProfessionalProfile @relation(fields: [professionalProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([workFieldId, professionalProfileId])
+}
+
+model WorkFieldOnJobOpportunity {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workFieldId String
+  workField   WorkFields @relation(fields: [workFieldId], references: [workFieldId], onDelete: Cascade)
+
+  jobOpportunityId String
+  jobOpportunity   JobOpportunity @relation(fields: [jobOpportunityId], references: [jobId], onDelete: Cascade)
+
+  @@unique([workFieldId, jobOpportunityId])
+}
+

@@ -1,0 +1,41 @@
+CREATE SCHEMA backend;
+
+CREATE USER prisma_user WITH PASSWORD 'password';
+
+GRANT CONNECT ON DATABASE nest TO prisma_user;
+GRANT USAGE ON SCHEMA backend TO prisma_user;
+
+GRANT CREATE ON SCHEMA backend TO prisma_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA backend TO prisma_user;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA backend TO prisma_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA backend
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO prisma_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA backend
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO prisma_user;
+
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON ALL TABLES IN SCHEMA backend TO prisma_user;
+GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA backend TO prisma_user;
+GRANT CREATE ON SCHEMA backend TO prisma_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA backend
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON TABLES TO prisma_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA backend
+GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO prisma_user;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA backend TO prisma_user;
+
+
+\COPY (SELECT 'ALTER TABLE ' || table_schema || '.' || '"' || table_name || '"' || ' SET SCHEMA backend;'
+FROM information_schema.tables
+WHERE table_schema = 'public' AND table_type = 'BASE TABLE') TO move_schema.txt;
+
+## COPY THE OUTPUT ON move_schema.txt AND RUN IT;
+
+SELECT 'ALTER TYPE ' || n.nspname || '.' || '"' || t.typname || '"' || ' SET SCHEMA backend;'
+FROM pg_type t
+JOIN pg_enum e ON t.oid = e.enumtypid
+JOIN pg_namespace n ON n.oid = t.typnamespace
+WHERE n.nspname = 'public'
+GROUP BY n.nspname, t.typname;

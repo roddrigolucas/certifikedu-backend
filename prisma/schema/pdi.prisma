@@ -1,0 +1,133 @@
+model Pdi {
+  pdiId     String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title String
+
+  dailyTime         String
+  previousEducation String?
+
+  goals  String
+  skills String
+
+  progressPercentage Float @default(0)
+
+  status          PdiStatus @default(PENDING)
+  numberOfRetries Int       @default(0)
+
+  nodes PdiNode[]
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  subscriptionId String?
+  subscription   PagarmePlanSubscription? @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  basicSubscriptionId String?
+  basicSubscription   BasicPlanSubscriptions? @relation(fields: [basicSubscriptionId], references: [userSubscriptionId])
+}
+
+model PdiNode {
+  nodeId    String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  objective        String
+  description      String?
+  markedAsFinished Boolean @default(false)
+
+  abilities         PdiNodeAbilities[]
+  abilitiesOnReview PdiNodeAbilitiesOnReview[]
+  books             BookNodes[]
+
+  pdiId String
+  pdi   Pdi    @relation(fields: [pdiId], references: [pdiId], onDelete: Cascade)
+}
+
+model Books {
+  bookId    String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  authorName  String
+  description String?
+
+  isbn String?
+
+  abilities         BookAbilities[]
+  abilitiesOnReview BookAbilitiesOnReview[]
+
+  nodes BookNodes[]
+}
+
+//Relations
+model BookNodes {
+  bookNodeId String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  bookId String
+  book   Books  @relation(fields: [bookId], references: [bookId], onDelete: Cascade)
+
+  nodeId String
+  node   PdiNode @relation(fields: [nodeId], references: [nodeId], onDelete: Cascade)
+}
+
+//Abilities Relation
+model PdiNodeAbilities {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  nodeId String
+  node   PdiNode @relation(fields: [nodeId], references: [nodeId], onDelete: Cascade)
+
+  abilityId String
+  ability   Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+
+  @@unique([nodeId, abilityId])
+}
+
+model BookAbilities {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookId String
+  book   Books  @relation(fields: [bookId], references: [bookId], onDelete: Cascade)
+
+  abilityId String
+  ability   Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+
+  @@unique([bookId, abilityId])
+}
+
+model PdiNodeAbilitiesOnReview {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  nodeId String
+  node   PdiNode @relation(fields: [nodeId], references: [nodeId], onDelete: Cascade)
+
+  abilityOnReviewId String
+  abilityOnReview   AbilityOnReview @relation(fields: [abilityOnReviewId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, abilityOnReviewId])
+}
+
+model BookAbilitiesOnReview {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookId String
+  book   Books  @relation(fields: [bookId], references: [bookId], onDelete: Cascade)
+
+  abilityOnReviewId String
+  abilityOnReview   AbilityOnReview @relation(fields: [abilityOnReviewId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, abilityOnReviewId])
+}

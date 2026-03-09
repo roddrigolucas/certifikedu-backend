@@ -1,0 +1,88 @@
+model Events {
+  eventId   String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  logoImage String?
+
+  name               String
+  description        String
+  descriptionImage   String
+  cargaHoraria       Int
+  certificatePicture String
+  issuedAt           DateTime?
+  expiresAt          DateTime?
+  hexFontColor       String?
+
+  backgroundId       String?                      @unique
+  backgroungImageUrl String?                      @unique
+  backgroundImages   BackgroundCertificateImages? @relation(fields: [backgroundId, backgroungImageUrl], references: [backgroundId, imageUrl])
+
+  qrCodePosition QRCodePositionEnum @default(NULL)
+
+  abilities EventAbilities[]
+  abilitiesOnReview EventAbilitiesOnReview[]
+
+  fontDescId String?
+  fontDesc   Fonts?  @relation(name: "fontDescription", fields: [fontDescId], references: [fontId])
+
+  fontNameId String?
+  fontName   Fonts?  @relation(name: "fontName", fields: [fontNameId], references: [fontId])
+
+  issuesNumberLimit  Int?
+  startDateTime      DateTime?
+  expirationDateTime DateTime?
+
+  participants          EventParticipants[]
+  eventAllowedDocuments EventsAllowedDocuments[]
+
+  certificates Certificates[]
+
+  hasOrder Boolean
+  orderId  String?
+  order    PagarmeOrders? @relation(fields: [orderId], references: [orderId])
+
+  customerId String
+  customer   PagarmeCustomers @relation(fields: [customerId], references: [customerId])
+
+  issuerId String
+  issuer   User   @relation(fields: [issuerId], references: [id])
+}
+
+model EventsAllowedDocuments {
+  allowId   String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  document String
+
+  hasReceived Boolean @default(false)
+
+  eventId String
+  event   Events @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+}
+
+//Abilities Relations
+model EventAbilities {
+  eventAbilitieId String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  eventId String
+  event   Events @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  abilityId String
+  ability   Abilities @relation(fields: [abilityId], references: [habilidadeId], onDelete: Cascade)
+}
+
+model EventAbilitiesOnReview {
+  eventAbilitieId String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  eventId String
+  event   Events @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  abilityOnReviewId String
+  ability   AbilityOnReview @relation(fields: [abilityOnReviewId], references: [id], onDelete: Cascade)
+}

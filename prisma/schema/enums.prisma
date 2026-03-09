@@ -1,0 +1,189 @@
+enum UserType {
+  PF
+  PJ
+}
+
+enum UserStatus {
+  ENABLED
+  DISABLED
+  REVIEW
+  ADMIN
+}
+
+enum CertificateStatus {
+  REVIEW
+  ENABLED
+  DISABLED
+}
+
+enum TransactionStatus {
+  ONGOING
+  SUCESSFUL
+  FAILED
+}
+
+enum BillingTypeEnum {
+  prepaid
+  postpaid
+  exact_day
+}
+
+enum PaymentMethodEnum {
+  credit_card
+  boleto
+  debit_card
+}
+
+enum QuotaPeriod {
+  monthly
+  bimonthly
+  trimontlhy
+  biannually
+  annually
+  forever
+  unlimited
+}
+
+enum SubjectTypeEnum {
+  required
+  elective
+}
+
+enum EducationLevelEnum {
+  EducacaoInfantil
+  EnsinoFundamental
+  EnsinoMedio
+  Graduacao
+  GraduacaoTecnologica
+  PosGraduacao
+  Mestrado
+  Doutorado
+  PosDoutorado
+  Extensao
+  Profissionalizante
+  EducacaoEmpresarial
+}
+
+enum CredentialTypeEnum {
+  PARECER
+  RESOLUCAO
+  DECRETO
+  PORTARIA
+  LEIFEDERAL
+  LEIESTADUAL
+  LEIMUNICIPAL
+  ATOPROPRIO
+  DELIBERACAO
+}
+
+enum AcademicTypeEnum {
+  EAD
+  PRESENCIAL
+}
+
+enum PJAdminRoleEnum {
+  basico
+  medio
+  admin
+}
+
+enum PJAssociationStatus {
+  REVIEW
+  ENABLED
+}
+
+enum WorkModel {
+  REMOTE
+  HYBRID
+  ON_SITE
+}
+
+enum JobOpportunityType {
+  APPRENTICESHIP
+  INTERNSHIP
+  PART_TIME
+  FULL_TIME
+  TEMPORARY
+  FREELANCER
+  VOLUNTEER
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  SELF_EMPLOYED
+  FREELANCE
+  CONTRACT
+  APPRENTICESHIP
+  INTERNSHIP
+  LEADERSHIP_PROGRAM
+  INDIRECT_CONTRACT
+}
+
+enum JobOpportunityStatus {
+  IN_PROGRESS
+  CLOSED
+}
+
+enum ProfessionalEducationLevel {
+  NONE
+  ELEMENTARY
+  HIGH_SCHOOL
+  ASSOCIATE
+  BACHELOR
+  MASTER
+  DOCTORATE
+  POSTDOCTORATE
+  VOCATIONAL
+  CERTIFICATION
+}
+
+enum SeniorityLevel {
+  JUNIOR
+  ANALIST
+  MID_LEVEL
+  SENIOR
+  MANAGER
+  COORDINATOR
+  DIRECTOR
+  EXECUTIVE
+}
+
+enum PCDInfo {
+  PCD_EXCLUSIVE
+  PCD_DONT_ACCEPT
+  PCD_ACCEPT
+}
+
+enum QRCodePositionEnum {
+  NULL
+  BOTTOM_RIGHT
+  BOTTOM_LEFT
+  TOP_RIGHT
+  TOP_LEFT
+}
+
+enum DiscountTypeEnum {
+  flat
+  percentage
+}
+
+enum CertificateSuccessStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PdiStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum ResumeLanguageLevel {
+  ELEMENTARY
+  LIMITED_WORKING
+  PROFESSIONAL_WORKING
+  FULL_PROFESSIONAL_WORKING
+  NATIVE
+}

@@ -1,0 +1,188 @@
+###ADMIN AUTHENTICATE COGNITO
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "guil.dendena@gmail.com",
+    "password": ""
+}
+
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "testepj@email.com",
+    "password": "Teste123!"
+}
+
+### AUTHENTICATE COGNITO
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "presidente@assespro-mg.org.br",
+    "password": "x79Q4RH!nQ5"
+}
+
+###
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/auth/signup/pj
+content-type: application/json
+
+{
+    "email": "pagoda5684@buzblox.com",
+    "documentNumber": "87569973000124",
+    "password": "x79Q4RH!nQ5",
+    "pjInfo": {
+        "razaoSocial": "PROEX PUCMG e CertifikEDU",
+        "nomeFantasia": "PROEX PUCMG e CertifikEDU",
+        "dataDeFundacao": "11-12-2000",
+        "telefone": "61999435791",
+        "socios": {
+            "CPF": "02902055063",
+            "nome": "61299546030",
+            "telefone": "61999435791",
+            "dataDeNascimento": "01-01-1980",
+            "cepNumber": "74280010",
+            "estado": "MG",
+            "cidade": "Belo Horizonte",
+            "bairro": "Nova Suica",
+            "rua": "Ficticia",
+            "numero": "400",
+            "complemento": ""
+        }
+    }
+}
+
+###UPDATE USER ADMIN
+PATCH http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/users/admin/update
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiNjk5M2RiN2YtODEyZi00Y2NkLThhMDMtYmQ1Y2FiODEwM2ZiIiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjFiNTY5YTJmLWZiZjgtNDliYy04YTlmLTA5MDA5MDEyMDJjMiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzEzOTA1MzYwLCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTcxMzkwODk2MCwiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNzEzOTA1MzYwLCJqdGkiOiI1OTBmMWE0NS04ZWU4LTQ4ZTQtYTQ5Ni0wZmVlNGI5ZDhlNmMiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.vueVFMVbjG0wWaREunDmfg_xEWaIWDRYs1TTWoG-yUCtH3hp9dJ6FrxctHctMq9FIMANm2Y16_Htdf2LT2FgPG-RegM57QHGnvDwTL6v53Mq7aFcezSbOo-5hYtadZf2oVc2yPMAjyic1l0Vqh5NsqBbnxf4H8EjF_72jAFknfyWGORmSsRVcWUhbW-6ECDYYWj96aa4oFmqdRDX380MSQ8RCn-_Ao6NCjlaQg7VXqeTsXVGItREhaqUsliHXNcxs8kSc42w0_UPPJccg9nJbAZYmzz3ypdtLRhipxHDFqbEwb6VkHrqwq9_FvAjChxEoS8smdcWrXy6jsqFLFwhig
+content-type: application/json
+
+{
+    "userToUpdateId": "5ecb68e0-5740-4415-9a78-450dbecdeeb7",
+    "status": "ENABLED"
+}
+
+###ENABLE USER API KEY FEATURE
+PATCH http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/enable/5ecb68e0-5740-4415-9a78-450dbecdeeb7
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiNjk5M2RiN2YtODEyZi00Y2NkLThhMDMtYmQ1Y2FiODEwM2ZiIiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjFiNTY5YTJmLWZiZjgtNDliYy04YTlmLTA5MDA5MDEyMDJjMiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzEzOTA1MzYwLCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTcxMzkwODk2MCwiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNzEzOTA1MzYwLCJqdGkiOiI1OTBmMWE0NS04ZWU4LTQ4ZTQtYTQ5Ni0wZmVlNGI5ZDhlNmMiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.vueVFMVbjG0wWaREunDmfg_xEWaIWDRYs1TTWoG-yUCtH3hp9dJ6FrxctHctMq9FIMANm2Y16_Htdf2LT2FgPG-RegM57QHGnvDwTL6v53Mq7aFcezSbOo-5hYtadZf2oVc2yPMAjyic1l0Vqh5NsqBbnxf4H8EjF_72jAFknfyWGORmSsRVcWUhbW-6ECDYYWj96aa4oFmqdRDX380MSQ8RCn-_Ao6NCjlaQg7VXqeTsXVGItREhaqUsliHXNcxs8kSc42w0_UPPJccg9nJbAZYmzz3ypdtLRhipxHDFqbEwb6VkHrqwq9_FvAjChxEoS8smdcWrXy6jsqFLFwhig
+
+###CREATE USER API KEY
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/create/key
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJmMGM3M2YzYS0wZmUxLTQ1NDgtYTNjNS04NmUxNDk1NzRjZWIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjpmYWxzZSwiY29nbml0bzp1c2VybmFtZSI6ImYwYzczZjNhLTBmZTEtNDU0OC1hM2M1LTg2ZTE0OTU3NGNlYiIsIm9yaWdpbl9qdGkiOiI0YjZlOTNhMS0xZWM4LTRlZjQtYWMxNC04ZDk5MTIwMGQ5MGYiLCJhdWQiOiIzcWZ1bTg0aTNnbTkzaWd1ZHFidWdmOWc4diIsImV2ZW50X2lkIjoiNmM2YzU2NzUtNDE0Zi00MTcwLWI4OTktYjM5Yjc5MTcxNTI2IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MTE0OTA0OTYsInBob25lX251bWJlciI6Iis1NTYxOTk5NDM1NzkxIiwiZXhwIjoxNzExNDk0MDk2LCJjdXN0b206dXNlcl90eXBlIjoiUEoiLCJpYXQiOjE3MTE0OTA0OTYsImp0aSI6ImM5Njc0YjRkLTVlYTYtNDRkMS1iYTZlLWJhMGZjZjk0YWQxYiIsImVtYWlsIjoicHJlc2lkZW50ZUBhc3Nlc3Byby1tZy5vcmcuYnIifQ.TFa2ZJa5htFSbWjfvLQ-_bZuoAluGTZdg4jSZyYRr1k7sCaPT9ct5t4-mPkSM9tZA4V9ChgCWX_Mlhiobbd4ZpNit827aGS3ldlnt07NG9r0psRr54d3_n1kK8QupJHSVzEB3eKo2ur97FJ1ctUkTEke1mxwNajAG_kGmTCyrbbzNxK5Bp5ccrqd4kuMW8vm75NyjDM1z_VXkE7KTFwi0CjAL6ylIduxt38UqQZsHzy_Xlnx5qu5pyHVbQyjRX3u2wGE_Xljy2VlVPsdzpmwjcbYGK1H-b5fYXon0TnapXRl-2qs_ES5o2GGzKR9c9rN7vuP7WiKZMxUc30dY9uTAg
+
+###GET USER ACTIVE KEY
+GET http://homolog-certifikedu-nest-env.eba-xemcv4pd.us-east-1.elasticbeanstalk.com/api/v1/user/key
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI1NDUzYzk0Yy1kOGNhLTQ0MzMtYTQ4Mi1lN2MzNzliMjBmNDAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwiY29nbml0bzp1c2VybmFtZSI6IjU0NTNjOTRjLWQ4Y2EtNDQzMy1hNDgyLWU3YzM3OWIyMGY0MCIsIm9yaWdpbl9qdGkiOiI0MWZjOGFlZS0wNWYxLTRiNjEtODUyYi1hOGU5NTM3YWY2NTciLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiYWZjMWVhYzItYTIwMi00N2YwLWIwZTgtYzIxODY1MDk5MjQ3IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MDk5NDQ5ODYsImV4cCI6MTcwOTk0ODU4NiwiaWF0IjoxNzA5OTQ0OTg2LCJqdGkiOiIwNGFkYzk4Yy0xN2VjLTQ4MGItOTA4MC01YjZlODk4NzYzN2EiLCJlbWFpbCI6InRlc3RlcGpAZW1haWwuY29tIn0.LBs14niO2ALJqOHHeyN5KRovd7hnBQn5IU6f32qDpVXJW6ZbTKrQ_braRcDh2jgWe6P79YDY8aSnehpiFqcG1-Y6GXmvyWFblGLtXJFsdjGQrXMZCML1GaX3tYLoheuib4kZk64Kx03q4P4g_2w1H9bh9DASU2rPDhZ-umqclgRWBhNZzoJSGtEA8iKMezzb6XFz53vmmzXvtvyeo9Wn0YNOgke99deDzeG8wBS8f8wA4A1OZ1SWlHpS899bIutKvz7gN3n6Ac4XLDFLt7YY0v-1Te1hz5ByPehMSD-zW8RLwOmA8px8ecN-y8vNIWT88Ow7STXauk0DxxJvCGDcOw
+
+###CREATE SCHOOL
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/school
+ce-api-key: ce_prod_196eba3b663c34a5
+content-type: application/json
+
+{
+    "schoolCnpj": "00017260000170",
+    "phoneNumber": "61999435791",
+    "homepageUrl": "certifikedu.com",
+    "description": "Palestra PROEX PUC.MG e CertifikEDU",
+    "email": "certifikedu@certifikedu.com",
+    "name": "PROEX PUC.MG e CertifikEDU"
+}
+
+###GET COURSE BY ID
+GET http://localhost:3000/courses/7ece4a18-5a44-4d18-82bf-44c58a12e2b9
+
+
+### HABILIDADE
+# POST http://localhost:3000/abilities/create
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/abilities/create
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiNGExYzVmNDgtYTc4Mi00YjcwLTljMzAtMWFkMzVmYWI5YTVjIiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjFjMjQwOGM2LTEzMzUtNGQ1Yi1hNWU3LWYxOTRlMDA0MDIxYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzA4NDMyMjQwLCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTcwODQzNTg0MCwiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNzA4NDMyMjQwLCJqdGkiOiJiNjU3MjRlMS1mMTA2LTQ3MTEtOWIxMy03NDA0YjYyZTNjZDkiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.SIqnNWu1PpWpxVx01vapOOWxR-_31EdKSDuqNgaDyHz2rXn3IyO90F2TdeJHZlRnZz4P7F1aRwwaYclNaycYbEI4DThJrHbcLrjLucDDBgvG45dU4O3iVniyIJZFJgELB0RFPa-ZN9KOsUhQrAuIcCMPq0oMjhIntDQZkgjCh3qZZ3WlBrw-1Ud8GCvnM1NWjMmIrQBjreQtpj5AuEQYCZGe_ejRTAJGI0KOOvtmQP4y02CHagCNRwqJLzWamDq9dSHJW1ezzpEv9wwiFmdoZjzNbTrkqA6RWWJh-uT_UVUVI9yEoVaE3hdA9p2mehAPxfsHQ1NuxLXaCQF68IIBaw
+content-type: application/json
+
+{
+    "habilidade": "Ser capaz de identificar oportunidades de melhoria e desenvolver soluções criativas para desafios educacionais, seja na gestão de recursos, no design curricular ou na criação de novos programas educacionais.",
+    "tema": "Gestão Educacional"
+}
+
+### Upgrade ability on review
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/abilities/upgrade/11ab8f23-8273-4974-b77d-0c726f986401
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiYzRmZjhmOWUtZTYxNC00N2M2LThlNGUtMDgxYmJkOTliYzA3IiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6ImRmZGNiMjY5LTdiMDUtNDY0NS1hMTlhLWU0YTllZjhkM2JiYSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzA2NzA0MTE2LCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTcwNjcwNzcxNiwiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNzA2NzA0MTE2LCJqdGkiOiIyYTBkNjkzZS0yMWE5LTRhNDctOTYxZC00NGE2MWFhOGNjMjkiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.SjZT7_Knzg5WgEqhFRtcP75ut3KFYfGV8ZBzhQQyFaHtRP3fm6bMcHey3xtPSsZZrN7ocHq3D2xHNvyJbSQAyOl7wSm0OyvxqRcSegB3fMZiVLDr_ZK4QDpFKinmYJVAGg4K3mrbyN9KIDl9yF8ZtJhDbdzy1sAQGnDSLZSCOu6MPVgGMG7ca3L5KTfoRKudZrHdB04hlE742ADWmFea0puxMkVpA0Q_sDdb-B6-cm2J5l1DVV1sPEULI0fZuWiveK2DZvp48KLtYEobMf6uKEKWET_4fBo2jc68oXgIjoXcZi3ZC-lts4IgBzjiip2rYodtMvOLx8X3lOQWQENnxA
+
+###
+###GET COURSE BY ID
+GET http://localhost:3000/courses/7ece4a18-5a44-4d18-82bf-44c58a12e2b9
+
+
+### HABILIDADE
+###CREATE COURSE
+
+curl -X POST "http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/templates/create" \
+    -H "ce-api-key: ce_prod_196eba3b663c34a5" \
+    -H "Content-Type: multipart/form-data" \
+    -F "schoolId=3120fcfb-3e63-45d3-993f-d110471b94b7" \
+    -F "description= O/A profissional acima indicado/a participou da palestra Comunicação em Público ministrada pelo Prof. Márcio Barros, no Workshop Gestão Humanizada, evento de extensão no âmbito da disciplina Gestão Estratégica de Pessoas do curso de Administração da PUC Minas Praça da Liberdade, com o apoio da PROEX, com carga horária de 2 horas, em 25 de abril de 2024." \
+    -F "name=Comunicação em Público" \
+    -F "hoursWorkload=2" \
+    -F "issuedAt=25/04/2024" \
+    -F "expiresAt=25/04/2030" \
+    -F "abilities[]=c63e3a57-3fdd-4ed0-9fa4-e7d9385d96de" \
+    -F "abilities[]=ec3f0a75-60b8-4d7a-a59b-9c646ff53ed1" \
+    -F "abilities[]=8bca6ce1-bd7a-4086-867c-a7d13dcdbc05" \
+    -F "imageTemplate=@/home/godis/Downloads/firefox/certificate_2504.png;type=image/png"
+
+curl -X POST "http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/templates/create" \
+    -H "ce-api-key: ce_prod_29817e929b98790e" \
+    -H "Content-Type: multipart/form-data" \
+    -F "schoolId=5f26e2cb-b0b6-44b7-b893-abc87d9751c9" \
+    -F "description=O/A educador(a) acima indicado(a) participou do módulo presencial da disciplina Inovação: Tecnologia e Inteligência Artificial, com carga horária de 4 horas, do Curso de Pós-Graduação Lato Sensu em Gestão Escolar, no dia 26 de abril de 2024, pelo Instituto Ivoti e o Setrem, em Ivoti (RS)." \
+    -F "name=Inovação: Tecnologia e Inteligência Artificial" \
+    -F "hoursWorkload=4" \
+    -F "issuedAt=26/04/2024" \
+    -F "expiresAt=26/04/2030" \
+    -F "abilities[]=d75186cd-dc9c-499c-a032-22ae8b35613e" \
+    -F "abilities[]=e65589c8-65e9-4527-bf7f-9956ca7d3028" \
+    -F "abilities[]=b5ba7f4c-0415-4735-ad14-5d34477ab088" \
+    -F "abilities[]=acffb5b9-5255-4308-8122-00fb3606aee0" \
+    -F "imageTemplate=@/home/godis/Downloads/firefox/palestra_2604_2.png;type=image/png"
+
+curl -X POST "http://homolog-certifikedu-nest-env.eba-xemcv4pd.us-east-1.elasticbeanstalk.com/api/v1/templates/create" \
+    -H "ce-api-key: ce_homolog_de505dacd4fdc781" \
+    -H "Content-Type: multipart/form-data" \
+    -F "schoolId=bf5fa7dd-ad66-469b-bb6b-30ce4c1e5f2f" \
+    -F "description=Faz parte do Ecossistema CertifikEDU de Microcertificações com Blockchain e Inteligência Artificial. Demonstra habilidades que ampliam suas oportunidades de trabalho e busca estar em constante autodesenvolvimento nas competências para o século 21." \
+    -F "name=CertifikEDU - Eu Faço parte!"\
+    -F "hoursWorkload=1" \
+    -F "abilities[]=e881bc27-c1b1-4908-a33f-84052b361a7b" \
+    -F "abilities[]=6841c7e7-665f-48fc-8a0a-033bf2699572" \
+    -F "imageTemplate=@/home/godis/Downloads/firefox/certificado_boas_vindas_update.png;type=image/png"
+
+
+###SCHOOLS
+###CREATE SCHOOL
+# POST http://Certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/api/v1/create/school
+POST http://localhost:3000/api/v1/create/school
+ce-api-key: ce_homolog_c93039bea23076c7
+content-type: application/json
+
+{
+    "schoolCnpj": "45528607000187",
+    "phoneNumber": "31998002447",
+    "homepageUrl": "certifikedu.com",
+    "description": "Palestras Luciano",
+    "email": "luciano.sathler@certifikedu.com",
+    "name": "Palestras Luciano"
+}
+
+###CREATE CERTIFICATE COURSES
+POST http://localhost:3000/templates/create/certificate
+content-type: application/json
+
+{
+    "templateId": "02176ba4-e6f0-476a-a1ea-a56d9f6c8967",
+    "name": "Guilherme Dendena",
+    "email": "guil.dendena@gmail.com",
+    "docNumber": "02902055064"
+
+}

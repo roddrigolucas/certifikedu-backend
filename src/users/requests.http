@@ -1,0 +1,252 @@
+###ADMIN AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "guil.dendena@gmail.com",
+    "password": "!"
+}
+
+###get user info
+GET http://localhost:3000/users/info
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI2NGI3NGM5Yi05ZjRkLTRmZWEtYjk5ZS03YTYyMGVmNDQyN2UiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjpmYWxzZSwiY29nbml0bzp1c2VybmFtZSI6IjY0Yjc0YzliLTlmNGQtNGZlYS1iOTllLTdhNjIwZWY0NDI3ZSIsIm9yaWdpbl9qdGkiOiI0ZTE0ZTk3ZC03NmRiLTQyMzEtYjJlYi00M2IwY2Q1YTIzM2UiLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiN2UwZmY3N2UtZDFkNi00ZDM0LTgyMjUtNzBjMzM1YTc5MTgwIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2OTk1NTU3MTQsInBob25lX251bWJlciI6Iis1NTU0OTkxNDkzNjc2IiwiZXhwIjoxNjk5NTU5MzE0LCJjdXN0b206dXNlcl90eXBlIjoiUEoiLCJpYXQiOjE2OTk1NTU3MTQsImp0aSI6IjQxMzQzMjhkLTc1N2YtNGI2My1hNzcwLTFjYzM5ZjNmOTg4OCIsImVtYWlsIjoiaGFjYmJ5emhlY2Vha3VpbWp4QGNhemx2LmNvbSJ9.K53WtVpX2aVx6gtDQKxLGR7Vwm4dhrRINooA2wzcgHAzOsm6tLbMkNtAJKNXgC099v9L4QL-trUrC_X0pYRc9Qlm3RFuFK9F74LScwzbGBelcSbTy4kKDwJevK1iwb9TnSQMB9Va0STEFqgouMoW22dqWAA4OZOmU_HONl1AV19o-ByHJMsYAkbSUd7Xue8xyTFefe2K_wrQdp5_dKYq29d1yirCQEJCM5alofAwGrOqbQ84pNWQsbrymfxXIAb7h5fOdO9eTLoN8Qos2e4eAu5BIKAG2gPU0elzZonAhdNu44ek6PYO3IgJov_lfFS3xEeBJShTywzyI7_RtdGMbg
+
+
+###get user info by status
+GET https://api.certifikedu.com/users/admin/users/
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiMSIsImNvZ25pdG86dXNlcm5hbWUiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJvcmlnaW5fanRpIjoiMjA5MmZkYTctYzkzNC00ZjVlLWE1MGMtOTE3M2RkMTQyZjk0IiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjJmM2ZkNzhjLTkxMWUtNDc0MS1hOGMzLTAwMGYxZTg5YjFkYSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgyMzg5MjUyLCJleHAiOjE2ODIzOTI4NTIsImN1c3RvbTp1c2VyX3R5cGUiOiJQRiIsImlhdCI6MTY4MjM4OTI1MiwianRpIjoiMzBiMTlhMzgtNDFkMi00ZDk4LTgxZTgtNjA3MDRiMjNiN2MyIiwiZW1haWwiOiJhZG1pbkBjZXJ0aWZpa2VkdS5jb20ifQ.bS0iMKF_XTJAiW4owB5pJzp7zxLlDOQTUDpmB5Xk27GNcAgzCCpxpZweXsUpVkuxgAcmRz0V5YA4AWMcWXDrw6pxFggBE7q8hYZa5ZhTNil7znInOxBcb53pzeGnvU4nPbVjkcSdNakriBI49OZwnezvmxk9MnvS5PrfZBb3NTo-wR0SfNIl9HvJL1waf5qJKw6SJ2DhZ6Hbwi353-YTgZ0R9pRJv_wh9HbZGFK4oXLr7PZtWnVlGxhIUUjuOm17IQoGTC78NsXZWxr6tM1qVc2DzREVRy-dbnerXX1uDfOhHPOhOofKot4qm_ScZWBiIEaYNTOPQStS_27JqaPJIA
+content-type: application/json
+
+{
+    "status": "ENABLED"
+}
+
+###get user info via admin
+GET https://api.certifikedu.com/users/admin/user/info/3
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiMSIsImNvZ25pdG86dXNlcm5hbWUiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJvcmlnaW5fanRpIjoiOWRiZjk4NDAtNmNlNS00OTE0LWFjMWEtYjU5NDliZTQ2ZDk4IiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6ImQyN2M4MTVlLTA0ZDUtNGU1YS1iYmM3LTMzMDlhMzAyYzY5ZCIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgyMzk5NTQyLCJleHAiOjE2ODI0MDMxNDIsImN1c3RvbTp1c2VyX3R5cGUiOiJQRiIsImlhdCI6MTY4MjM5OTU0MiwianRpIjoiOTQ3ZTNmOWUtYWFiMS00YzI4LTk5NzgtMDVkMWM4OGQ2OWVhIiwiZW1haWwiOiJhZG1pbkBjZXJ0aWZpa2VkdS5jb20ifQ.d0CY8Uto37RuuZ3MmcECNb-PS2lOCxZ9NIN53R4piSohfOqg1zBOIkAE7VdCDGX-PYCb_uKgmFlVZrySVyykiSjgzNO14qXTutrdbeaW2J3sMS06P0Mmq1MMWumG9kLffvYnLQPFVayT8-M6YQjGDatJo1bKojobuxq_-vACYiAP0vhn-Gmtpy-F5cB_YRbPJjwP6p627KG8PwNwijWOFD9OQLkrmRM3d8enTDQQ8Xk1n3VSFmaM6l4vU6Ek7sPYKcuZcD7FJcQrLQrxGJydzHp4eBE3QpPzxSEjzqxrNK6BvHGEc8t__Dzv99eigOjM-eO-Xh337qV_8vDaNl_rPg
+
+
+###TEST COGNITO CURRENT USER
+GET http://localhost:3000/users/whoami
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3NDIyODQ5Ny02MzRiLTQyY2UtYTljYi03ZTFiZjk0ZDlmYTMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY29nbml0bzp1c2VybmFtZSI6Ijc0MjI4NDk3LTYzNGItNDJjZS1hOWNiLTdlMWJmOTRkOWZhMyIsIm9yaWdpbl9qdGkiOiJkZjg4NmVhMi1jZjFmLTQyOGMtYTdmMy0wMTQzMDQ1NzE2NzYiLCJhdWQiOiIzdGszM3RvMHVqYmtiZWh0aWdyazFiMWZraiIsImV2ZW50X2lkIjoiZjkwODBiMzAtMjA2MS00ODU0LThiZGQtOGY0ODA3YTk2ZjQwIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2ODE5MzIzMTEsImV4cCI6MTY4MTkzNTkxMSwiaWF0IjoxNjgxOTMyMzExLCJqdGkiOiI2YzY1NDhjMi00MzM1LTQ5ZjgtOGZiMS01ZDUzNTY2OTllNmMiLCJlbWFpbCI6InRlc3RlcGZAZW1haWwuY29tIn0.BZlNDWedKsb-axzNsUnn23i5GSVmKOt00xZ09L8k1q3P-CIVqY_2fWD2yNNE8Nu6ujYrnEKIVEjtMGi0hXC4wz7ICRsT3wG-x8dP4J5Cj-LacBcn-c3-XxniGnNm0oCRXXcGincakzesWCbqaHBLxQBUhzk_l7G0sWpByJydQZbWLNN6SHORGzcSPCUDXQL_PuleaexbdnLhnEyYukxpXVAMG71hg4grq87JDLh8oGjHO08Y6nVUt8sPkBpyIeRcTmOdMzfrgYwa5s40r6-iN2nTyiufR9Ux00FMs0HK6Weei0hhFm68orb-sT9LrPYaakMc9bVUddFBAEY2ZSJCPw
+
+### SIGN UP Pessoa Fisica
+POST http://localhost:3000/auth/signup/pf
+content-type: application/json
+
+{
+    "email": "meucara1411@nezid.com",
+    "documentNumber": "132925771100",
+    "password": "Teste123!",
+    "pfInfo": {
+        "nome": "teste23312",
+        "telefone": "11998877333",
+        "dataDeNascimento": "12-12-1997",
+        "cepNumber": "98765432",
+        "estado": "SP",
+        "cidade": "Sao Paulo",
+        "bairro": "Iracema",
+        "rua": "Rua das Nozes",
+        "numero": "100",
+        "complemento": "Fundos"
+    }
+}
+
+### SIGN UP Pessoa Juridica
+POST http://localhost:3000/auth/signup/pj
+content-type: application/json
+
+{
+    "email": "rodrigo@otimize-ti.com.br",
+    "documentNumber": "04149773000195",
+    "password": "x79Q4RH!nQ4",
+    "pjInfo": {
+        "razaoSocial": "Otimize TI",
+        "nomeFantasia": "Otimize TI",
+        "dataDeFundacao": "11-12-2000",
+        "telefone": "61999435791",
+        "socios": {
+            "CPF": "Rodrigo",
+            "nome": "34750022055",
+            "telefone": "61999435791",
+            "dataDeNascimento": "01-01-1980",
+            "cepNumber": "74280010",
+            "estado": "GO",
+            "cidade": "Goiania",
+            "bairro": "Nova Suica",
+            "rua": "C-255",
+            "numero": "400",
+            "complemento": ""
+        }
+    }
+}
+
+###Current User
+GET http://localhost:3000/users/whoami
+Authorization: Bearer eyJraWQiOiIzZitpb0xUdjhBdEk2MVc0c0lwc0dxK2EzN3lRR2tmWXBVbklUbUkrY0U0PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJiY2Q3YzZlZi0wMzFjLTRmYWEtOGU4Ny1lMGRhMGEyMDdiMjgiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfckxJZHdFdUZjIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjp0cnVlLCJjb2duaXRvOnVzZXJuYW1lIjoiYmNkN2M2ZWYtMDMxYy00ZmFhLThlODctZTBkYTBhMjA3YjI4Iiwib3JpZ2luX2p0aSI6ImRiYzZlZmE1LWRkODUtNGI4Ni05Yjk5LTlkMjk2MDY4NTEyZiIsImF1ZCI6IjU1YjRiZGJtaXVubG8zYjZ2Zjh0MXVsMmptIiwiZXZlbnRfaWQiOiJhZDQwN2FlNC1mYzZhLTQxZTEtODQ0Mi1kYTYzYzkwNmQ1YTgiLCJ0b2tlbl91c2UiOiJpZCIsImF1dGhfdGltZSI6MTY3OTk4MTIyOCwicGhvbmVfbnVtYmVyIjoiKzU1NjY5OTg4Nzc2NiIsImV4cCI6MTY3OTk4NDgyOCwiaWF0IjoxNjc5OTgxMjI4LCJqdGkiOiI2M2I1YzIwNi1kMTA1LTRhNWYtYTcwMi01YTM4ZGJmNDI0NTAiLCJlbWFpbCI6ImFkbWluQGNlcnRpZmlrZWR1LmNvbSJ9.q2ine7hhJ3r2rXRSXfsSYLVRDVyg3DltOdEaYtC5yN-wezB4tndKBfQR6wWJz7pDrsov07rVKZTN1eGeVLctA78BPFDqr5Otl-mNu2XDBV297Glz5oVJcZiD7gvvJTKIeElwmfWOhNKbV59RPzAR_nuiP0zdhuVdjs3ifPcEcqVroVBrXDrt2KfeDZ7dJsU6qFhq4eXOEFZxuDKdDthDHno6IgsUHkwILcWy3TVDvK5VUvd3ODGSQrp0vgaXttUsAkb7UQ1-ldinJ3F9KOyk7ElgT0rPJii-xiP66POg9CCOJl899_WD95zYrr_D4NYnDSXFV3QWnf9VrxtjXnjqSw
+
+###Doc Pic
+GET http://localhost:3000/users/document/2
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiMSIsImNvZ25pdG86dXNlcm5hbWUiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJvcmlnaW5fanRpIjoiYjZhZWQ5YjMtODdlOS00MzQ5LWEwODYtOGY2MmM1MDBkZWM1IiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjNiNWZjOWI3LTAyMWUtNGZmMi1iNzkxLWU1MDM0M2ZmYjMwYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjg1MzI1MzM2LCJleHAiOjE2ODUzMjg5MzYsImN1c3RvbTp1c2VyX3R5cGUiOiJQRiIsImlhdCI6MTY4NTMyNTMzNiwianRpIjoiOGQ1YzIyNzUtMmI0Mi00ZWFmLThhNTctOGUyNDcyNjk5YWQyIiwiZW1haWwiOiJhZG1pbkBjZXJ0aWZpa2VkdS5jb20ifQ.JGfQowHA6LBoXgUREula80hVKuLAdK1HgREaFin5kFrsYkyYKJyoLqRyXqWKpa7wZqe04uN0zmVBEk8StxrZ3ju8aN4rMTA8QozQ6WRPBOJgVuCVxnBe_SLQOAlWwOrYRMRg2iWzeI0H5O99SGnKK8L9S5xH50wQqL-toRshxIY4nLkO5aSb4OayQ-IVFbicDucPRgPF1e7zY5AQdXVuXgnGsIZXxsdxuLPgH9NLIMYCzbWe38eSkUrNw4-P2ZvFmQQ1Bbd8kGFYzqXYRqnzC8YS2h0dF1UROPc3vz7EOW9303ArNGC-_DGf1yGjCh_tQB9XxbfceIPCAJ159y3r7Q
+
+### AUTHENTICATE COGNITO
+POST http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "guil.dendena@gmail.com",
+    "password": ""
+}
+
+###UPDATE USER ADMIN
+PATCH http://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/users/admin/update
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiZTE3YjhjZDctZjNmMy00ZTNlLWJiNjItMDhlMTExYzYxOTI5IiwiYXVkIjoiM3FmdW04NGkzZ205M2lndWRxYnVnZjlnOHYiLCJldmVudF9pZCI6IjkxYjhlNDE1LTYxYmEtNGUwYi1hZWU4LWQyNDgyZGVhYzIyZiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNzE1MDI3MDI2LCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTcxNTAzMDYyNiwiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNzE1MDI3MDI2LCJqdGkiOiI0MGZmNGQwMy1lMmUwLTQ4MmYtYTI2NS1jZWYyMzNiZDZmNDMiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.IWZTqA_axORBH7v2DKBklFyLkGCT-uXimHTMwC4jIIN24qVQf3IPqhf_xPVh057VWh8oU-mA4_gXDi8LR8OFsIqjyAvZnlTGMYw-fLByvVnYfQnlWuIiy6UuP_S4E4I2clK7raFB1A0qiKwvktDp5cr7OkrkjhogKysUrf7buEEfUwmxquOOQ1NUuyBp6r98rddGBHfJnA8YkE13-8EJsYkrIGoJu4pu08YMAUCOwI-czA9hiG4nvGfdrE2FWyNXawdW2pS8EgPcl-0s7C_rYbXxbml2TWX8pcoLLHdI6hHW3jK0rWL2S32RZKP1n2X3TMtRbP858jwqBIjbtJwy1w
+content-type: application/json
+
+{
+    "userToUpdateId": "329e53af-76ae-4f5d-86ca-9e656d359b35",
+    "status": "ENABLED"
+}
+
+###UPDATE USER ADMIN
+PATCH http://homolog-certifikedu-nest-env.eba-xemcv4pd.us-east-1.elasticbeanstalk.com/users/update/pf/info
+Authorization: Bearer eyJraWQiOiJNc0hnS3RPQVZ6d1lUbFU5V0s0XC9hK1FqRXp5aml2VkxKTnVwRGlWcDUrdz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMTkyNjlhNC03ZTI2LTRjMGMtYjYzOC1kYzhiOTBkMGY5NDgiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfWXpIR3Z6WlNCIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjpmYWxzZSwiY29nbml0bzp1c2VybmFtZSI6IjExOTI2OWE0LTdlMjYtNGMwYy1iNjM4LWRjOGI5MGQwZjk0OCIsIm9yaWdpbl9qdGkiOiIzZTNlYjJkNi04ZDdhLTRmNzctOGM4Ni03MTIyOTc2NzUyMmQiLCJhdWQiOiIxOWM5NW9vY2I0ZXZlMGcyb2hxbmo1NTJtYyIsImV2ZW50X2lkIjoiMmQzYmVlZDgtOWQzMS00MzU3LTg1MDItYjY2N2M0YWExY2RhIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MDg4MTg0NDksInBob25lX251bWJlciI6Iis1NTU0OTkxNDkzNjc2IiwiZXhwIjoxNzA4ODIyMDQ5LCJjdXN0b206dXNlcl90eXBlIjoiUEYiLCJpYXQiOjE3MDg4MTg0NDksImp0aSI6IjQwZDhhZTJhLTg2NDYtNDgzZS1hMWIwLTk4YTU5NDlmNGU5YyIsImVtYWlsIjoiZ3VpbC5kZW5kZW5hQGdtYWlsLmNvbSJ9.E066EJCP7lgMKS7-tFalKAENtf-kmTjYIbbwrwsR8FNK9YWJBREdy90eP__cySHvMiyvQaXvAWc4fanvcwwl28PDhqgOKUuLyPew4AgDQYkdKVkwZ5yGun1oi3_vQ9gAAZOf84lXT4JPPGfFKaAtQuRhCU7cK6Kofl8X3003KJhgfnWTn4J-y4OEYiCOZyRUgMAs7Wz49t_Tz5eUcXCzDTvNaxKicO3F0doCv1x7Cg7C_Xpgh0okJ-GkXzhhTzzNhBfBGztoMEq9E_S36HQ93rZSReLDs1OJ50Gmi9WtVFe_NZhZpz-RwlEIQV5uyekCU4n3LgcneTJoOTp5F2YJhg 
+content-type: application/json
+
+{
+    "number": "43"
+}
+
+### UPDATE CURRENT USER PARTNER INFO
+PATCH http://localhost:3000/users/update/partner/info
+Authorization: Bearer eyJraWQiOiJkemdiemJWc1U5OFN1WTB3dTZcL01zbDdxaUJSKzRKNlwvaFlFMG9cL0paUVpRPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxOWFhNmRjYS0zODNhLTQ0ZTctYTJlOS0yY2ViY2Q5ZDM3ZTAiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2dWWjJlTlI3aCIsImNvZ25pdG86dXNlcm5hbWUiOiIxOWFhNmRjYS0zODNhLTQ0ZTctYTJlOS0yY2ViY2Q5ZDM3ZTAiLCJvcmlnaW5fanRpIjoiNmNjNmE1YzUtNTEzNy00N2E2LTlmMzQtNTViZGU3YzUxN2QxIiwiYXVkIjoiMW4wcHIzdXI5dm44NHQ1MGFobWhmbXBpa2QiLCJldmVudF9pZCI6ImVhODc0NGIzLWJmZmEtNGVjZC1hNTk5LTg1NTBiYjkxM2FmYSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjc5NTQzOTY4LCJuYW1lIjoibXVsZWtlcGoiLCJleHAiOjE2Nzk1NDc1NjgsImlhdCI6MTY3OTU0Mzk2OCwianRpIjoiMzFjMGRlOWQtZGQ2Yy00OTI3LTk2MGYtYWYzNmU3YTE4N2M0IiwiZW1haWwiOiJ0ZXN0ZXBqQGVtYWlsLmNvbSJ9.LDjXQ3NOAaoHEgPgNUfReiqpXcGKJfKcs6JoJbnvMdQJw9Y6h-g5P6lIw3zy0kfnaV6sVniNqSjpjRtujadhAOSKy86FbTxOQh2NrNYevdqM-TOHsua3K65VTHbOtER-GnnG_OabA22iy01V4lBxGdyMIadhuhlqtoDul-HuDGKwbDvSVTS4zjMO-Ojg7BsWhsqcbyEgkv5zCXJ8wY4SfmBAqXDB6uYUYdbZt0s6oSNKPg9RmBzokdu1xosYQhXEkx_n7vEXvOR0UzXFmEuF_lByrqwiQVgmlUK0ajuxvYZn8j8WMPSkGBSKlxTXVFuB8o3sATl_H_N6KgEkbVG8TA
+content-type: application/json
+
+{
+    "fotoDocumento": "https://cdn.readonepiece.com/file/mangap/3258/10571000/6.jpg"
+}
+
+### ADD USER DOC PIC
+POST http://localhost:3000/users/document
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiMmVlYTQ0MTUtNDY0OC00MmM3LWJlNmItMzlhNTY2NGUzYjI5IiwiYXVkIjoiM3RrMzN0bzB1amJrYmVodGlncmsxYjFma2oiLCJldmVudF9pZCI6ImY4NTAzMGJiLTM4NGItNGE2NS04YzQ1LTY5ODQ3ODMxYzhiZSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgyMzIzMDMzLCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTY4MjMyNjYzMywiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNjgyMzIzMDMzLCJqdGkiOiI1ODllZWQxMi0zNDQ3LTRkYWYtOTk5OS05MTBlMDM2NWU5MjkiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.TX5FzqaaQVnI_5cJIfeP4xjDF_67HGQVBW0zyvosh6OiNL5_wdj0x1HHLl0nBGa5TbsXMZDm5KQ4TqACK9Ajfti3pWIk7_dg232BgjokzjsHWMQ95W0qe6l1_h31K5a6qmEPx2lLZgJd5hvkdDjZba4Q3_9-xWXtrhWqen-BB_mcGmOTPLIKY0Ji0NcUKeEXStG1KI6qD5Y7ch6d8H8bxVO2nO3zu9RwdeDPKENxtcxtzV2dkFUxlHkiA0fBwxVt2mhW7wGBrS-06uM7TVbcdCMpHMPjwvqC3ojCVYQFC0h19EONXTsMOLCc9rH0UflpeC_ONJBqDSWbEHulmMfW5Q
+Content-Type: multipart/form-data; boundary=xxx
+
+--xxx
+Content-Disposition: form-data; name="file"; filename="op.jpeg"
+Content-Type: image/jpeg
+
+< /home/godis/0.jpeg
+
+--xxx--
+
+
+###DELETE USER
+DELETE http://localhost:3000/users/admin/delete/4
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY29nbml0bzp1c2VybmFtZSI6IjJhZGQyZmEzLWVkMzItNDczZC1iMDYzLTM0Y2EzOTI5ODhlMCIsIm9yaWdpbl9qdGkiOiJhMTRkOGJmOC00OGI5LTQ0NzAtODM2MC02ODdjYmJjNjc0ZGEiLCJhdWQiOiIzdGszM3RvMHVqYmtiZWh0aWdyazFiMWZraiIsImV2ZW50X2lkIjoiMDBmOWQ1NjAtNDc0OC00MzQxLWI2ZGQtNjRiNTU0OTgyYjMzIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2ODIwMjU0NzQsImV4cCI6MTY4MjAyOTA3NCwiaWF0IjoxNjgyMDI1NDc0LCJqdGkiOiJkMWFhOWE4OS04MzNiLTQ2ZTAtOTY1Mi02ZTE0NDdjYzgxMzkiLCJlbWFpbCI6ImFkbWluQGNlcnRpZmlrZWR1LmNvbSJ9.1GALta67MdDQEC_1cGia5w1iWjVhgeZsxA0dLulFNeJWdfu9BzxQ8DMSfKmuYQPTlcUjZmCWglgq_ZyNQxmE8G_To472o-iVwOsDbiG5Ui-ObQhc5WWuz5YU6WLsPUWa2fgXUv-1QEIKtSU7pZmp_wt5UXPJB0uRhbQcawhZCY-LTCeeiQyx_rV2PR7N56OWHpIiFxXIm3PVMI6voh1tFeYlddNCNiilYJ3dgcq8vXjCEDQqmcKvE0FLkWVSXffojTpKONvpWdIvhsNJUoehrFuOEkWnT9tQuptwt1XpSwX6uZ210eOTXtt1Kfckz7ECOnoTWJ_rQNFMYRPg6gzHmA
+
+
+### 
+GET https://certifikeduprod-env.eba-pscmbpj2.us-east-1.elasticbeanstalk.com/users/info
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3YTU5ZjE1YS1mODZiLTQzZjUtYTllNi0wZDljZDBmNzZkZjIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjpmYWxzZSwiY29nbml0bzp1c2VybmFtZSI6IjdhNTlmMTVhLWY4NmItNDNmNS1hOWU2LTBkOWNkMGY3NmRmMiIsIm9yaWdpbl9qdGkiOiJlNzU1OWVhMS01YzE2LTQ5NTMtYmI2YS05NjhjYzYzMWZiOGIiLCJjdXN0b206ZG9jX251bWJlciI6IjY2MDQ2NDY3MDA0IiwiYXVkIjoiM3RrMzN0bzB1amJrYmVodGlncmsxYjFma2oiLCJldmVudF9pZCI6ImU5MTI2NjhjLWEwZmUtNDNkYS1hYTM1LTIzZjljNWNhMzNiNyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgxOTM5NzI3LCJwaG9uZV9udW1iZXIiOiIrNTUzMTk4NzY1NDMyMSIsImV4cCI6MTY4MTk0MzMyNywiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNjgxOTM5NzI3LCJqdGkiOiI0MDFhOWJhZC0xMWIyLTQ5MTYtYmVkNy1lMDg4MmY1MzJhNGEiLCJlbWFpbCI6ImxvdWJhY2tAZ21haWwuY29tIn0.xnyrFVxJl5RBuA3nbGE0btSDoxWHAq11aeRSG9Y5tXjlq2KI98DAeEI1dWgKZ9maT2LtNMXqIxT_l-eVOj-JoyLZgb7AUsv7dbQE1I4qCyCUJIlsvXF2em_3zx7miQai7Oa8GCEOeaHkSYGcopfHkyydXjBmUUMN-xU7o3VV5Y50FzR4qssnNs1Az0kSoPykzvuvo0wKEbcAKHWC_UF5KSajx9tkPBu_Z-fWk4syqHfYTf4C960niIIVR22psSH3R9CWhZtFvpDggApTccl6tUAWDpeuk1QwnxZ1-ZWLLr4TUARk5-j5sUvsgRc6Aal0PRkVO383trMte2sEN56FhA
+
+### AUTHENTICATE COGNITO
+POST https://api.certifikedu.com/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+###GET USER BY STATUS
+GET https://api.certifikedu.com/users/admin/users/ENABLED
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "guil.dendena@gmail.com",
+    "password": ""
+}
+
+
+### SIGN UP Pessoa Fisica
+POST http://localhost:3000/auth/signup/pf
+content-type: application/json
+
+{
+    "email": "wijamcxtioccfjbt@tcwlx.com",
+    "documentNumber": "183325771100",
+    "password": "Teste123!",
+    "pfInfo": {
+        "nome": "teste23312",
+        "telefone": "11998877333",
+        "dataDeNascimento": "12-12-1997",
+        "cepNumber": "98765432",
+        "estado": "SP",
+        "cidade": "Sao Paulo",
+        "bairro": "Iracema",
+        "rua": "Rua das Nozes",
+        "numero": "100",
+        "complemento": "Fundos"
+    }
+}
+
+### Update CERTIFICATE ADMIN
+PATCH http://homolog-certifikedu-nest-env.eba-xemcv4pd.us-east-1.elasticbeanstalk.com/certificates/admin/update
+Authorization: Bearer 
+content-type: application/json
+
+{
+    "certificateId": "cd43d526-8790-4820-afd5-85d54314c447",
+    "status": "ENABLED"
+}
+
+
+###DELETE USER
+DELETE https://api.certifikedu.com/users/admin/delete/27
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWRkMmZhMy1lZDMyLTQ3M2QtYjA2My0zNGNhMzkyOTg4ZTAiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY29nbml0bzp1c2VybmFtZSI6IjJhZGQyZmEzLWVkMzItNDczZC1iMDYzLTM0Y2EzOTI5ODhlMCIsIm9yaWdpbl9qdGkiOiJhMzFlNTBlNS00ZWRlLTRmNDktYTJjZi04NGM5NTUyYmI0NDQiLCJhdWQiOiIzdGszM3RvMHVqYmtiZWh0aWdyazFiMWZraiIsImV2ZW50X2lkIjoiNzdkNGUxM2YtNjZhMi00NmU2LWE0MDEtZTJhYjY1M2M1MzNlIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2ODIyMTUyMTIsImV4cCI6MTY4MjIxODgxMiwiaWF0IjoxNjgyMjE1MjEyLCJqdGkiOiI2MzAwMTExMC0zZmIzLTQ3NDYtOWRiOS1kOTZjOGZkMWZlOTQiLCJlbWFpbCI6ImFkbWluQGNlcnRpZmlrZWR1LmNvbSJ9.LcXKLpwn31gqxlm8xV50QzpfKpPXJwuijtlkJsjKN-zg6PR7ES-dDYmb39Wz87tKL4_dPureJ2wg9UsoE7LRMMsHQphTCEAu3_ih3yPlsuWwPc6q-MwyADK-fGMfcSb8CyOsDLnYEaPjrSeyjn_yeeHaN7K64ocbkS4ol1s8VO5mz76cKwO7TcwrX5tB4M1nabvxKVg82Uzv6sv_yt2Byyeqr6QDt0K2yN-j2uxpWG0ZPafl-l7uTTSMYPNYxBg7vCg-jQwjafMwf4GtO4NZkhFWGvxoTaOuMM2_xrE9_RkRQXtxw3Zt_PAAQ2cD16eI9W4gVMG0CwbGjTWxY4baqA
+
+
+### ADD USER DOC PIC
+POST https://api.certifikedu.com/users/document
+Authorization: Bearer eyJraWQiOiJXNU1BcjRoYjNtY0tcL0szQXJ2WnYzbFAyUUc4QlZUaG9EdEFaS1dZS1k4QT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYVNVaGR1SWhFIiwiY3VzdG9tOmlkIjoiNCIsInBob25lX251bWJlcl92ZXJpZmllZCI6ZmFsc2UsImNvZ25pdG86dXNlcm5hbWUiOiIyYWU5ZDY5ZS1jNWIyLTQ1YjQtODBlMC1iNmQwYTA4ZWZlMDkiLCJvcmlnaW5fanRpIjoiMmVlYTQ0MTUtNDY0OC00MmM3LWJlNmItMzlhNTY2NGUzYjI5IiwiYXVkIjoiM3RrMzN0bzB1amJrYmVodGlncmsxYjFma2oiLCJldmVudF9pZCI6ImY4NTAzMGJiLTM4NGItNGE2NS04YzQ1LTY5ODQ3ODMxYzhiZSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjgyMzIzMDMzLCJwaG9uZV9udW1iZXIiOiIrNTU1NDk5MTQ5MzY3NiIsImV4cCI6MTY4MjMyNjYzMywiY3VzdG9tOnVzZXJfdHlwZSI6IlBGIiwiaWF0IjoxNjgyMzIzMDMzLCJqdGkiOiI1ODllZWQxMi0zNDQ3LTRkYWYtOTk5OS05MTBlMDM2NWU5MjkiLCJlbWFpbCI6Imd1aWwuZGVuZGVuYUBnbWFpbC5jb20ifQ.TX5FzqaaQVnI_5cJIfeP4xjDF_67HGQVBW0zyvosh6OiNL5_wdj0x1HHLl0nBGa5TbsXMZDm5KQ4TqACK9Ajfti3pWIk7_dg232BgjokzjsHWMQ95W0qe6l1_h31K5a6qmEPx2lLZgJd5hvkdDjZba4Q3_9-xWXtrhWqen-BB_mcGmOTPLIKY0Ji0NcUKeEXStG1KI6qD5Y7ch6d8H8bxVO2nO3zu9RwdeDPKENxtcxtzV2dkFUxlHkiA0fBwxVt2mhW7wGBrS-06uM7TVbcdCMpHMPjwvqC3ojCVYQFC0h19EONXTsMOLCc9rH0UflpeC_ONJBqDSWbEHulmMfW5Q
+Content-Type: multipart/form-data; boundary=xxx
+
+--xxx
+Content-Disposition: form-data; name="file"; filename="op.jpeg"
+Content-Type: image/jpeg
+
+< /home/godis/0.jpeg
+
+--xxx--
+
+### Update CERTIFICATE ADMIN
+POST http://localhost:3000/auth/signup/raw
+content-type: application/json
+
+{
+    "name": "Guilherme Teste",
+    "documentNumber": "62631417003",
+    "email": "piloyo7855@lucvu.com",
+    "phone": "54998765434"
+}
+
+###RESET RAW USER
+PATCH http://localhost:3000/auth/reset/
+content-type: application/json
+
+{
+    "email": "matapo3505sa@fresec.com"
+}
+

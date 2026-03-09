@@ -1,0 +1,541 @@
+model PagarmeCustomers {
+  customerId String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customerCreatedAt DateTime
+  customerUpdatedAt DateTime
+  name              String
+  email             String
+  code              String?
+  document          String
+  documentType      String
+  deliquent         Boolean  @default(false)
+
+  inSync Boolean @default(true)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  pagarmeCards PagarmeCards[]
+
+  pagarmeOrders PagarmeOrders[]
+
+  pagarmePlanSubscriptions PagarmePlanSubscription[]
+
+  addresses PagarmeAddresses[]
+
+  certificateCredits CertificatesCredits[]
+
+  events Events[]
+}
+
+model PagarmeAddresses {
+  addressId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status String
+
+  country String
+  state   String
+  city    String
+  zipCode String
+  line1   String
+  line2   String?
+
+  customerId String
+  customer   PagarmeCustomers @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
+
+  cardId String?
+  card   PagarmeCards? @relation(fields: [cardId], references: [cardId])
+}
+
+model PagarmeCards {
+  cardId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cardCreatedAt DateTime
+  cardUpdatedAt DateTime
+
+  first_six_digits String
+  last_four_digits String
+  brand            String
+  holder_name      String
+  holder_document  String
+  exp_month        Int
+  exp_year         Int
+  status           String
+  code             String?
+
+  isDefault Boolean @default(false)
+
+  customerId String
+  customer   PagarmeCustomers @relation(fields: [customerId], references: [customerId])
+
+  orders PagarmeOrders[]
+
+  addresses PagarmeAddresses[]
+
+  planSubscriptions PagarmePlanSubscription[]
+}
+
+model PagarmeOrders {
+  orderId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orderCreatedAt DateTime
+  orderUpdatedAt DateTime
+  orderClosedAt  DateTime?
+  amount         Int
+  currency       String
+  closed         Boolean
+  status         String
+
+  itemsIds   String[]
+  chargesIds String[]
+
+  customerId      String
+  pagarmeCustomer PagarmeCustomers @relation(fields: [customerId], references: [customerId])
+
+  cardId       String
+  pagarmeCards PagarmeCards @relation(fields: [cardId], references: [cardId])
+
+  orders  PagarmeOrderItems[]
+  charges PagarmeCharges[]
+
+  events Events[]
+}
+
+model PagarmeOrderItems {
+  orderItemId String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  amount      Int
+  description String
+
+  quantity String
+
+  code     String?
+  category String?
+  status   String
+
+  pagarmeCreatedAt DateTime
+  pagarmeUpdatedAt DateTime
+
+  orderId String
+  order   PagarmeOrders @relation(fields: [orderId], references: [orderId])
+}
+
+model PagarmeCharges {
+  chargeId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  code      String?
+  gatewayId String?
+
+  amount        Int
+  paymentMethod String
+  status        String
+
+  dueAt            DateTime?
+  pagarmeCreatedAt DateTime
+  pagarmeUpdatedAt DateTime
+
+  orderId String?
+  order   PagarmeOrders? @relation(fields: [orderId], references: [orderId])
+
+  invoiceId String?
+  invoice   PagarmeInvoices? @relation(fields: [invoiceId], references: [pagarmeInvoiceId])
+}
+
+model PagarmePlans {
+  planId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isActive Boolean @default(true)
+
+  description        String
+  descriptionPagarme String?
+
+  recommendend Boolean @default(false)
+
+  interval     String @default("month")
+  installments Int[]
+
+  planName        String
+  trialPeriodDays Int?
+
+  billingType BillingTypeEnum
+  billingDays Int[]
+
+  pdisQty   Int
+  pdiPeriod QuotaPeriod
+
+  emittedCertificatesQuota  Int
+  emittedCertificatesPeriod QuotaPeriod
+
+  receivedCertificateQuota  Int
+  receivedCertificatePeriod QuotaPeriod
+
+  singleCertificatePrice Int
+  montlhyPrice           Int
+
+  paymentMethod PaymentMethodEnum[]
+
+  subscriptions PagarmePlanSubscription[]
+
+  items PagarmePlanItems[]
+}
+
+model PagarmePlanItems {
+  planItemId String   @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  name        String
+  description String?
+  quantity    Int
+  cycles      Int
+
+  schemeType String
+  price      Int
+
+  planId String
+  plan   PagarmePlans @relation(fields: [planId], references: [planId], onDelete: Cascade)
+
+  discounts DiscountOnItem[]
+  increment IncrementOnItem[]
+}
+
+model PagarmePlanSubscription {
+  subscriptionId String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  subscriptionCreatedAt DateTime
+  subscriptionStartedAt DateTime?
+  subscriptionUpdatedAt DateTime
+  subscriptionClosedAt  DateTime?
+
+  paymentMethod PaymentMethodEnum
+  currency      String
+  interval      String
+  intervalCount Int
+  minimumPrice  Int
+  billingType   String
+
+  cycleStart DateTime
+  cycleEnd   DateTime
+
+  price        Int
+  installments Int
+
+  start_at DateTime?
+
+  status   String
+  isActive Boolean @default(true)
+
+  userPlanId String?    @unique
+  userPlan   UserPlans? @relation(fields: [userPlanId], references: [userPlanId], onDelete: Cascade)
+
+  planId       String
+  PagarmePlans PagarmePlans @relation(fields: [planId], references: [planId])
+
+  customerId String
+  customer   PagarmeCustomers @relation(fields: [customerId], references: [customerId])
+
+  cardId String?
+  card   PagarmeCards? @relation(fields: [cardId], references: [cardId])
+
+  certificates Certificates[]
+  pdis         Pdi[]
+  resumes      Resume[]
+
+  cycles     PagarmeSubscriptionCycles[]
+  discounts  DiscountOnSubscription[]
+  increments IncrementOnSubscription[]
+  items      PagarmeSubscriptionItems[]
+}
+
+model PagarmeSubscriptionCycles {
+  cycleId   String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cycle Int
+
+  duration Int
+
+  pagarmeCycleId String @unique
+
+  status String
+
+  startAt DateTime
+  endAt   DateTime
+
+  pagarmeCreatedAt DateTime
+  pagarmeUpdatedAt DateTime
+
+  billing_at DateTime?
+
+  invoice PagarmeInvoices?
+
+  subscriptionId String
+  subscription   PagarmePlanSubscription @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  @@unique([cycleId, pagarmeCycleId])
+}
+
+model PagarmeInvoices {
+  invoiceId String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pagarmeInvoiceId String  @unique
+  url              String?
+
+  amount         Int
+  payment_method String
+  installments   Int
+
+  status    String
+  billingAt DateTime?
+
+  seenAt           DateTime?
+  dueAt            DateTime?
+  canceledAt       DateTime?
+  pagarmeCreatedAt DateTime
+  pagarmeUpdatedAt DateTime
+
+  totalDiscount  Int
+  totalIncrement Int
+
+  pagarmeCycleId String                    @unique
+  cycle          PagarmeSubscriptionCycles @relation(fields: [pagarmeCycleId], references: [pagarmeCycleId])
+
+  charges PagarmeCharges[]
+}
+
+model PagarmeSubscriptionItems {
+  subscriptionItemId String   @unique
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  name        String
+  description String?
+  quantity    Int
+  cycles      Int
+
+  status String @default("active")
+
+  schemeType String
+  price      Int
+
+  subscriptionId String
+  subscription   PagarmePlanSubscription @relation(fields: [subscriptionId], references: [subscriptionId], onDelete: Cascade)
+
+  discounts DiscountOnItem[]
+  increment IncrementOnItem[]
+}
+
+model PagarmeIncrements {
+  incrementId String   @unique @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  isValid   Boolean  @default(true)
+  expiresAt DateTime
+
+  isFlat Boolean @default(true)
+  cycles Int
+  value  Int
+
+  code  String @unique
+  total Int?
+
+  userId String?
+  user   PessoaJuridica? @relation(fields: [userId], references: [idPJ])
+
+  subscriptions IncrementOnSubscription[]
+  items         IncrementOnItem[]
+
+  @@unique([incrementId, userId])
+}
+
+model PagarmeDiscounts {
+  discountId String   @unique @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  isValid   Boolean  @default(true)
+  expiresAt DateTime
+
+  isFlat Boolean @default(true)
+  cycles Int
+  value  Int
+
+  code  String @unique
+  total Int?
+
+  userId String?
+  user   PessoaJuridica? @relation(fields: [userId], references: [idPJ])
+
+  subscriptions DiscountOnSubscription[]
+  items         DiscountOnItem[]
+
+  @@unique([discountId, userId])
+}
+
+//Relations
+model DiscountOnSubscription {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startedAt DateTime
+  expiresAt DateTime?
+  cycles    Int[]
+
+  status String @default("active")
+
+  pagarmeDiscountId String @unique
+
+  subscriptionId String
+  subscription   PagarmePlanSubscription @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  discountId String
+  discount   PagarmeDiscounts @relation(fields: [discountId], references: [discountId])
+
+  @@unique([subscriptionId, discountId])
+}
+
+
+model DiscountOnItem {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startedAt DateTime
+  expiresAt DateTime?
+  cycles    Int[]
+
+  status String @default("active")
+
+  pagarmeDiscountId String @unique
+
+  planItemId   String
+  subscription PagarmePlanItems @relation(fields: [planItemId], references: [planItemId])
+
+  subscriptionItemId String
+  subscriptionItem   PagarmeSubscriptionItems @relation(fields: [subscriptionItemId], references: [subscriptionItemId])
+
+  discountId String
+  discount   PagarmeDiscounts @relation(fields: [discountId], references: [discountId])
+
+  @@unique([subscriptionItemId, discountId])
+}
+
+model IncrementOnSubscription {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startedAt DateTime
+  expiresAt DateTime?
+  cycles    Int[]
+
+  subscriptionId String
+  subscription   PagarmePlanSubscription @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  status String @default("active")
+
+  pagarmeIncrementId String @unique
+
+  incrementId String
+  increment   PagarmeIncrements @relation(fields: [incrementId], references: [incrementId])
+
+  @@unique([subscriptionId, incrementId])
+}
+
+model IncrementOnItem {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  startedAt DateTime
+  expiresAt DateTime?
+  cycles    Int[]
+
+  planItemId   String?
+  subscription PagarmePlanItems? @relation(fields: [planItemId], references: [planItemId])
+
+  pagarmeIncrementId String @unique
+
+  status String @default("active")
+
+  subscriptionItemId String?
+  subscriptionItem   PagarmeSubscriptionItems? @relation(fields: [subscriptionItemId], references: [subscriptionItemId])
+
+  incrementId String
+  increment   PagarmeIncrements @relation(fields: [incrementId], references: [incrementId])
+
+  @@unique([subscriptionItemId, incrementId])
+  @@unique([planItemId, incrementId])
+}
+
+//Internal Plans
+model BasicPlanSubscriptions {
+  userSubscriptionId String   @unique @default(uuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  cycleStart DateTime
+  cycleEnd   DateTime
+
+  canceledAt DateTime?
+
+  isActive Boolean @default(true)
+
+  userPlanId String?    @unique
+  userPlan   UserPlans? @relation(fields: [userPlanId], references: [userPlanId], onDelete: Cascade)
+
+  planId String
+  plan   BasicPlans @relation(fields: [planId], references: [planId], onDelete: Cascade)
+
+  certificates Certificates[]
+  pdis         Pdi[]
+  resumes      Resume[]
+}
+
+model BasicPlans {
+  planId    String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name String
+
+  description String
+
+  isDefault Boolean @default(false)
+
+  pdisQty   Int
+  pdiPeriod QuotaPeriod
+
+  emittedCertificatesQuota  Int
+  emittedCertificatesPeriod QuotaPeriod
+
+  receivedCertificateQuota  Int
+  receivedCertificatePeriod QuotaPeriod
+
+  singleCertificatePrice Int
+
+  subscriptions BasicPlanSubscriptions[]
+}
+
+

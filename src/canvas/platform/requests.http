@@ -1,0 +1,50 @@
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("admin", string.format("Bearer %s", token.access_token))
+--%}
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "testepj@email.com",
+    "password": "Teste123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("pj", string.format("Bearer %s", token.access_token))
+--%}
+
+
+
+POST http://localhost:3000/canvas-platform/get-token
+content-type: application/json
+
+{
+    "userId": "ce3fb08a-cfdb-4550-a754-dd7a350a8d4c",
+    "courseId": "40bc0438-b809-4e59-9700-27aa84886159",
+    "schoolId": "89f65a9b-0b5e-4a6d-8643-d68542b461d2"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("local_token", string.format("Bearer %s", token.token))
+--%}
+
+POST http://localhost:3000/canvas-platform/refresh-token
+Authorization: {{local_token}}
+
+GET http://localhost:3000/canvas-platform/info
+Authorization: {{local_token}}
+

@@ -1,0 +1,25 @@
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "testepf@email.com",
+    "password": "Teste123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("pj", string.format("Bearer %s", token.access_token))
+--%}
+
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/pdi
+Authorization: Bearer {{jwt}}
+
+{
+  "title": "PDI pra virar padeiro",
+  "dailyTime": "4 horas",
+  "previousEducation": "Ja trabalhei como confeitero na franca e agora quero vender pao fresco no mercado.",
+  "skills": "Assar pao, amassar pao, fazer massa de pao e crescer massa de pao com fermento",
+  "goals": "Quero ser o melhor padeiro do bairro",
+}

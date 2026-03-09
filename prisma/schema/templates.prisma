@@ -1,0 +1,146 @@
+model Templates {
+  templateId String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  logoImage String?
+
+  hidden Boolean @default(false)
+
+  isWelcome Boolean @default(false)
+
+  version Int @default(1)
+
+  backgroundImage String @default("")
+
+  name               String
+  description        String
+  descriptionImage   String?
+  cargaHoraria       Int
+  habilidades        TemplateAbilities[]
+  certificatePicture String
+
+  hexFontColor String?
+
+  issuedAt  DateTime?
+  expiresAt DateTime?
+
+  qrCodePosition QRCodePositionEnum @default(NULL)
+
+  schoolId String
+  school   Schools @relation(fields: [schoolId], references: [schoolId], onDelete: Cascade)
+
+  courses      CourseTemplates[]
+  certificates Certificates[]
+
+  backgroundId     String?
+  backgroundImages BackgroundCertificateImages? @relation(fields: [backgroundId], references: [backgroundId])
+
+  inverseId     String?
+  inverseImages InverseCertificateImages? @relation(fields: [inverseId], references: [inverseId])
+
+  fontDescId String?
+  fontDesc   Fonts?  @relation(name: "fontDescription", fields: [fontDescId], references: [fontId])
+
+  fontNameId String?
+  fontName   Fonts?  @relation(name: "fontName", fields: [fontNameId], references: [fontId])
+
+  issuesNumberLimit         Int?
+  startDateTime             DateTime?
+  expirationDateTime        DateTime?
+  TemplatesAllowedDocuments TemplatesAllowedDocuments[]
+
+  curriculum Curriculum?
+  semester   Semester?
+
+  subject            Subjects?
+  internship         Internships?
+  activity           Activities?
+  institutionalEvent InstitutionalEvents?
+
+  studyFields StudyField?
+
+  learningPaths     LearningPaths?
+  learningPathsStep LearningPathsModules?
+}
+
+model BackgroundCertificateImages {
+  backgroundId String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  bucket String?
+
+  imageUrl  String
+  imageType String
+
+  isValid  Boolean @default(true)
+  isPublic Boolean @default(false)
+
+  templates Templates[]
+
+  events Events[]
+
+  idPJ           String?
+  pessoaJuridica PessoaJuridica? @relation(fields: [idPJ], references: [idPJ], onDelete: Cascade)
+
+  @@unique([backgroundId, imageUrl])
+}
+
+model InverseCertificateImages {
+  inverseId String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bucket String?
+
+  imageUrl  String
+  imageType String
+
+  isValid Boolean @default(true)
+
+  templates Templates[]
+
+  idPJ           String?
+  pessoaJuridica PessoaJuridica? @relation(fields: [idPJ], references: [idPJ], onDelete: Cascade)
+
+  @@unique([inverseId, imageUrl])
+}
+
+//Abilities Relation
+model TemplateAbilities {
+  id           String @id @default(uuid())
+  templateId   String
+  habilidadeId String
+
+  template   Templates @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
+  habilidade Abilities @relation(fields: [habilidadeId], references: [habilidadeId], onDelete: Cascade)
+
+  @@unique([templateId, habilidadeId])
+}
+
+model TemplatesAllowedDocuments {
+  allowId   String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  templateId String
+  template   Templates @relation(fields: [templateId], references: [templateId])
+
+  document String
+
+  hasReceived Boolean @default(false)
+}
+
+//Relations
+model CourseTemplates {
+  courseTemplateId String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  templateId String
+  template   Templates @relation(fields: [templateId], references: [templateId], onDelete: Cascade)
+}

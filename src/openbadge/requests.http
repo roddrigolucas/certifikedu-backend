@@ -1,0 +1,18 @@
+### AUTHENTICATE COGNITO
+POST http://localhost:3000/auth/authenticate/cognito
+content-type: application/json
+
+{
+    "email": "admin@certifikedu.com",
+    "password": "Admin123!"
+}
+
+--{%
+local token = context.json_decode(context.result.body)
+context.set_env("jwt", string.format('Bearer %s', token.access_token))
+--%}
+
+### get user info
+PATCH http://localhost:3000/openbadge/admin/fix/
+Authorization: {{jwt}}
+

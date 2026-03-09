@@ -1,0 +1,121 @@
+model PessoaJuridica {
+  idPJ      String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId           String                  @unique
+  CNPJ             String                  @unique
+  email            String                  @unique
+  user             User                    @relation(fields: [userId, CNPJ, email], references: [id, numeroDocumento, email], onDelete: Cascade)
+  ltiConfiguration CanvasLTIConfiguration?
+
+  razaoSocial          String
+  nomeFantasia         String
+  telefone             String
+  dataDeFundacao       DateTime?
+  segmento             String?
+  numeroDeFuncionarios Int?
+
+  admins          PJAdmins[]
+  corporateAdmins CorporateAdmins[]
+
+  socios Socios[]
+
+  schools Schools[]
+  course  Course[]
+
+  internships         Internships[]
+  subjects            Subjects[]
+  activities          Activities[]
+  studyFields         StudyField[]
+  institutionalEvents InstitutionalEvents[]
+  credentials         AcademicCredentials[]
+  JobOpportunity      JobOpportunity[]
+
+  BackgroundCertificateImage BackgroundCertificateImages[]
+  reverseCertificateImage    InverseCertificateImages[]
+
+  discounts  PagarmeDiscounts[]
+  increments PagarmeIncrements[]
+
+  userImports UserImports[]
+
+  rawPJ RawPJ[]
+
+  learningPaths LearningPaths[]
+
+  @@unique([userId, CNPJ, email])
+  @@unique([userId, idPJ])
+}
+
+model PJAdmins {
+  idAdmin   String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status PJAssociationStatus @default(REVIEW)
+
+  role PJAdminRoleEnum
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF])
+
+  idPJ String
+  pj   PessoaJuridica @relation(fields: [idPJ], references: [idPJ])
+}
+
+model CorporateAdmins {
+  idCorporateAdmin String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  status PJAssociationStatus @default(REVIEW)
+
+  role PJAdminRoleEnum
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF])
+
+  idPJ String
+  pj   PessoaJuridica @relation(fields: [idPJ], references: [idPJ])
+}
+
+model RawPJ {
+  rawPJId   String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String  @unique
+  email    String?
+  phone    String?
+  cnpj     String?
+  location String?
+
+  resumeExperiences ResumeExperience[]
+  resumeEducation   ResumeEducation[]
+
+  idPJ           String?
+  pessoaJuridica PessoaJuridica? @relation(fields: [idPJ], references: [idPJ], onDelete: Cascade)
+}
+
+model Socios {
+  sociosId  Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId           String         @unique
+  pessoaJuridicaId String         @unique
+  pessoaJuridica   PessoaJuridica @relation(fields: [userId, pessoaJuridicaId], references: [userId, idPJ], onDelete: Cascade)
+
+  CPF              String
+  nome             String
+  telefone         String
+  dataDeNascimento DateTime
+  cepNumber        String
+  estado           String
+  cidade           String
+  bairro           String
+  rua              String
+  numero           String
+  complemento      String?
+}

@@ -1,0 +1,96 @@
+model PessoaFisica {
+  idPF      String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  CPF    String @unique
+  email  String @unique
+  user   User   @relation(fields: [userId, CPF, email], references: [id, numeroDocumento, email], onDelete: Cascade)
+
+  nome             String
+  telefone         String
+  dataDeNascimento DateTime
+  cepNumber        String
+  estado           String
+  cidade           String
+  bairro           String
+  rua              String
+  numero           String
+  complemento      String?
+
+  pjAdmin         PJAdmins[]
+  corporateAdmins CorporateAdmins[]
+
+  canvasUser CanvasUser?
+
+  schools     Schools[]             @relation("SchoolsToStudents")
+  courses     CourseStudents[]
+  curriculums CurriculumStudents[]
+  semesters   SemesterStudents[]
+  subjects    SubjectStudents[]
+  internships InternshipsStudents[]
+  activities  ActivitiesStudents[]
+  institutionalEvents  InstitutionalEventsStudents[]
+
+  jobOpportunities    PessoaFisicaOnJobOpportunity[]
+  professionalProfile ProfessionalProfile?
+  pdis                Pdi[]
+  resumes             Resume[]
+
+  eventParticipant EventParticipants[]
+
+  learningPaths LearningPathsStudents[]
+
+  @@unique([userId, CPF, email])
+}
+
+model DocumentsPictures {
+  documentId String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  s3Url    String
+  fotoHash String
+  fotoType String?
+  status   CertificateStatus @default(REVIEW)
+}
+
+//Relations
+model PessoaFisicaOnJobOpportunity {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  matchLevel     Float
+  abilitiesMatch Float @default(0)
+  generalMatch   Float @default(0)
+
+  jobId          String
+  jobOpportunity JobOpportunity @relation(fields: [jobId], references: [jobId])
+
+  idPF String
+  pf   PessoaFisica @relation(fields: [idPF], references: [idPF])
+
+  @@id([idPF, jobId])
+}
+
+model EventParticipants {
+  participantId String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  document    String
+  hasReceived Boolean @default(false)
+
+  idPf         String
+  pessoaFisica PessoaFisica @relation(fields: [idPf], references: [idPF], onDelete: Cascade)
+
+  eventId String
+  event   Events @relation(fields: [eventId], references: [eventId], onDelete: Cascade)
+
+  @@unique([idPf, eventId])
+}
+

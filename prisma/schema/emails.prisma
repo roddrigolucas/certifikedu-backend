@@ -1,0 +1,19 @@
+model InternalEmailTemplates {
+  emailId   String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isActive Boolean @default(true)
+
+  templateKey  String
+  templateName String
+  subject      String
+
+  variables String
+
+  deletable Boolean @default(false)
+
+  variablesNames String[]
+  types          String[]
+}
+

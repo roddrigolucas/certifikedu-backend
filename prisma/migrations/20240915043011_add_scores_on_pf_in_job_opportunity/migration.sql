@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "PessoaFisicaOnJobOpportunity" ADD COLUMN     "abilitiesMatch" DOUBLE PRECISION NOT NULL DEFAULT 0,
+ADD COLUMN     "generalMatch" DOUBLE PRECISION NOT NULL DEFAULT 0;

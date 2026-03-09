@@ -1,0 +1,109 @@
+model CanvasLTIConfiguration {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  canvasDomain             String @unique
+  canvasClientIdLTI        String
+  canvasClientSecretLTI    String
+  canvasClientIdDevKey     String
+  canvasClientSecretDevKey String
+
+  iv String
+
+  idPJ String         @unique
+  pj   PessoaJuridica @relation(fields: [idPJ], references: [idPJ], onDelete: Cascade)
+
+  school Schools?
+
+  loginIntents CanvasLoginIntents[]
+
+  canvasUsers CanvasUser[]
+
+  @@unique([canvasDomain, canvasClientIdLTI])
+}
+
+model CanvasUser {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  canvasUserId Int
+  canvasEmail  String @unique
+  canvasName   String
+
+  canvasDomain String
+  canvasLti    CanvasLTIConfiguration @relation(references: [canvasDomain], fields: [canvasDomain], onDelete: Cascade)
+
+  isTeacher    Boolean
+  tempDocument String?
+
+  idPF String?       @unique
+  pf   PessoaFisica? @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  @@unique([canvasUserId, canvasDomain])
+}
+
+model CanvasCourse {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  canvasCourseId      Int
+  canvasDomain        String
+  canvasName          String
+  canvasDescription   String
+  canvasStartDate     DateTime?
+  canvasEndDate       DateTime?
+  canvasTotalStudents Int
+
+  courseId String @unique
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@unique([canvasCourseId, canvasDomain])
+}
+
+model CanvasToken {
+  id              Int      @id @default(autoincrement())
+  canvasUserId    Int
+  canvasDomain    String
+  token           String
+  refreshToken    String
+  tokenExpiration DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([canvasUserId, canvasDomain])
+}
+
+model CanvasLoginIntents {
+  id                       Int                    @id @default(autoincrement())
+  state                    String                 @unique
+  canvasLTIConfigurationId String
+  canvasLTIConfiguration   CanvasLTIConfiguration @relation(fields: [canvasLTIConfigurationId], references: [id], onDelete: Cascade)
+  ltiLaunchInfo            Json                   @default("{}")
+  createdAt                DateTime               @default(now())
+  updatedAt                DateTime               @updatedAt
+}
+
+model CanvasEphemeralLogin {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  state String @unique
+
+  expiresAt DateTime @default(now())
+
+  canvasUserId    Int?
+  canvasUserEmail String?
+
+  isValid   Boolean   @default(false)
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime?
+
+  userId   String?
+  schoolId String?
+  courseId String?
+}
+

@@ -1,0 +1,168 @@
+model Certificates {
+  certificateId String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  emissionId    String?
+  successStatus CertificateSuccessStatus @default(PENDING)
+
+  receptorId    String?
+  receptorName  String?
+  receptorDoc   String
+  receptorEmail String?
+
+  name               String?
+  description        String?
+  descriptionImage   String?
+  cargaHoraria       Int?
+  status             CertificateStatus      @default(REVIEW)
+  habilidades        AbilityOnCertificate[]
+  certificateLogo    String?
+  certificatePicture String?
+
+  openBadge      Boolean     @default(false)
+  openBadgeId    String?
+  openBadgeModel OpenBadges? @relation(fields: [openBadgeId], references: [openBadgeId])
+
+  blockchain    Boolean @default(false)
+  blockchainUrl String?
+
+  emissorId    String
+  emissorDoc   String
+  emissorEmail String
+  emissorName  String
+  user         User   @relation(fields: [emissorId, emissorDoc, emissorEmail], references: [id, numeroDocumento, email], onDelete: Cascade)
+
+  issuedAt  DateTime?
+  expiresAt DateTime?
+
+  statedIssuer         String?
+  statedIssuerDocument String?
+  statedIssuerUrl      String?
+
+  statusRequest Boolean @default(false)
+
+  paymentType         String               @default("NULL")
+  certificateCreditId String?              @unique
+  certificateCredit   CertificatesCredits? @relation(fields: [certificateCreditId], references: [CertificateCreditId])
+
+  subscriptionId String?
+  subscription   PagarmePlanSubscription? @relation(fields: [subscriptionId], references: [subscriptionId])
+
+  basicSubscriptionId String?
+  basicSubscription   BasicPlanSubscriptions? @relation(fields: [basicSubscriptionId], references: [userSubscriptionId])
+
+  hashes CertificatesSharing[]
+
+  schoolId String?
+  school   Schools? @relation(fields: [schoolId], references: [schoolId])
+
+  evidence  EvidenceOpenBadge[]
+  narrative NarrativeOpenBadge[]
+
+  templateId String?
+  template   Templates? @relation(fields: [templateId], references: [templateId])
+
+  eventId String?
+  event   Events? @relation(fields: [eventId], references: [eventId])
+
+  fontDescId String?
+  fontDesc   Fonts?  @relation(name: "fontDescription", fields: [fontDescId], references: [fontId])
+
+  fontNameId String?
+  fontName   Fonts?  @relation(name: "fontName", fields: [fontNameId], references: [fontId])
+
+  resumeExperienceCertificate ResumeExperienceCertificate[]
+  resumeEducationCertificate  ResumeEducationCertificate[]
+  resumeLanguageCertificate   ResumeLanguageCertificate[]
+
+  @@unique([emissionId, certificateId])
+  @@map("certificates")
+}
+
+model CertificatesSharing {
+  hashId    String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId], onDelete: Cascade)
+
+  certificateHash String?
+  isValid         Boolean @default(true)
+}
+
+model OpenBadges {
+  openBadgeId String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  assertionUrl String
+  badgeUrl     String
+  issuerUrl    String
+
+  version Int @default(1)
+
+  Certificates Certificates[]
+}
+
+model EvidenceOpenBadge {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  isDeleted Boolean @default(false)
+
+  evidenceType String?
+  evidenceUrl  String?
+  bucket       String?
+
+  createdByUser String
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId])
+}
+
+model NarrativeOpenBadge {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  narrativeDescription String?
+  narrativeType        String?
+  narrativeUrl         String?
+  bucket               String?
+
+  createdByUser String
+
+  certificateId String
+  certificate   Certificates @relation(fields: [certificateId], references: [certificateId])
+}
+
+model CertificatesCredits {
+  CertificateCreditId String   @unique @default(uuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  isValid Boolean   @default(true)
+  usedAt  DateTime?
+
+  customerId String?
+  customer   PagarmeCustomers? @relation(fields: [customerId], references: [customerId])
+
+  certificate Certificates?
+}
+
+//Abilities Relation
+model AbilityOnCertificate {
+  id            String  @id @default(uuid())
+  userId        String?
+  certificateId String
+  habilidadeId  String
+
+  user        User?        @relation(fields: [userId], references: [id])
+  certificate Certificates @relation(fields: [certificateId], references: [certificateId], onDelete: Cascade)
+  habilidade  Abilities    @relation(fields: [habilidadeId], references: [habilidadeId], onDelete: Cascade)
+
+  @@unique([certificateId, habilidadeId])
+}
