@@ -19,7 +19,7 @@ import { TemplatesService } from '../../../templates/templates.service';
 import { BackgroundsService } from '../../../backgrounds/background.service';
 import { CertificatesService } from '../../../certificates/certificates.service';
 import { CoursesService } from '../../../courses/courses.service';
-import { AuxService } from '../../../aux/aux.service';
+import { AuxService } from '../../../_aux/_aux.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DateFormat } from '../../../interceptors/dateformat.interceptor';
 import { UsersService } from '../../../users/users.service';

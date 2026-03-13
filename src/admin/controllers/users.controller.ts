@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, 
 import { ApiTags } from '@nestjs/swagger';
 import { UserStatus } from '@prisma/client';
 import { JwtGuard } from '../../auth/guard';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { CognitoService } from '../../aws/cognito/cognito.service';
 import { S3Service } from '../../aws/s3/s3.service';
 import { SESService } from '../../aws/ses/ses.service';

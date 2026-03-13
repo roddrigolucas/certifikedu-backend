@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { AWSModule } from '../aws/aws.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { EmailsModule } from '../emails/emails.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { CoursesModule } from 'src/courses/courses.module';
 import { SchoolsModule } from 'src/schools/schools.module';
 

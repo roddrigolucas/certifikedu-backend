@@ -11,7 +11,7 @@ import { DateFormat } from '../../interceptors/dateformat.interceptor';
 import { ResponsePjInfoDto, ResponseProfilePjInfoDto } from '../dtos/pjuser/pjuser-response.dto';
 import { PJUsersService } from '../../pjusers/pjusers.service';
 import { TPessoaJuridicaUpdateInput } from '../../users/types/user.types';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TPessoaJuridicaWithSociosOutput } from '../../pjusers/types/pjusers.types';
 import { CertificatesService } from 'src/certificates/certificates.service';
 import { SchoolsService } from '../../schools/schools.service';

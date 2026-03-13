@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AuxService } from '../../aux/aux.service';
-import { TPessoaFisicaOutput } from '../../aux/types/aux.types';
+import { AuxService } from '../../_aux/_aux.service';
+import { TPessoaFisicaOutput } from '../../_aux/types/_aux.types';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ICustomerAddressData } from '../interfaces/customer.interfaces';
 import { IAddressQueryPagarme } from '../pagarme/interfaces/address/pagarme-address-input.interfaces';

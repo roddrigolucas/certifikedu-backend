@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TAcademicCredentialsOutput } from '../../academic-credentials/types/academic-credentials.types';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TSchoolCreateInput, TSchoolOutput, TSchoolUpdateInput } from '../../schools/types/schools.types';
 import { GetUser } from '../../auth/decorators';
 import { DateFormat } from '../../interceptors/dateformat.interceptor';

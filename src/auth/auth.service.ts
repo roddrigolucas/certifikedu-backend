@@ -4,7 +4,7 @@ import { TUserOutput, TUserPfAndPjOutput, TUserPfOutput, TUserPjOutput } from '.
 import { TUserCreateInput } from './types/auth.types';
 import { CognitoService } from '../aws/cognito/cognito.service';
 import { TemplatesService } from '../templates/templates.service';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { IAdminCreateUserCognito, IRegisterOnPoolCognitoRequest } from '../aws/cognito/interfaces/cognito.interfaces';
 import { IResponseUsersRawInfo } from './interfaces/auth.interfaces';

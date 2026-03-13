@@ -20,7 +20,7 @@ import {
 } from '../dtos/learning-paths/paths-response.dto';
 import { LearningPathService } from '../../learning-paths/path.service';
 import { GetUser } from 'src/auth/decorators';
-import { AuxService } from 'src/aux/aux.service';
+import { AuxService } from 'src/_aux/_aux.service';
 import {
   TCreateLearningPathInput,
   TLearningPath,

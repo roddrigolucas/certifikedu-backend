@@ -18,7 +18,7 @@ import { RolesGuard } from '../users/guards';
 import { JwtGuard } from '../auth/guard';
 import { PJUsersService } from './pjusers.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { TPessoaFisicaCreateWoUserInput, TUserCreateInput } from '../auth/types/auth.types';
 import { AuthService } from '../auth/auth.service';
 import { CognitoService } from '../aws/cognito/cognito.service';

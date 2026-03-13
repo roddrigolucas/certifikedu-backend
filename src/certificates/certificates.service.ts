@@ -8,7 +8,7 @@ import { CandidateService } from '../candidate/candidate.service';
 import { S3Service } from '../aws/s3/s3.service';
 import { SQSService } from '../aws/sqs/sqs.service';
 import { AbilitiesService } from '../abilities/abilities.service';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { UsersService } from '../users/users.service';
 import { TTemplateSchoolAbilitiesOutput } from '../templates/types/template.types';
 import { IResponseOpenBadgeClass } from '../openbadge/interfaces/openbadge.interfaces';

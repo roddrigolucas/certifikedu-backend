@@ -15,7 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { AcademicCredentialsService } from '../../academic-credentials/academic-credentials.service';
 import { TAcademicCredentialsCreateInput } from '../../academic-credentials/types/academic-credentials.types';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import {
   TCourseCreateInput,
   TCourseUpdateInput,

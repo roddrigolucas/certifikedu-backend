@@ -11,7 +11,7 @@ import { CanvasTemplatesController } from './controllers/canvas-templates.contro
 
 //MODULES
 import { PassportModule } from '@nestjs/passport';
-import { AuxModule } from '../../aux/aux.module';
+import { AuxModule } from '../../_aux/_aux.module';
 import { BackgroundsModule } from '../../backgrounds/backgrounds.module';
 import { AWSModule } from '../../aws/aws.module';
 import { UsersModule } from '../../users/users.module';

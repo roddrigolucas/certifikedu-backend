@@ -2,7 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SecretManagerService } from '../aws/secrets-manager/secrets-manager.service';
 import * as crypto from 'crypto';
-import { TPessoaFisicaOutput, TPessoaJuridicaOutput } from './types/aux.types';
+import { TPessoaFisicaOutput, TPessoaJuridicaOutput } from './types/_aux.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { IAbility } from '../abilities/interfaces/abilities.interfaces';
 import { TWorkFieldCreateInput } from '../corporate/types/corporate.types';

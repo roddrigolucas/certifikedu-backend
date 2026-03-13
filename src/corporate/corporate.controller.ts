@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JobOpportunityStatus } from '@prisma/client';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../auth/guard';

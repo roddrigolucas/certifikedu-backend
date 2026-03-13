@@ -25,7 +25,7 @@ import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { FontsService } from 'src/fonts/fonts.service';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { SchoolsService } from '../../schools/schools.service';
 import { BackgroundsService } from '../../backgrounds/background.service';
 import { randomUUID } from 'crypto';

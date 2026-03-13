@@ -13,7 +13,7 @@ import { InternshipsModule } from '../internships/internships.module';
 import { CoursesModule } from '../courses/courses.module';
 import { StudyFieldsModule } from '../studyfields/studyfields.module';
 import { AuthModule } from '../auth/auth.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { AcademicCredentialsModule } from '../academic-credentials/academic-credentials.module';
 import { AWSModule } from '../aws/aws.module';
 import { CredentialsModule } from '../credentials-api/credentials.module';

@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '../../auth/guard';
 import { Roles } from '../../users/decorators';
 import { RolesGuard } from '../../users/guards';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { CredentialsService } from '../../credentials-api/credentials.service';
 
 @ApiTags('ADMIN -- API Credentials')

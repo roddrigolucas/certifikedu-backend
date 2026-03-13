@@ -10,11 +10,11 @@ import {
 } from './types/template.types';
 import { ICreateCertificatePreview, ICreateTemplateLambda } from '../requests/requests.interfaces';
 import { S3Service } from '../aws/s3/s3.service';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { BackgroundsService } from '../backgrounds/background.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { FontsService } from '../fonts/fonts.service';
-import { TQueryPromise } from '../aux/types/aux.types';
+import { TQueryPromise } from '../_aux/types/_aux.types';
 import { QRCodePositionEnum, User } from '@prisma/client';
 import { IStudentInfo } from './interfaces/templates.interfaces';
 import { randomUUID } from 'crypto';

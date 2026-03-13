@@ -17,7 +17,7 @@ import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { Roles } from 'src/users/decorators';
 
-import { AuxService } from 'src/aux/aux.service';
+import { AuxService } from 'src/_aux/_aux.service';
 import { GetUser } from 'src/auth/decorators';
 import { InverseService } from 'src/inverse/inverse.service';
 import { FileInterceptor } from '@nestjs/platform-express';

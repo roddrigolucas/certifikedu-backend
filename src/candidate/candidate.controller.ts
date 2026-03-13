@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AbilitiesService } from '../abilities/abilities.service';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { GetUser } from '../auth/decorators';
 import { JwtGuard } from '../auth/guard';
 import { Roles } from '../users/decorators';

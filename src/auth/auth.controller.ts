@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseAuthDto, ResponseUsersRawInfoDto } from './dto/auth-response.dto';
 import { AuthenticateRequestDto, AuthPfDto, AuthPjDto, RawUserDto, ResetUserPasswordDto } from './dto/auth-input.dto';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { CognitoService } from '../aws/cognito/cognito.service';
 import {
   TPessoaFisicaCreateWoUserInput,

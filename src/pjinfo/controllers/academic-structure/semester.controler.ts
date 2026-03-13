@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
-import { AuxService } from '../../../aux/aux.service';
+import { AuxService } from '../../../_aux/_aux.service';
 import { JwtGuard } from 'src/auth/guard';
 import { RolesGuard } from 'src/users/guards';
 import { TSemesterCreateInput, TSemesterWithSubjectsOutput } from '../../../semesters/types/semesters.types';

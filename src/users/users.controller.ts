@@ -19,7 +19,7 @@ import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DateFormat } from '../interceptors/dateformat.interceptor';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { SESService } from '../aws/ses/ses.service';
 import { PaymentsService } from '../payments/services/payments.service';
 import { S3Service } from '../aws/s3/s3.service';

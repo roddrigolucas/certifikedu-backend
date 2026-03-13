@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { GetUser } from '../../auth/decorators';
 import { JwtGuard } from '../../auth/guard';
 import { BackgroundsService } from '../../backgrounds/background.service';

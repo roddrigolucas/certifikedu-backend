@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
-import { AuxService } from 'src/aux/aux.service';
+import { AuxService } from 'src/_aux/_aux.service';
 import { InstitutionalEventsService } from 'src/institutional-events/inst-events.service';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { RolesGuard } from 'src/users/guards';

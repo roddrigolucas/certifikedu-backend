@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ILambdaValidateText } from 'src/requests/requests.interfaces';
-import { TQueryPromise } from '../aux/types/aux.types';
+import { TQueryPromise } from '../_aux/types/_aux.types';
 import {
   TProfessionalProfileWithFieldsAndAbilitiesOutput,
   TProfessionalProfileWithOnlyIdsOutput,

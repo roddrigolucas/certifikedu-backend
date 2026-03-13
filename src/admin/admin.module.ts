@@ -22,7 +22,7 @@ import { PagarmeSubscriptionAdminController } from './controllers/subscriptions.
 import { PagarmeOrdersAdminController } from './controllers/orders.controller';
 import { PagarmeDiscountsAdminController } from './controllers/discounts.controller';
 import { PagarmeIncrementsAdminController } from './controllers/increments.controller';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { EmailsModule } from '../emails/emails.module';
 import { RequestsModule } from '../requests/requests.module';
 

@@ -6,7 +6,7 @@ import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { Roles } from 'src/users/decorators';
 import { MetabaseService } from 'src/metabase/metabase.service';
-import { AuxService } from 'src/aux/aux.service';
+import { AuxService } from 'src/_aux/_aux.service';
 import { GetUser } from 'src/auth/decorators';
 
 @ApiTags('Institutional -- Dashboards')

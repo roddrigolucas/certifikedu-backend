@@ -19,7 +19,7 @@ import {
   TUserWithPfAndProfileOutput,
   TUserWithPjAndLtiAndKeysOutput,
 } from './types/user.types';
-import { TPessoaFisicaOutput } from '../aux/types/aux.types';
+import { TPessoaFisicaOutput } from '../_aux/types/_aux.types';
 import {
   TCorporateAdminsWithPfOutput,
   TCorporateAdminsWithPjOutput,

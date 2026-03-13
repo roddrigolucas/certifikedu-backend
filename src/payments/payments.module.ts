@@ -1,7 +1,7 @@
 //MODULES
 import { Module } from '@nestjs/common';
 import { PagarmeModule } from './pagarme/pagarme.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { PagarmeSubscriptionsModule } from './pagarme/subscriptions/pagarme-subscriptions.module';
 import { PagarmeOrdersModule } from './pagarme/orders/pagarme-orders.module';
 

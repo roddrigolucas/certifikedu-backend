@@ -19,7 +19,7 @@ import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { CertificatesService } from '../../certificates/certificates.service';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TemplatesService } from '../../templates/templates.service';
 import { CoursesService } from '../../courses/courses.service';
 import { UsersService } from '../../users/users.service';

@@ -2,7 +2,7 @@ import { Controller, Delete, ForbiddenException, Get, NotFoundException, Param, 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { BackgroundsService } from '../../../backgrounds/background.service';
-import { AuxService } from '../../../aux/aux.service';
+import { AuxService } from '../../../_aux/_aux.service';
 import { CanvasJwtGuard } from '../guards/canvas-jwk.guard';
 import { CanvasGetUser } from '../decorators/get-user-canvas.decorator';
 import { ResponseCanvasBackgroundsDto } from '../dtos/backgrounds/canvas-backgrounds-response.dto';

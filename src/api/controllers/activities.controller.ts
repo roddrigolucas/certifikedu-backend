@@ -13,7 +13,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { TActivitesAndCurriculumOutput, TActivitiesCreateInput } from '../../activities/types/activities.types';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { ActivitiesService } from '../../activities/activities.service';
 import { GetUser } from '../../auth/decorators';
 import { CreateActivityAPIDto, EditActivityAPIDto } from '../dtos/activities/activities-input.dto';

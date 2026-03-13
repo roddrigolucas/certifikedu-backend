@@ -6,7 +6,7 @@ import { BlockchainModule } from '../blockchain/blockchain.module';
 import { OpenBadgeModule } from '../openbadge/openbadge.module';
 import { RequestsModule } from '../requests/requests.module';
 import { CandidateModule } from '../candidate/candidate.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { AbilitiesModule } from '../abilities/abilities.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { UsersModule } from '../users/users.module';

@@ -17,7 +17,7 @@ import { Roles } from '../../users/decorators';
 import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { CoursesService } from '../../courses/courses.service';
 import { InstitutionalEventsService } from '../../institutional-events/inst-events.service';
 import { TCourseCreateInput, TCourseUpdateInput } from '../../courses/types/courses.types';

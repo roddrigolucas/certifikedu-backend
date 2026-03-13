@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../../../aux/aux.service';
+import { AuxService } from '../../../_aux/_aux.service';
 import { JwtGuard } from '../../../auth/guard';
 import { RolesGuard } from '../../../users/guards';
 import {

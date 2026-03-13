@@ -14,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { BackgroundsService } from '../../backgrounds/background.service';
 import { SchoolsService } from '../../schools/schools.service';
 import { TTemplateCreateInput, TTemplateSchoolAbilitiesCourseData } from '../../templates/types/template.types';

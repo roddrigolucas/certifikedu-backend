@@ -19,7 +19,7 @@ import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { SchoolsService } from '../../schools/schools.service';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TSchoolCreateInput } from '../../schools/types/schools.types';
 import { CoursesService } from '../../courses/courses.service';
 import { randomUUID } from 'crypto';

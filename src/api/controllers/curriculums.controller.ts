@@ -14,7 +14,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
 import { ActivitiesService } from '../../activities/activities.service';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TCurriculumCreateInput, TCurriculumWithAllOutput } from '../../curriculums/types/curriculum.types';
 import { InternshipsService } from '../../internships/internships.service';
 import { SemestersService } from '../../semesters/semesters.service';

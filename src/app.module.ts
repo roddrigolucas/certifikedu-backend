@@ -37,7 +37,7 @@ import { CanvasModule } from './canvas/canvas.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { CandidateModule } from './candidate/candidate.module';
 import { CanvasPlatformModule } from './canvas/platform/canvas-platform.module';
-import { AuxModule } from './aux/aux.module';
+import { AuxModule } from './_aux/_aux.module';
 import { PagarmeModule } from './payments/pagarme/pagarme.module';
 import { PdiModule } from './pdi/pdi.module';
 import { ResumesModule } from './resumes/resumes.module';

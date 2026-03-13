@@ -7,7 +7,7 @@ import { LoggerModule } from '../logger/logger.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { JwtStrategy } from './strategy';
 import { CertificatesModule } from '../certificates/certificates.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { TemplatesModule } from '../templates/templates.module';
 
 @Module({

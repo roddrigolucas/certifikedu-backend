@@ -13,7 +13,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../auth/auth.service';
 import { TPessoaFisicaCreateWoUserInput, TUserCreateInput } from '../../auth/types/auth.types';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { CognitoService } from '../../aws/cognito/cognito.service';
 import { SESService } from '../../aws/ses/ses.service';
 import { SchoolsService } from '../../schools/schools.service';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TQueryPromise } from '../aux/types/aux.types';
+import { TQueryPromise } from '../_aux/types/_aux.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { IAbility, IAbilityInfo } from './interfaces/abilities.interfaces';
 import { TAbilityOnReviewCreateInput, TAbilityOnReviewOutput } from './types/abilities-on-review.types';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ICreateInternship } from './interfaces/internships.interfaces';
 import {

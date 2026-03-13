@@ -7,7 +7,7 @@ import { EmailsModule } from '../emails/emails.module';
 import { SchoolsModule } from '../schools/schools.module';
 import { TemplatesModule } from '../templates/templates.module';
 import { UsersModule } from '../users/users.module';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { FontsModule } from 'src/fonts/fonts.module';
 import { BackgroundsInstitutionalController } from './controllers/backgrounds.controller';
 import { CertificatesInstitutionalController } from './controllers/certificates.controller';

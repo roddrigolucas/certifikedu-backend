@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TemplatesController } from './templates.controller';
-import { AuxModule } from '../aux/aux.module';
+import { AuxModule } from '../_aux/_aux.module';
 import { TemplatesService } from './templates.service';
 import { AWSModule } from '../aws/aws.module';
 import { RequestsModule } from '../requests/requests.module';

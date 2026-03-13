@@ -41,7 +41,7 @@ import { HttpService } from '@nestjs/axios';
 import { CustomLogger } from '../logger/custom-logger.service';
 import { STSService } from '../aws/sts/sts.service';
 import { randomUUID } from 'crypto';
-import { AuxService } from '../aux/aux.service';
+import { AuxService } from '../_aux/_aux.service';
 import { ICertificateEventSQS } from 'src/certificates/interfaces/certificates.interfaces';
 
 @Injectable()

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { TInternshipCreateInput, TIntershipWithCurriculumOutput } from '../../internships/types/internships.types';
 import { GetUser } from '../../auth/decorators';
 import { InternshipsService } from '../../internships/internships.service';

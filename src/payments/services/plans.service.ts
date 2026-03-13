@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuxService } from 'src/aux/aux.service';
+import { AuxService } from 'src/_aux/_aux.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ICreatePlan, IEditPlan, IEditPlanItem } from '../interfaces/plans.interface';
 import {

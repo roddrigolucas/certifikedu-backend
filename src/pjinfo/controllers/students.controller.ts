@@ -21,7 +21,7 @@ import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { ResponseCreateSchoolPjInfoDto } from '../dtos/schools/schools-response.dto';
 import { CreateCourseStudentsAssociationPjInfoDto } from '../dtos/courses/courses-input.dto';
-import { AuxService } from '../../aux/aux.service';
+import { AuxService } from '../../_aux/_aux.service';
 import { SchoolsService } from '../../schools/schools.service';
 import { AuthService } from '../../auth/auth.service';
 import { IResponseUsersRawInfo } from '../../auth/interfaces/auth.interfaces';

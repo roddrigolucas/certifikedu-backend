@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AWSModule } from '../../aws/aws.module';
 import { HttpModule } from '@nestjs/axios';
-import { AuxModule } from 'src/aux/aux.module';
+import { AuxModule } from 'src/_aux/_aux.module';
 import { PagarmeCardsService } from './services/pagarme-cards.service';
 import { PagarmeCustomerService } from './services/pagarme-customer.service';
 import { PagarmePlansService } from './services/pagarme-plans.service';

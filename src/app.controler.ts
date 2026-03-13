@@ -2,7 +2,7 @@ import { Get, Controller, Param, UseInterceptors, NotFoundException } from '@nes
 import { AppService } from './app.service';
 import { DateFormat } from './interceptors/dateformat.interceptor';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from './aux/aux.service';
+import { AuxService } from './_aux/_aux.service';
 
 @ApiTags('public')
 @Controller()
