@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -59,14 +59,14 @@ export class CognitoService {
     );
 
     if (!result || result.length === 0) {
-      throw new Error('User not found');
+      throw new UnauthorizedException('User not found');
     }
 
     const credentials = result[0];
     const isValid = await bcrypt.compare(data.password, credentials.password_hash);
 
     if (!isValid) {
-      throw new Error('Invalid password');
+      throw new UnauthorizedException('Invalid password');
     }
 
     const user = await this.prismaService.user.findUnique({ where: { email: data.email } });
