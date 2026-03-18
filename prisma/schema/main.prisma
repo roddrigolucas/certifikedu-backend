@@ -70,3 +70,12 @@ model Session {
   @@index([token])
   @@map("sessions")
 }
+
+model AuthCredentials {
+  email         String @id
+  password_hash String
+  user_type     String
+  status        String
+
+  @@map("auth_credentials")
+}

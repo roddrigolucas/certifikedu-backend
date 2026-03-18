@@ -107,4 +107,14 @@ export class UpdatePfInfoDto {
   @IsString()
   @IsOptional()
   additionalDetails?: string;
+
+  @IsString()
+  @IsEmail()
+  @IsOptional()
+  alternativeEmail?: string;
+
+  @IsString()
+  @IsEmail()
+  @IsOptional()
+  email?: string;
 }

@@ -28,12 +28,16 @@ import { Is3OperationsLambdaDto } from './dtos/s3operations-input.dto';
 import { RequestsService } from 'src/requests/requests.service';
 import * as jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
+import { PdiAiService } from './pdi-ai.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @ApiTags('PDI')
 @Controller('pdi')
 export class PdiController {
   constructor(
     private readonly pdiService: PdiService,
+    private readonly pdiAiService: PdiAiService,
+    private readonly prisma: PrismaService,
     private readonly auxService: AuxService,
     private readonly smsService: SecretManagerService,
     private readonly requestsService: RequestsService,
@@ -91,27 +95,29 @@ export class PdiController {
       throw new NotFoundException();
     }
 
-    const isPdiTextApproved = await this.requestsService.getApproveText({ texts: { ...dto } });
-
-    if (!isPdiTextApproved) {
-      throw new BadRequestException('PDI Text was not approved');
-    }
-
     const pdiId = randomUUID();
-    const pdiRequest = {
-      pdi_id: pdiId,
-      learning_goal: dto.goals,
-      learning_topics: dto.skills,
-      previousEducation: dto.previousEducation,
-      daily_time: dto.dailyTime,
-    };
 
-    const pdiResponse = await this.requestsService.triggerPdiService(pdiRequest);
+    // 1. Fetch user certificates
+    const certificates = await this.prisma.certificates.findMany({
+      where: { receptorId: userId },
+      include: {
+        habilidades: {
+          include: { habilidade: true }
+        }
+      }
+    });
 
-    if (!pdiResponse) {
-      throw new ServiceUnavailableException("teste")
-    }
+    // 2. Call local AI generator (synchronous delay 5-10s expected)
+    const generatedNodes = await this.pdiAiService.generatePdiNodes(
+      dto.title,
+      dto.goals,
+      dto.skills,
+      dto.previousEducation,
+      dto.dailyTime,
+      certificates
+    );
 
+    // 3. Save initial PDI object
     const data: TPdiCreateInput = {
       pdiId: pdiId,
       title: dto.title,
@@ -119,10 +125,19 @@ export class PdiController {
       previousEducation: dto.previousEducation,
       skills: dto.skills,
       goals: dto.goals,
+      status: PdiStatus.SUCCESS,
       pf: { connect: { idPF: pf.idPF } },
     };
 
-    const pdi = await this.pdiService.createPdi(data);
+    let pdi = await this.pdiService.createPdi(data);
+
+    // 4. Save generated AI nodes
+    if (generatedNodes && generatedNodes.length > 0) {
+      await this.pdiService.createPdiNodes(pdiId, generatedNodes);
+      
+      // refetch the PDI with included nodes
+      pdi = await this.pdiService.getPdi(pdiId);
+    }
 
     return this.getPdiResponse(pdi);
   }

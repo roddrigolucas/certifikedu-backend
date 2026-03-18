@@ -147,7 +147,7 @@ export class UsersController {
 
     const pf = await this.auxService.getPfInfo(userId);
 
-    const data: TPessoaFisicaUpdateInput = {
+    const data: TPessoaFisicaUpdateInput & { email?: string } = {
       nome: dto?.name ?? pf.nome,
       telefone: dto?.phone ?? pf.telefone,
       dataDeNascimento: dto?.birthDate ?? pf.dataDeNascimento,
@@ -157,7 +157,17 @@ export class UsersController {
       bairro: dto?.neighborhood ?? pf.bairro,
       rua: dto?.street ?? pf.rua,
       numero: dto?.number ?? pf.numero,
+      alternativeEmail: dto?.alternativeEmail ?? pf.alternativeEmail,
     };
+    
+    // Check if main email is changing (need to ensure it's not already used)
+    if (dto.email && dto.email !== pf.email) {
+      const existingUser = await this.userService.getUserByEmail(dto.email);
+      if (existingUser && existingUser.id !== userId) {
+        throw new BadRequestException('Email already in use');
+      }
+      data.email = dto.email;
+    }
 
     const pessoaFisica = await this.userService.updatePfInfo(userId, data);
 
@@ -183,6 +193,7 @@ export class UsersController {
               street: pessoaFisica.rua,
               number: pessoaFisica.numero,
               additionalDetails: pessoaFisica.complemento,
+              alternativeEmail: pessoaFisica.alternativeEmail,
             },
           },
         },

@@ -18,6 +18,7 @@ model PessoaFisica {
   rua              String
   numero           String
   complemento      String?
+  alternativeEmail String?
 
   pjAdmin         PJAdmins[]
   corporateAdmins CorporateAdmins[]

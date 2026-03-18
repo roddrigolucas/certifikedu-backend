@@ -5,10 +5,12 @@ import { AuxModule } from 'src/_aux/_aux.module';
 import { AbilitiesModule } from 'src/abilities/abilities.module';
 import { AWSModule } from 'src/aws/aws.module';
 import { RequestsModule } from 'src/requests/requests.module';
+import { PdiAiService } from './pdi-ai.service';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Module({
   imports: [AuxModule, RequestsModule, AbilitiesModule, AWSModule],
   controllers: [PdiController],
-  providers: [PdiService],
+  providers: [PdiService, PdiAiService, PrismaService],
 })
 export class PdiModule { }

@@ -15,6 +15,7 @@
     "prisma:studio": "npx prisma studio"
   },
   "dependencies": {
+    "@google/genai": "^1.46.0",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^10.3.0",
     "@nestjs/config": "^3.1.1",

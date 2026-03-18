@@ -328,10 +328,29 @@ export class UsersService {
     });
   }
 
-  async updatePfInfo(userId: string, data: TPessoaFisicaUpdateInput): Promise<TPessoaFisicaOutput> {
+  async updatePfInfo(userId: string, data: TPessoaFisicaUpdateInput & { email?: string }): Promise<TPessoaFisicaOutput> {
+    const pfData = { ...data };
+    
+    // If email is provided and being updated, we must update the User model as well
+    if (pfData.email) {
+      // Find current user to check if email actually changed
+      const currentUser = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+      
+      if (currentUser && currentUser.email !== pfData.email) {
+        await this.prismaService.user.update({
+          where: { id: userId },
+          data: { email: pfData.email as string },
+        });
+      }
+    }
+
+    delete pfData.email;
+
     return await this.prismaService.pessoaFisica.update({
       where: { userId: userId },
-      data: data,
+      data: pfData as TPessoaFisicaUpdateInput,
     });
   }
 
