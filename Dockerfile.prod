@@ -1,6 +1,7 @@
-FROM node:20-alpine
+FROM node:20-slim
 
-# Criar diretório da aplicação
+
+RUN apt-get update -y && apt-get insta
 WORKDIR /usr/src/app
 
 # Copiar arquivos de dependências e banco
