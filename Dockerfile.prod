@@ -1,7 +1,7 @@
 FROM node:20-slim
 
 
-RUN apt-get update -y && apt-get insta
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
 WORKDIR /usr/src/app
 
 # Copiar arquivos de dependências e banco
