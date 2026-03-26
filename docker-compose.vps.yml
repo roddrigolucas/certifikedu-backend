@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:13-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: postgres
+      POSTGRES_DB: certifikedu
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - net
+
+  backend:
+    build:
+      context: ./certifikedu-backend
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file: ./certifikedu-backend/.env
+    environment:
+      - DATABASE_URL=postgresql://postgres:123@database:5432/certifikedu
+    depends_on:
+      - database
+    ports:
+      - "3001:3001"
+    networks:
+      - net
+
+  frontend:
+    build:
+      context: ./plataform
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_URL=http://31.97.91.29:3001
+        - VITE_APPLICATION_URL=http://31.97.91.29:3000
+    restart: always
+    ports:
+      - "3000:80"
+    networks:
+      - net
+
+  website:
+    build:
+      context: ./site
+      dockerfile: Dockerfile.prod
+      args:
+        - NEXT_PUBLIC_APP_URL=http://31.97.91.29:3001
+        - NEXT_PUBLIC_PLATFORM_URL=http://31.97.91.29:3000
+        - SKIP_ENV_VALIDATION=true
+    restart: always
+    ports:
+      - "80:3000"
+    networks:
+      - net
+
+volumes:
+  pgdata:
+
+networks:
+  net:
+    driver: bridge
