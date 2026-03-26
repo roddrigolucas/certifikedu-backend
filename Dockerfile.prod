@@ -1,23 +1,32 @@
-FROM node:20-slim
-
+# Estágio 1: Build
+FROM node:20-slim AS builder
 
 RUN apt-get update -y && apt-get install -y openssl libssl-dev
 WORKDIR /usr/src/app
 
-# Copiar arquivos de dependências e banco
 COPY package*.json ./
 COPY prisma ./prisma/
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
 
-# Instalação limpa e geração do Prisma Client
 RUN npm install
 RUN npx prisma generate
 
-# Copiar o código fonte e gerar o build
 COPY . .
 RUN npm run build
 
-# Expor a porta que o NestJS usa
+# Estágio 2: Produção
+FROM node:20-slim
+
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
+WORKDIR /usr/src/app
+
+# Copia apenas o necessário do estágio de build
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/prisma ./prisma/
+
 EXPOSE 3001
 
-# Rodar os migrations do Prisma antes de iniciar em produção
-CMD ["sh", "-c", "npx prisma db push && npm run start:prod"]
+CMD ["sh", "-c", "npx prisma db push && node dist/src/main"]
