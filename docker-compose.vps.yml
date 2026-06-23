@@ -46,10 +46,15 @@ services:
       context: ./site
       dockerfile: Dockerfile.prod
       args:
-        - NEXT_PUBLIC_APP_URL=http://31.97.91.29:3001
+        - NEXT_PUBLIC_APP_URL=http://31.97.91.29
         - NEXT_PUBLIC_PLATFORM_URL=http://31.97.91.29:3000
         - SKIP_ENV_VALIDATION=true
+        - NEXT_PUBLIC_SANITY_DATASET=staging
+        - NEXT_PUBLIC_SANITY_PROJECT_ID=cil3po11
+        - SANITY_API_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
+        - SANITY_API_READ_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
     restart: always
+    env_file: ./site/.env
     ports:
       - "80:3000"
     networks:

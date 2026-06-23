@@ -9,10 +9,15 @@ import { JwtStrategy } from './strategy';
 import { CertificatesModule } from '../certificates/certificates.module';
 import { AuxModule } from '../_aux/_aux.module';
 import { TemplatesModule } from '../templates/templates.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'secretKey',
+      signOptions: { expiresIn: '15m' },
+    }),
     AuxModule,
     AWSModule,
     LoggerModule,

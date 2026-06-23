@@ -1,27 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { TUserOutput, TUserPfAndPjOutput, TUserPfOutput, TUserPjOutput } from '../users/types/user.types';
 import { TUserCreateInput } from './types/auth.types';
-import { CognitoService } from '../aws/cognito/cognito.service';
 import { TemplatesService } from '../templates/templates.service';
 import { AuxService } from '../_aux/_aux.service';
 import { CertificatesService } from '../certificates/certificates.service';
-import { IAdminCreateUserCognito, IRegisterOnPoolCognitoRequest } from '../aws/cognito/interfaces/cognito.interfaces';
 import { IResponseUsersRawInfo } from './interfaces/auth.interfaces';
 import { SESService } from '../aws/ses/ses.service';
 import { PaymentsService } from '../payments/services/payments.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
+import { AuthenticateRequestDto } from './dto/auth-input.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly cognitoService: CognitoService,
     private readonly templatesService: TemplatesService,
     private readonly auxService: AuxService,
     private readonly certificatesService: CertificatesService,
     private readonly paymentsService: PaymentsService,
     private readonly sesService: SESService,
-  ) { }
+    private readonly jwtService: JwtService,
+  ) {}
 
   async checkDocumentNumber(userDocument: string): Promise<TUserOutput> {
     return await this.prismaService.user.findUnique({ where: { numeroDocumento: userDocument } });
@@ -41,7 +42,6 @@ export class AuthService {
 
   async checkUser(userDocument: string, email: string): Promise<{ exist: boolean; errorMessage?: string }> {
     const checkUserDocument = await this.checkDocumentNumber(userDocument);
-
     if (checkUserDocument) {
       return { exist: true, errorMessage: this.getEmailErrorMessage(checkUserDocument.email) };
     }
@@ -51,15 +51,8 @@ export class AuthService {
       return { exist: true, errorMessage: this.getDocumentErrorMessage(checkUserEmail.numeroDocumento) };
     }
 
-    const cognito = await this.cognitoService.checkUserCognito(email);
-
-    if (cognito?.Users && cognito?.Users.length > 0) {
-      await this.cognitoService.deleteUserCognito(email);
-    }
-
     return { exist: false };
   }
-
 
   async getUserByEmail(email: string): Promise<TUserPfAndPjOutput> {
     return await this.prismaService.user.findUnique({
@@ -88,77 +81,51 @@ export class AuthService {
     });
   }
 
-  async signUpPjUser(data: TUserCreateInput, password: string): Promise<TUserPjOutput> {
-    const signUpCognitoDto: IRegisterOnPoolCognitoRequest = {
-      email: data.email,
-      password: password,
-      phoneNumber: '+55' + data.pessoaJuridica.create.telefone,
-      docNumber: data.numeroDocumento,
-    };
+  async createAuthCredentials(email: string, passwordString: string, type: string) {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(passwordString, salt);
+    await this.prismaService.authCredentials.upsert({
+      where: { email },
+      update: { password_hash: hash, status: 'CONFIRMED', user_type: type },
+      create: { email, password_hash: hash, status: 'CONFIRMED', user_type: type },
+    });
+  }
 
-    await this.cognitoService.registerNewUserOnPoolCognito(signUpCognitoDto, 'PJ');
-
+  async signUpPjUser(data: TUserCreateInput, passwordString: string): Promise<TUserPjOutput> {
+    await this.createAuthCredentials(data.email, passwordString, 'PJ');
     return this.createUserPjRecord(data);
   }
 
   async signUpPfUserWithoutCognito(data: TUserCreateInput) {
     const user = await this.createUserPfRecord(data);
-
     const userName = user.tempName ?? '';
-
     await this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, userName);
-
     await this.templatesService.createWelcomeTemplateCertificate(user, userName);
-
     await this.paymentsService.createRawUserSubscription(user.id);
   }
 
   async logoutSession(token: string): Promise<{ success: boolean }> {
-    const session = await this.prismaService.session.findUnique({
-      where: { token },
-    });
-
-    if (!session || !session.isActive) {
-      return { success: true };
-    }
+    const session = await this.prismaService.session.findUnique({ where: { token } });
+    if (!session || !session.isActive) return { success: true };
 
     const now = new Date();
-    // Calculate final duration: time difference from lastActivityAt
     const timeSinceLastActivity = Math.floor((now.getTime() - session.lastActivityAt.getTime()) / 1000);
     const newDurationSeconds = session.durationSeconds + timeSinceLastActivity;
 
     await this.prismaService.session.update({
       where: { token },
-      data: {
-        isActive: false,
-        logoutAt: now,
-        durationSeconds: newDurationSeconds,
-      },
+      data: { isActive: false, logoutAt: now, durationSeconds: newDurationSeconds },
     });
-
     return { success: true };
   }
 
-  async signUpPfUser(data: TUserCreateInput, password: string): Promise<TUserPfOutput> {
-    const signUpCognitoDto: IRegisterOnPoolCognitoRequest = {
-      email: data.email,
-      password: password,
-      phoneNumber: '+55' + data.pessoaFisica.create.telefone,
-      docNumber: data.numeroDocumento,
-    };
-
-    await this.cognitoService.registerNewUserOnPoolCognito(signUpCognitoDto, 'PF');
-
+  async signUpPfUser(data: TUserCreateInput, passwordString: string): Promise<TUserPfOutput> {
+    await this.createAuthCredentials(data.email, passwordString, 'PF');
     const user = await this.createUserPfRecord(data);
-
     await this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, user.pessoaFisica.nome);
-
     await this.templatesService.createWelcomeTemplateCertificate(user, user.pessoaFisica.nome);
-
     await this.paymentsService.addNewUserToPaymentsInfra(user);
-
-    this.sesService.sendRawEmail(user.pessoaFisica.nome, user.email, user.pessoaFisica.telefone)
-
+    this.sesService.sendRawEmail(user.pessoaFisica.nome, user.email, user.pessoaFisica.telefone);
     return user;
   }
 
@@ -177,85 +144,75 @@ export class AuthService {
       return responseDict;
     }
 
-    const password = this.auxService.generateRandomPassword();
-
-    const cognitoData: IAdminCreateUserCognito = {
-      email: data.email,
-      userType: 'PF',
-      password: password,
-    };
-
-    const cognito = await this.cognitoService.checkUserCognito(data.email);
-
-    if (cognito?.Users && cognito?.Users.length > 0) {
-      await this.cognitoService.deleteUserCognito(data.email);
-    }
-
-    this.cognitoService.adminCreateNewUserCognito(cognitoData);
+    const passwordString = this.auxService.generateRandomPassword();
+    await this.createAuthCredentials(data.email, passwordString, 'PF');
 
     const userName = data?.tempName ?? '';
-
-    this.sesService.sendNewUserPassword(data.email, password, userName);
+    this.sesService.sendNewUserPassword(data.email, passwordString, userName);
 
     const user = await this.createRawUserRecord(data);
-
     this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, userName);
-
     this.templatesService.createWelcomeTemplateCertificate(user, user.tempName ?? '');
-
     this.paymentsService.createRawUserSubscription(user.id);
-
-    this.sesService.sendRawEmail(user?.tempName ?? "nao informado", user.email)
+    this.sesService.sendRawEmail(user?.tempName ?? "nao informado", user.email);
 
     return responseDict;
   }
 
   async resetRawUserPassword(email: string): Promise<{ hasAccount: boolean; isRaw: boolean }> {
     const response = { hasAccount: false, isRaw: false };
-
-    const listUsersResponse = await this.cognitoService.listCognitoUserByEmail(email);
-
-    if (!listUsersResponse.Users || listUsersResponse.Users.length === 0) {
-      return response;
-    }
-
-    const user = await this.cognitoService.getUserCognito(listUsersResponse.Users[0].Username);
-
-    if (!user) {
-      return response;
-    }
-
-    const cognitoStatus = {
-      status: user.Enabled,
-      userStatus: user.UserStatus,
-      emailStatus: user.UserAttributes?.find((attr) => attr.Name === 'email_verified')?.Value ?? 'false',
-    };
+    const authRecord = await this.prismaService.authCredentials.findUnique({ where: { email } });
+    if (!authRecord) return response;
 
     const userInfo = await this.getUserByEmail(email);
-
-    if (!userInfo) {
-      return response;
-    }
+    if (!userInfo) return response;
 
     response.hasAccount = true;
-
-    if (
-      (userInfo.pessoaFisica || userInfo.pessoaJuridica) &&
-      cognitoStatus.status === true &&
-      cognitoStatus.emailStatus !== 'false' &&
-      cognitoStatus.userStatus === 'CONFIRMED'
-    ) {
+    if ((userInfo.pessoaFisica || userInfo.pessoaJuridica) && authRecord.status === 'CONFIRMED') {
       return response;
     }
 
     response.isRaw = true;
-
-    const password = this.auxService.generateRandomPassword();
-
-    await this.cognitoService.resetUserPasswordCognito(email, password);
-
-    await this.sesService.sendNewUserPassword(email, password, userInfo?.tempName ?? '');
+    const passwordString = this.auxService.generateRandomPassword();
+    await this.createAuthCredentials(email, passwordString, 'PF');
+    await this.sesService.sendNewUserPassword(email, passwordString, userInfo?.tempName ?? '');
 
     return response;
+  }
+
+  async login(dto: AuthenticateRequestDto): Promise<{ accessToken: string, refreshToken: string, user: any }> {
+    const { email, password } = dto;
+    const authRecord = await this.prismaService.authCredentials.findUnique({ where: { email } });
+    if (!authRecord) {
+      throw new UnauthorizedException('Email ou senha incorretos');
+    }
+
+    const isMatch = await bcrypt.compare(password, authRecord.password_hash);
+    if (!isMatch) {
+      throw new UnauthorizedException('Email ou senha incorretos');
+    }
+
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException('Usuário não encontrado');
+    }
+
+    const payload = { email: user.email, sub: user.id };
+    const accessToken = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET || 'secretKey', expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign(payload, { secret: process.env.JWT_REFRESH_SECRET || 'refreshSecretKey', expiresIn: '7d' });
+
+    return { accessToken, refreshToken, user };
+  }
+
+  async refreshTokens(refreshToken: string): Promise<{ accessToken: string, newRefreshToken: string }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET || 'refreshSecretKey' });
+      const newPayload = { email: payload.email, sub: payload.sub };
+      const accessToken = this.jwtService.sign(newPayload, { secret: process.env.JWT_SECRET || 'secretKey', expiresIn: '15m' });
+      const newRefreshToken = this.jwtService.sign(newPayload, { secret: process.env.JWT_REFRESH_SECRET || 'refreshSecretKey', expiresIn: '7d' });
+      return { accessToken, newRefreshToken };
+    } catch (e) {
+      throw new UnauthorizedException('Refresh token inválido ou expirado');
+    }
   }
 }
