@@ -16,7 +16,7 @@ export class ResponseAbilityDto {
 //TODO: CHANGE THIS MOTHERFUCKER
 export class ResponseAbilitiesDto {
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => ResponseAbilityDto)
   abilities: Array<ResponseAbilityDto>
 }
@@ -31,5 +31,22 @@ export class MUDARResponseAbilitiesDto {
 
   @IsString()
   tema: string;
+}
 
+export class RecommendationDto {
+  @IsString()
+  label: string;
+
+  @IsString()
+  value: string;
+
+  @IsString()
+  category: string;
+}
+
+export class AbilitiesRecommendationsResponseDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RecommendationDto)
+  abilities: Array<RecommendationDto>
 }

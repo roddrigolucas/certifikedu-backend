@@ -26,6 +26,7 @@ model Schools {
   templates Templates[]
 
   courses SchoolsCourses[]
+  missionTemplates MissionTemplate[]
 
   canvasConfigId String?                 @unique
   canvasLTI      CanvasLTIConfiguration? @relation(fields: [canvasConfigId], references: [id])
@@ -38,6 +39,7 @@ model Course {
 
   name        String
   description String?
+  isAxis      Boolean @default(false)
 
   isAcademic Boolean @default(false)
 

@@ -17,7 +17,7 @@ import { Roles } from '../../users/decorators';
 import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { CoursesService } from '../../courses/courses.service';
 import { InstitutionalEventsService } from '../../institutional-events/inst-events.service';
 import { TCourseCreateInput, TCourseUpdateInput } from '../../courses/types/courses.types';
@@ -31,6 +31,9 @@ import {
   CreateCourseStudentsAssociationPjInfoDto,
   CreateOrUpdateCoursePjInfoDto,
 } from '../dtos/courses/courses-input.dto';
+import { promiseHooks } from 'v8';
+import { User } from '@prisma/client';
+import { PfUserAPIDto } from 'src/api/dtos/user/user-input.dto';
 
 @ApiTags('Institutional -- Courses')
 @Controller('pj/:pjId')
@@ -40,7 +43,7 @@ export class CoursesInstitutionalController {
     private readonly courseService: CoursesService,
     private readonly auxService: AuxService,
     private readonly institutionalEventService: InstitutionalEventsService,
-  ) {}
+  ) { }
 
   @UseGuards(RolesGuard, PJRolesGuard)
   @Roles('enabled')
@@ -81,11 +84,12 @@ export class CoursesInstitutionalController {
   @PJRoles('basico')
   @Post('/courses/:schoolId')
   async createCourse(
-    @GetUser('id') userId: string,
+    @GetUser() userId: User & { idPF: string },
     @Param('schoolId') schoolId: string,
     @Body() dto: CreateOrUpdateCoursePjInfoDto,
   ): Promise<ResponseCoursePjInfoDto> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const pj = await this.auxService.getPjInfo(userId.id);
+    const pfId = await this.auxService.getUserIdFromPfId(userId.idPF);
 
     if (!dto.isAcademic) {
       await this.institutionalEventService.createInstEventByCourse(pj.idPJ, dto);
@@ -111,7 +115,7 @@ export class CoursesInstitutionalController {
       schools: { create: { schoolId: schoolId } },
     };
 
-    const course = await this.courseService.createCourse(courseData);
+    const course = await this.courseService.createCourse(courseData, pfId);
 
     return {
       courseId: course.courseId,
@@ -217,16 +221,15 @@ export class CoursesInstitutionalController {
   @PJRoles('basico')
   @Delete('/courses/:courseId')
   async deleteCourse(
-    @GetUser('id') userId: string,
+    @GetUser() user: User & { idPF: string },
     @Param('courseId') courseId: string,
   ): Promise<{ success: boolean }> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const schoolUserId = user.id;
+    const pj = await this.auxService.getPjInfo(schoolUserId);
+    const userId = await this.auxService.getUserIdFromPfId(user.idPF);
 
     const course = await this.courseService.getCourseById(courseId);
-
-    if (!course) {
-      throw new NotFoundException('Course Not Found');
-    }
+    if (!course) throw new NotFoundException('Course Not Found');
 
     if (!course.isAcademic) {
       await this.institutionalEventService.deleteInstEventByCourse(
@@ -237,15 +240,12 @@ export class CoursesInstitutionalController {
       );
     }
 
-    const owners = course.schools.map((school) => {
-      return school.school.ownerUserId;
-    });
-
+    const owners = course.schools.map((school) => school.school.ownerUserId);
     if (!owners.includes(pj.idPJ)) {
       throw new ForbiddenException('User does not own school');
     }
 
-    await this.courseService.deleteCourse(courseId);
+    await this.courseService.deleteCourse(courseId, userId);
 
     return { success: true };
   }

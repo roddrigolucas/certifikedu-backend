@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   TCourseCreateInput,
@@ -12,10 +12,15 @@ import {
 import { TSchoolOutput, TSchoolWithCoursesOutput } from 'src/schools/types/schools.types';
 import { TUserOutput, TUserPfWithCoursesOutput } from 'src/users/types/user.types';
 import { ICreateCourse } from './interfaces/courses.interfaces';
+import { AuditService } from 'src/audit/audit.service';
+import { AuditAction } from '@prisma/client';
 
 @Injectable()
 export class CoursesService {
-  constructor(private prismaService: PrismaService) { }
+  constructor(
+    private prismaService: PrismaService,
+    private readonly auditService: AuditService,
+  ) { }
 
   async getSchool(schoolId: string): Promise<TSchoolOutput> {
     return await this.prismaService.schools.findUnique({
@@ -74,8 +79,8 @@ export class CoursesService {
     });
   }
 
-  async createCourse(data: TCourseCreateInput): Promise<TCourseWithCredentialsOutput> {
-    return await this.prismaService.course.create({
+  async createCourse(data: TCourseCreateInput, actorId?: string): Promise<TCourseWithCredentialsOutput> {
+    const course = await this.prismaService.course.create({
       data: data,
       include: {
         schools: true,
@@ -84,6 +89,25 @@ export class CoursesService {
         curriculum: { select: { curriculumId: true, name: true } },
       },
     });
+
+    // REVIEW - Made it optional to avoid issues with Canva LTI integration
+    if (actorId) {
+      await this.auditService.log({
+        action: AuditAction.CREATE,
+        actorId: actorId,
+        pjId: course.userId, // The PJ owner of the course
+        targetEntity: 'Curso',
+        targetId: course.courseId,
+        description: `Criou o curso: ${course.name}`,
+        metadata: {
+          name: course.name,
+          educationLevel: course.educationLevel,
+          isAcademic: course.isAcademic
+        }
+      });
+    }
+
+    return course;
   }
 
   async editCourse(courseId: string, data: TCourseUpdateInput): Promise<TCourseWithCredentialsOutput> {
@@ -99,8 +123,33 @@ export class CoursesService {
     });
   }
 
-  async deleteCourse(courseId: string) {
+  async deleteCourse(courseId: string, actorId: string) {
+    const course = await this.prismaService.course.findUnique({
+      where: { courseId: courseId },
+      include: { schools: true }
+    });
+
+    if (!course) {
+      throw new NotFoundException("Course not found");
+    }
+
     await this.prismaService.course.delete({ where: { courseId: courseId } });
+
+    await this.auditService.log({
+      action: AuditAction.DELETE,
+      actorId: actorId,
+      pjId: course.userId,
+      targetEntity: 'Curso',
+      targetId: courseId,
+      description: `Excluiu o curso: ${course.name}`,
+      metadata: {
+        snapshot: {
+          name: course.name,
+          educationLevel: course.educationLevel,
+          connectedSchools: course.schools.length
+        }
+      }
+    });
   }
 
   async addCourseCredentials(courseId: string, credentialId: string): Promise<TCourseWithCredentialsOutput> {

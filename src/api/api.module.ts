@@ -13,7 +13,7 @@ import { InternshipsModule } from '../internships/internships.module';
 import { CoursesModule } from '../courses/courses.module';
 import { StudyFieldsModule } from '../studyfields/studyfields.module';
 import { AuthModule } from '../auth/auth.module';
-import { AuxModule } from '../_aux/_aux.module';
+import { AuxModule } from '../common/common.module';
 import { AcademicCredentialsModule } from '../academic-credentials/academic-credentials.module';
 import { AWSModule } from '../aws/aws.module';
 import { CredentialsModule } from '../credentials-api/credentials.module';
@@ -35,6 +35,7 @@ import { TemplatesAPIController } from './controllers/templates.controller';
 import { UsersAPIController } from './controllers/user.controller';
 import { CredentialsAPIController } from './controllers/credentials.controller';
 import { UsersModule } from '../users/users.module';
+import { AuditModule } from 'src/audit/audit.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { UsersModule } from '../users/users.module';
     AuthModule,
     AcademicCredentialsModule,
     CredentialsModule,
+    AuditModule,
   ],
   controllers: [
     CredentialsAPIController,

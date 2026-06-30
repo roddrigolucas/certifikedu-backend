@@ -11,7 +11,7 @@ import {
   IIssuer,
   IResponseOpenBadgeClass,
 } from './interfaces/openbadge.interfaces';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 
 @Injectable()
 export class OpenBadgeService {

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AuxService } from 'src/_aux/_aux.service';
+import { AuxService } from 'src/common/common.service';
 import { S3Service } from 'src/aws/s3/s3.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TInverseCertificateImagesCreateInput, TInverseCertificateImagesOutput } from './types/inverse.types';
 import { randomUUID } from 'crypto';
-import { TPessoaJuridicaOutput } from 'src/_aux/types/_aux.types';
+import { TPessoaJuridicaOutput } from 'src/common/types/common.types';
 
 @Injectable()
 export class InverseService {

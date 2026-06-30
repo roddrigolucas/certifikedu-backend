@@ -2,7 +2,7 @@ import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, 
 import { ApiTags } from '@nestjs/swagger';
 import { UserStatus } from '@prisma/client';
 import { JwtGuard } from '../../auth/guard';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { CognitoService } from '../../aws/cognito/cognito.service';
 import { S3Service } from '../../aws/s3/s3.service';
 import { SESService } from '../../aws/ses/ses.service';
@@ -23,6 +23,8 @@ import {
   ResponseUserInfoAdminDto,
   ResponseUsersAdminDto,
 } from '../dtos/users/user-response.dto';
+import { AuditService } from 'src/audit/audit.service';
+import { PJRoles } from 'src/pjinfo/decorators/roles-pj.decorator';
 
 @ApiTags('ADMIN -- Users')
 @Controller('admin/users')
@@ -31,11 +33,61 @@ export class UsersAdminController {
   constructor(
     private readonly certificateService: CertificatesService,
     private readonly userService: UsersService,
+    private readonly auditService: AuditService,
     private readonly auxService: AuxService,
     private readonly sesService: SESService,
     private readonly s3Service: S3Service,
     private readonly cognitoService: CognitoService,
   ) { }
+
+
+  @Roles('enabled')
+  @PJRoles('medio')
+  @Get('compliance/:pjId')
+  async getAuditLogs(@Param('pjId') pjId: string) {
+    const logs = await this.auditService.getLogsByPjId(pjId);
+    console.log("AUDIT")
+    return {
+      logs: logs.map((log) => {
+        return {
+          id: log.id,
+          action: log.action,
+          description: log.description,
+          targetEntity: log.targetEntity,
+          targetId: log.targetId,
+          createdAt: log.createdAt,
+
+          actorEmail: log.actor?.email ?? 'Sistema',
+          actorType: log.actor?.type ?? 'N/A',
+          metadata: log.metadata,
+        };
+      }),
+    };
+  }
+
+  // TODO - Pagination
+  @Roles('admin')
+  @Get('compliance')
+  async getAllAuditLogs() {
+    const logs = await this.auditService.getAllLogs();
+
+    return {
+      logs: logs.map((log) => {
+        return {
+          id: log.id,
+          action: log.action,
+          description: log.description,
+          targetEntity: log.targetEntity,
+          targetId: log.targetId,
+          createdAt: log.createdAt,
+          // Mapeando os dados do actor que vieram do include
+          actorEmail: log.actor?.email ?? 'Sistema',
+          actorType: log.actor?.type ?? 'N/A',
+          metadata: log.metadata,
+        };
+      }),
+    };
+  }
 
   @Roles('admin')
   @Get(':status')
@@ -54,6 +106,7 @@ export class UsersAdminController {
           status: user.status,
           freeCertificates: user.freeCertificates,
           pictureId: user.document?.at(0)?.documentId ?? null,
+          apiEnabled: user.apiEnabled,
           //documentPictures: user.document.map((docPicture) => {
           //  return {
           //    pictureId: docPicture.documentId,
@@ -64,6 +117,7 @@ export class UsersAdminController {
       }),
     };
   }
+
 
   @Roles('admin')
   @Get(':userId')

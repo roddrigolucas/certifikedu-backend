@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { TPessoaJuridicaOutput } from 'src/_aux/types/_aux.types';
-import { AuxService } from '../_aux/_aux.service';
+import { TPessoaJuridicaOutput } from 'src/common/types/common.types';
+import { AuxService } from '../common/common.service';
 import { S3Service } from '../aws/s3/s3.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { TBackgroundCertificateImagesCreateInput, TBackgroundCertificateImagesOutput } from './types/backgrounds.types';

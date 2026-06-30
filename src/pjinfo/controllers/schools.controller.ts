@@ -19,7 +19,7 @@ import { RolesGuard } from '../../users/guards';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { SchoolsService } from '../../schools/schools.service';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { TSchoolCreateInput } from '../../schools/types/schools.types';
 import { CoursesService } from '../../courses/courses.service';
 import { randomUUID } from 'crypto';
@@ -29,6 +29,7 @@ import {
   ResponseSchoolsPjInfoDto,
 } from '../dtos/schools/schools-response.dto';
 import { CreateNewSchoolPjInfoDto, UpdateSchoolPjInfoDto } from '../dtos/schools/schools-input.dto';
+import { User } from '@prisma/client';
 
 @ApiTags('Institutional -- Schools')
 @Controller('pj/:pjId')
@@ -45,10 +46,11 @@ export class SchoolsInstitutionalController {
   @PJRoles('basico')
   @Post('/school')
   async createSchool(
-    @GetUser('id') userId: string,
+    @GetUser() user: User & { idPF: string },
     @Body() dto: CreateNewSchoolPjInfoDto,
   ): Promise<ResponseCreateSchoolPjInfoDto> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const pj = await this.auxService.getPjInfo(user.id);
+    const pfId = await this.auxService.getUserIdFromPfId(user.idPF);
 
     const schoolRecord = await this.schoolService.getSchoolByCnpj(dto.document);
 
@@ -59,10 +61,8 @@ export class SchoolsInstitutionalController {
     const { document: _document, courses, phone, website, ...rest } = dto;
 
     const schoolData: TSchoolCreateInput = {
-      //TODO: FIX AFTER UPDATING CONTRACT;
       phoneNumber: phone,
       homepageUrl: website,
-      //
       ...rest,
       schoolCnpj: dto.document,
       logoImage: null,
@@ -77,8 +77,7 @@ export class SchoolsInstitutionalController {
           const courseId = randomUUID();
           coursesIds.push({ courseId: courseId });
           return {
-            //TODO: UNCOMENT AFTER FIXING CONTRACT
-            //...course,
+            ...course,
             courseId: courseId,
             idPj: pj.idPJ,
             name: course.name,
@@ -91,7 +90,7 @@ export class SchoolsInstitutionalController {
       schoolData.courses.createMany.data = coursesIds;
     }
 
-    await this.schoolService.createSchool(schoolData);
+    await this.schoolService.createSchool(schoolData, pfId);
 
     return {
       statusCode: 201,
@@ -192,7 +191,6 @@ export class SchoolsInstitutionalController {
       throw new ForbiddenException('This user does not own this school');
     }
 
-    //TODO: FIX THIS AFTER UPDATING CONTRACT
     //const updateData = dto ;
 
     const { website, phone, ...rest } = dto;
@@ -226,10 +224,11 @@ export class SchoolsInstitutionalController {
   @PJRoles('basico')
   @Delete('/school/:schoolId')
   async deleteSchool(
-    @GetUser('id') userId: string,
+    @GetUser() user: User & { idPF: string },
     @Param('schoolId') schoolId: string,
   ): Promise<{ success: boolean }> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const pj = await this.auxService.getPjInfo(user.id);
+    const pfId = await this.auxService.getUserIdFromPfId(user.idPF);
 
     const schoolInfo = await this.schoolService.getSchoolById(schoolId);
 
@@ -245,7 +244,7 @@ export class SchoolsInstitutionalController {
       throw new ForbiddenException('This school cannot be deleted');
     }
 
-    await this.schoolService.deleteSchool(schoolId);
+    await this.schoolService.deleteSchool(schoolId, pfId);
 
     return { success: true };
   }

@@ -21,7 +21,7 @@ import { PJRoles } from '../decorators/roles-pj.decorator';
 import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { ResponseCreateSchoolPjInfoDto } from '../dtos/schools/schools-response.dto';
 import { CreateCourseStudentsAssociationPjInfoDto } from '../dtos/courses/courses-input.dto';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { SchoolsService } from '../../schools/schools.service';
 import { AuthService } from '../../auth/auth.service';
 import { IResponseUsersRawInfo } from '../../auth/interfaces/auth.interfaces';
@@ -46,6 +46,7 @@ import {
   StudentsImportsDetailResponseDto,
 } from '../dtos/students/students-response.dto';
 import { randomUUID } from 'crypto';
+import { User } from '@prisma/client';
 
 @ApiTags('Institutional -- Students')
 @Controller('pj/:pjId')
@@ -439,12 +440,13 @@ export class StudentsInstitutionalController {
   @PJRoles('basico')
   @Delete('/students/:schoolId/')
   async deleteStudentAssociation(
-    @GetUser('id') userId: string,
+    @GetUser() user: User & { idPF: string },
     @Param('schoolId') schoolId: string,
     @Body() dto: CreateOrDeleteStudentsAssociationPjInfoDto,
     @Param('courseId') courseId?: string,
   ): Promise<{ success: boolean }> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const pj = await this.auxService.getPjInfo(user.id);
+    const userId = await this.auxService.getUserIdFromPfId(user.idPF);
 
     const school = await this.schoolsService.getSchoolById(schoolId);
 
@@ -456,7 +458,7 @@ export class StudentsInstitutionalController {
       throw new ForbiddenException(`User does not own this school`);
     }
 
-    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs);
+    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, userId);
 
     if (courseId) {
       await this.coursesService.removeStudentFromCourse(courseId, dto.cpfs);

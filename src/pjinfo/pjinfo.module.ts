@@ -7,7 +7,7 @@ import { EmailsModule } from '../emails/emails.module';
 import { SchoolsModule } from '../schools/schools.module';
 import { TemplatesModule } from '../templates/templates.module';
 import { UsersModule } from '../users/users.module';
-import { AuxModule } from '../_aux/_aux.module';
+import { AuxModule } from '../common/common.module';
 import { FontsModule } from 'src/fonts/fonts.module';
 import { BackgroundsInstitutionalController } from './controllers/backgrounds.controller';
 import { CertificatesInstitutionalController } from './controllers/certificates.controller';
@@ -37,6 +37,7 @@ import { MetabasePjInfoController } from './controllers/metabase.controller';
 import { InverseModule } from 'src/inverse/inverse.module';
 import { InversePjInfoController } from './controllers/inverse.controller';
 import { FontsInstitutionalController } from './controllers/fonts.controller';
+import { AuditModule } from 'src/audit/audit.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { FontsInstitutionalController } from './controllers/fonts.controller';
     InstitutionalEventsModule,
     MetabaseModule,
     InverseModule,
+    AuditModule
   ],
   controllers: [
     BackgroundsInstitutionalController,

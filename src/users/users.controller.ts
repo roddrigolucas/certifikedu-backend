@@ -19,11 +19,12 @@ import { UsersService } from './users.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DateFormat } from '../interceptors/dateformat.interceptor';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { SESService } from '../aws/ses/ses.service';
 import { PaymentsService } from '../payments/services/payments.service';
 import { S3Service } from '../aws/s3/s3.service';
-import { UpdatePfInfoDto, UpdateRawUserDto } from './dtos/users-input.dto';
+import { SyncEmailByBodyDto, UpdatePfInfoDto, UpdateRawUserDto } from './dtos/users-input.dto';
+
 import { EnvironmentEnum } from '../pjusers/dtos/pjusers-input.dto';
 import { TDocumentPictureCreateInput, TPessoaFisicaCreateInput, TPessoaFisicaUpdateInput } from './types/user.types';
 import {
@@ -83,6 +84,20 @@ export class UsersController {
       phone: user?.tempPhone ?? '',
       fromCanvas: user.fromCanvas,
     };
+  }
+
+  @Roles('enabled') 
+  @Patch('sync/email')
+  async syncEmailAfterCognitoUpdate(
+    @Body() dto: SyncEmailByBodyDto,
+  ): Promise<{ status: string }> {
+
+    const userId = dto.userId;
+    const newEmail = dto.newEmail;
+    console.log(userId, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
+    await this.userService.updateUserEmail(userId, newEmail);
+
+    return { status: 'Success' };
   }
 
   @UseGuards(RolesGuard)
@@ -147,7 +162,7 @@ export class UsersController {
 
     const pf = await this.auxService.getPfInfo(userId);
 
-    const data: TPessoaFisicaUpdateInput & { email?: string } = {
+    const data: TPessoaFisicaUpdateInput = {
       nome: dto?.name ?? pf.nome,
       telefone: dto?.phone ?? pf.telefone,
       dataDeNascimento: dto?.birthDate ?? pf.dataDeNascimento,
@@ -157,17 +172,7 @@ export class UsersController {
       bairro: dto?.neighborhood ?? pf.bairro,
       rua: dto?.street ?? pf.rua,
       numero: dto?.number ?? pf.numero,
-      alternativeEmail: dto?.alternativeEmail ?? pf.alternativeEmail,
     };
-    
-    // Check if main email is changing (need to ensure it's not already used)
-    if (dto.email && dto.email !== pf.email) {
-      const existingUser = await this.userService.getUserByEmail(dto.email);
-      if (existingUser && existingUser.id !== userId) {
-        throw new BadRequestException('Email already in use');
-      }
-      data.email = dto.email;
-    }
 
     const pessoaFisica = await this.userService.updatePfInfo(userId, data);
 
@@ -193,7 +198,6 @@ export class UsersController {
               street: pessoaFisica.rua,
               number: pessoaFisica.numero,
               additionalDetails: pessoaFisica.complemento,
-              alternativeEmail: pessoaFisica.alternativeEmail,
             },
           },
         },
@@ -249,28 +253,8 @@ export class UsersController {
   private async getUserPfInfo(userId: string, userDocument: string): Promise<ResponsePfInfoDto> {
     const user = await this.userService.getPessoaFisicaByUserId(userId);
     const docPicture = await this.userService.getUserLastDocumentPicture(userId);
-
-    let creditInfo: any = { planId: null, nextCertificateDate: null, plan: null, customerId: null, certificateCredits: 0, additionalCertificatesCredits: 0, monthSpentCredits: 0, subsciptionId: null };
-    let userCards: any[] = [];
-    let defaultCardId: string | null = null;
-
-    try {
-      creditInfo = await this.paymentService.getUserCredits(userId);
-    } catch (err) {
-      // No payment customer for this user yet — safe to ignore
-    }
-
-    try {
-      userCards = await this.paymentService.getUserCards(userId);
-    } catch (err) {
-      // No cards for this user yet — safe to ignore
-    }
-
-    try {
-      defaultCardId = await this.paymentService.getUserDefaultCardId(user.id);
-    } catch (err) {
-      // No default card — safe to ignore
-    }
+    const creditInfo = await this.paymentService.getUserCredits(userId);
+    const userCards = await this.paymentService.getUserCards(userId);
 
     return {
       status: 'Success',
@@ -291,7 +275,7 @@ export class UsersController {
             emmitedCertificateQty: await this.userService.getUserEmmitedCertificatesByDocument(userDocument),
             planId: creditInfo.planId,
             nextPayment: creditInfo.nextCertificateDate,
-            paymentCardId: defaultCardId,
+            paymentCardId: await this.paymentService.getUserDefaultCardId(user.id),
             pjs: await this.userService.getUserCompanies(user.pessoaFisica.idPF),
             hasProfessionalProfile: user.pessoaFisica?.professionalProfile?.id ? true : false,
             hasResumes: user.pessoaFisica?.resumes?.length > 0 ? true : false,

@@ -7,7 +7,7 @@ import { PJRolesGuard } from '../guards/roles-guards-pj.guard';
 import { Roles } from 'src/users/decorators';
 import { PJRoles } from '../decorators/roles-pj.decorator';
 import { FontsResponseDto } from '../dtos/templates/fonts-response.dto';
-import { AuxService } from 'src/_aux/_aux.service';
+import { AuxService } from 'src/common/common.service';
 
 @ApiTags('Institutional -- Fonts')
 @Controller('pj/:pjId')

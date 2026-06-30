@@ -22,6 +22,7 @@ export async function createUsers(prisma: PrismaClient, userData: IUserData) {
         email: 'admin@certifikedu.com',
         type: 'PF',
         status: 'ADMIN',
+        freeCertificates: true,
         pessoaFisica: {
           create: {
             idPF: userData.admin.typeId,
@@ -49,6 +50,7 @@ export async function createUsers(prisma: PrismaClient, userData: IUserData) {
         email: 'guil.dendena@gmail.com',
         type: 'PF',
         status: 'ADMIN',
+        freeCertificates: true,
         pessoaFisica: {
           create: {
             idPF: userData.gui.typeId,
@@ -77,6 +79,7 @@ export async function createUsers(prisma: PrismaClient, userData: IUserData) {
         email: 'testepf@email.com',
         type: 'PF',
         status: 'ENABLED',
+        freeCertificates: true,
         pessoaFisica: {
           create: {
             idPF: userData.pf.typeId,

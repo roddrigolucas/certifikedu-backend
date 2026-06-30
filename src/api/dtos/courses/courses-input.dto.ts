@@ -1,6 +1,6 @@
 import { EducationLevelEnum } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { CreateAcademicCredentialsAPIDto } from '../academic-credentias/academic-credentials-input.dto';
 
 export class CourseInfoAPIDto {
@@ -21,6 +21,10 @@ export class CreateCourseAPIDto {
 
   @IsEnum(EducationLevelEnum)
   educationLevel: EducationLevelEnum;
+
+  @IsBoolean()
+  @IsOptional()
+  isAxis?: boolean = false;
 
   @IsOptional()
   @ValidateNested()

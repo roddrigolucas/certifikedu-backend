@@ -104,4 +104,8 @@ export class StudentInfoDto {
 
   @IsString()
   email: string;
+
+  @IsString()
+  @IsOptional()
+  issuedAt?: string;
 }

@@ -4,7 +4,7 @@ import { JwtGuard } from 'src/auth/guard';
 import { Roles } from '../users/decorators';
 import { RolesGuard } from '../users/guards';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from 'src/_aux/_aux.service';
+import { AuxService } from 'src/common/common.service';
 import { ResumesService } from './resumes.service';
 import {
   TResumeCreateInput,
@@ -35,7 +35,7 @@ import { Prisma } from '@prisma/client';
 import { RequestsService } from 'src/requests/requests.service';
 import { IResumePdf } from './interfaces/resumes.interfaces';
 import { ICreateResumePdfLambda } from 'src/requests/requests.interfaces';
-import { TPessoaFisicaOutput } from 'src/_aux/types/_aux.types';
+import { TPessoaFisicaOutput } from 'src/common/types/common.types';
 
 @ApiTags('Resume')
 @Controller('resumes')

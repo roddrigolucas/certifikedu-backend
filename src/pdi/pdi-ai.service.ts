@@ -75,7 +75,7 @@ A saída deve ser SOMENTE um JSON Array válido, rigorosamente neste formato, se
 
     try {
       const response = await this.ai.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         contents: prompt,
         config: {
           responseMimeType: 'application/json',

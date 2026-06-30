@@ -1,0 +1,1 @@
+{"@context":"https://w3id.org/openbadges/v2","type":"Issuer","id":"http://localhost:3001/uploads/users/7c2b4d35-a64c-4370-8c2a-bd51dcebd0ab/certificates/fdbe4677-22bd-4274-a2df-56e03e3931a8/open_badge/v1/issuer.json","name":"CertifikEDU","url":"https://certifikedu.com","email":"default@default.com","verification":{"startsWith":"http://localhost:3001/uploads"}}

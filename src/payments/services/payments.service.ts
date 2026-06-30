@@ -125,6 +125,7 @@ export class PaymentsService {
   }
 
   async getUserCredits(userId: string): Promise<IUserCreditsInfo> {
+
     const customerId = await this.customerService.getCustomerIdByUserId(userId);
 
     const subscription = await this.subscriptionsService.getUserSubscriptionInfo(userId);

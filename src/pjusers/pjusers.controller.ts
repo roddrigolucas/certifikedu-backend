@@ -18,7 +18,7 @@ import { RolesGuard } from '../users/guards';
 import { JwtGuard } from '../auth/guard';
 import { PJUsersService } from './pjusers.service';
 import { ApiTags } from '@nestjs/swagger';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { TPessoaFisicaCreateWoUserInput, TUserCreateInput } from '../auth/types/auth.types';
 import { AuthService } from '../auth/auth.service';
 import { CognitoService } from '../aws/cognito/cognito.service';
@@ -44,6 +44,11 @@ import {
   TPessoaJuridicaWithSociosOutput,
   TPjAdminsWithPfOutput,
 } from './types/pjusers.types';
+import { GetRecommnedationsDto } from 'src/abilities/dtos/abilities-recommendations.dto';
+import { AbilitiesRecommendationsResponseDto } from 'src/abilities/dtos/abilities-response.dto';
+import { AbilitiesService } from 'src/abilities/abilities.service';
+import { PJRoles } from 'src/pjinfo/decorators/roles-pj.decorator';
+import { User } from '@prisma/client';
 
 @ApiTags('User PJ -- Users')
 @Controller('pjusers')
@@ -56,7 +61,8 @@ export class PJUsersController {
     private readonly usersService: UsersService,
     private readonly cognitoService: CognitoService,
     private readonly sesService: SESService,
-  ) {}
+    private readonly abilitiesService: AbilitiesService,
+  ) { }
 
   @UseGuards(RolesGuard)
   @Roles('review')
@@ -402,10 +408,11 @@ export class PJUsersController {
   @Roles('enabled')
   @Delete()
   async deleteUserAdmin(
-    @GetUser('id') userId: string,
+    @GetUser() userId: User & { idPF: string },
     @Body() dto: EditOrDeletePJAdminDto,
   ): Promise<ResponseDeletedPJAdminDto> {
-    const pj = await this.auxService.getPjInfo(userId);
+    const pjId = userId.id;
+    const pj = await this.auxService.getPjInfo(userId.id);
 
     const institutionalAdmins = dto.admins
       .filter((x) => x.environment === EnvironmentEnum.institutional)
@@ -423,8 +430,8 @@ export class PJUsersController {
       return { deleted: [], notFound: dto.admins.map((x) => x.adminId) };
     }
 
-    await this.pjUserService.deleteInstitutionalAdmins(validInstitutionalAdminsIds);
-    await this.pjUserService.deleteCorporateAdmins(validCorporateAdminsIds);
+    await this.pjUserService.deleteInstitutionalAdmins(pjId, validInstitutionalAdminsIds);
+    await this.pjUserService.deleteCorporateAdmins(pjId, validCorporateAdminsIds);
 
     const deleted = [...validInstitutionalAdminsIds, ...validCorporateAdminsIds];
     return {
@@ -466,5 +473,17 @@ export class PJUsersController {
         })
         .at(0),
     };
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('enabled')
+  @PJRoles('basico')
+  @Post('recommend')
+  async getAbilitiesRecommendations(
+    @Body() dto: GetRecommnedationsDto,
+  ): Promise<AbilitiesRecommendationsResponseDto> {
+    const recommendations = await this.abilitiesService.getRecommendations(dto.text);
+
+    return { abilities: recommendations };
   }
 }

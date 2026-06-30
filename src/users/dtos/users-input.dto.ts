@@ -33,6 +33,14 @@ export class UpdateRawUserDto {
   complementary: string;
 }
 
+export class SyncEmailByBodyDto {
+  @IsString()
+  userId: string; // ID do Cognito (o 'sub')
+
+  @IsEmail()
+  newEmail: string;
+}
+
 export class RawUserDto {
   @IsString()
   documentNumber: string;
@@ -107,14 +115,4 @@ export class UpdatePfInfoDto {
   @IsString()
   @IsOptional()
   additionalDetails?: string;
-
-  @IsString()
-  @IsEmail()
-  @IsOptional()
-  alternativeEmail?: string;
-
-  @IsString()
-  @IsEmail()
-  @IsOptional()
-  email?: string;
 }

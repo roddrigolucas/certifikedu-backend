@@ -3,7 +3,7 @@ import { Type } from "class-transformer";
 import { IsArray, IsBoolean, IsDate, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from "class-validator";
 import { ResponseAbilityDto } from "src/abilities/dtos/abilities-response.dto";
 
-export class ResponseDocPicturesAdminDto  {
+export class ResponseDocPicturesAdminDto {
   @IsString()
   pictureId: string;
 
@@ -28,16 +28,19 @@ class ResponseUserAdminDto {
   document: string;
 
   @IsEnum(UserType)
-  type: UserType; 
+  type: UserType;
 
   @IsEnum(UserStatus)
-  status: UserStatus; 
+  status: UserStatus;
 
   @IsString()
   pictureId: string;
 
   @IsBoolean()
   freeCertificates: boolean;
+
+  @IsBoolean()
+  apiEnabled: boolean;
 
   //TODO: CHANGE THIS TO AN ARRAY 
   //@IsArray()
@@ -48,7 +51,7 @@ class ResponseUserAdminDto {
 
 export class ResponseUsersAdminDto {
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => ResponseUserAdminDto)
   users: Array<ResponseUserAdminDto>
 }
@@ -126,7 +129,7 @@ export class ResponsePjUserInfoAdminDto {
   category: string;
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => ResponseAdminPartnerPjInfoDto)
   partners: Array<ResponseAdminPartnerPjInfoDto>;
 }
@@ -198,16 +201,16 @@ export class ResponseUserInfoAdminDto {
   phone: string;
 
   @IsEnum(UserType)
-  type: UserType; 
+  type: UserType;
 
   @IsEnum(UserStatus)
-  status: UserStatus; 
+  status: UserStatus;
 
   @IsBoolean()
   isRaw: boolean;
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => ResponseDocPicturesAdminDto)
   documentPictures: Array<ResponseDocPicturesAdminDto>;
 
@@ -222,7 +225,7 @@ export class ResponseUserInfoAdminDto {
   pj?: ResponsePjUserInfoAdminDto;
 
   @IsArray()
-  @ValidateNested({each: true})
+  @ValidateNested({ each: true })
   @Type(() => ResponseCertificateInfoAdminDto)
   certificates: Array<ResponseCertificateInfoAdminDto>;
 }

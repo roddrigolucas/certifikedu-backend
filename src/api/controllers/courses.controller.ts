@@ -10,12 +10,13 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { AcademicCredentialsService } from '../../academic-credentials/academic-credentials.service';
 import { TAcademicCredentialsCreateInput } from '../../academic-credentials/types/academic-credentials.types';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import {
   TCourseCreateInput,
   TCourseUpdateInput,
@@ -29,6 +30,7 @@ import { CreateCourseAPIDto, EditCourseAPIDto } from '../dtos/courses/courses-in
 import { ResponseCourseAPIDto } from '../dtos/courses/courses-response.dto';
 import { ResponseCurriculumAPIDto } from '../dtos/curriculums/curriculums-response.dto';
 import { ApiKeyGuard } from '../guards/api_secret.guard';
+import { DateFormat } from 'src/interceptors/dateformat.interceptor';
 
 @ApiTags('API Courses')
 @UseGuards(ApiKeyGuard)
@@ -39,7 +41,7 @@ export class CoursesAPIController {
     private readonly auxService: AuxService,
     private readonly curriculumsService: CurriculumsService,
     private readonly academicCredentialsService: AcademicCredentialsService,
-  ) {}
+  ) { }
 
   @Get('course/:courseId')
   async getCourse(@GetUser() user: User, @Param('courseId') courseId: string): Promise<ResponseCourseAPIDto> {
@@ -58,6 +60,7 @@ export class CoursesAPIController {
   }
 
   @Post('course/:schoolId')
+  @UseInterceptors(new DateFormat(['publishedDate', 'issuedAt']))
   async createCourse(
     @GetUser('id') userId: string,
     @Param('schoolId') schoolId: string,
@@ -79,6 +82,7 @@ export class CoursesAPIController {
       name: dto.name,
       description: dto.description,
       educationLevel: dto.educationLevel,
+      isAxis: dto.isAxis ?? false,
       user: {
         connect: { idPJ: pj.idPJ },
       },
@@ -92,17 +96,29 @@ export class CoursesAPIController {
     }
 
     if (dto?.credentials) {
+      const parseDate = (dateStr: string | any) => {
+        if (typeof dateStr === 'string' && dateStr.includes('/')) {
+          const [day, month, year] = dateStr.split('/');
+          return new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+        }
+        return new Date(dateStr);
+      };
+
       const credentialsData: TAcademicCredentialsCreateInput = {
         ...dto.credentials,
-        user: { connect: { userId: pj.idPJ } },
+        issuedAt: parseDate(dto.credentials.issuedAt),
+        publishedDate: parseDate(dto.credentials.publishedDate),
+        user: { connect: { idPJ: pj.idPJ } },
       };
 
       const credentials = await this.academicCredentialsService.createCredentials(credentialsData);
 
-      courseData.academicCredentials.connect.credentialId = credentials.credentialId;
+      courseData.academicCredentials = {
+        connect: { credentialId: credentials.credentialId }
+      };
     }
 
-    const course = await this.courseService.createCourse(courseData);
+    const course = await this.courseService.createCourse(courseData, pj.idPJ);
 
     return this.getCourseResponse(course);
   }
@@ -155,7 +171,7 @@ export class CoursesAPIController {
       throw new ForbiddenException('Forbidden Resource');
     }
 
-    await this.courseService.deleteCourse(courseId);
+    await this.courseService.deleteCourse(courseId, pj.idPJ);
 
     return { success: true };
   }
@@ -216,6 +232,7 @@ export class CoursesAPIController {
       schoolIds: course.schools.map((school) => {
         return school.schoolId;
       }),
+      isAxis: course.isAxis,
       name: course.name,
       description: course?.description ?? null,
       educationLevel: course.educationLevel,
@@ -241,21 +258,21 @@ export class CoursesAPIController {
       }),
       credentials: course.academicCredentials
         ? {
-            credentialId: course.academicCredentials.credentialId,
-            createdAt: course.academicCredentials.createdAt,
-            updatedAt: course.academicCredentials.updatedAt,
-            emecCode: course.academicCredentials.emecCode,
-            type: course.academicCredentials.type,
-            number: course.academicCredentials.number,
-            description: course.academicCredentials.description,
-            issuedAt: course.academicCredentials.issuedAt,
-            publishedDate: course.academicCredentials.publishedDate,
-            publishingVehicle: course.academicCredentials.publishingVehicle,
-            publishingSection: course.academicCredentials.publishingSection,
-            publishingPage: course.academicCredentials.publishingPage,
-            numberDOU: course.academicCredentials.numberDOU,
-            credentialType: course.academicCredentials.credentialType,
-          }
+          credentialId: course.academicCredentials.credentialId,
+          createdAt: course.academicCredentials.createdAt,
+          updatedAt: course.academicCredentials.updatedAt,
+          emecCode: course.academicCredentials.emecCode,
+          type: course.academicCredentials.type,
+          number: course.academicCredentials.number,
+          description: course.academicCredentials.description,
+          issuedAt: course.academicCredentials.issuedAt,
+          publishedDate: course.academicCredentials.publishedDate,
+          publishingVehicle: course.academicCredentials.publishingVehicle,
+          publishingSection: course.academicCredentials.publishingSection,
+          publishingPage: course.academicCredentials.publishingPage,
+          numberDOU: course.academicCredentials.numberDOU,
+          credentialType: course.academicCredentials.credentialType,
+        }
         : null,
       curriculums: (await this.curriculumsService.getCourseCurriculums(course.courseId)).map((curriculum) =>
         this.getCurriculumResponse(curriculum),

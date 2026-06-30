@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { PJAdminRoleEnum } from '@prisma/client';
+import { AuditAction, PJAdminRoleEnum } from '@prisma/client';
 import { TPessoaJuridicaUpdateInput, TUserPfOutput } from '../users/types/user.types';
 import {
   TCorporateAdminsWithPfOutput,
   TPessoaJuridicaWithSociosOutput,
   TPjAdminsWithPfOutput,
 } from './types/pjusers.types';
+import { AuditService } from 'src/audit/audit.service';
 
 @Injectable()
 export class PJUsersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly auditService: AuditService,
+  ) { }
 
   async getPartnerId(userId: string): Promise<number> {
     return (
@@ -119,16 +123,72 @@ export class PJUsersService {
     return admins.map((id) => id.idCorporateAdmin);
   }
 
-  async deleteInstitutionalAdmins(ids: Array<string>) {
-    await this.prismaService.pJAdmins.deleteMany({
+  async deleteInstitutionalAdmins(actorId: string, ids: Array<string>) {
+    const adminsToDelete = await this.prismaService.pJAdmins.findMany({
+      where: { idAdmin: { in: ids } },
+      include: { pf: { select: { nome: true, email: true, CPF: true } } },
+    });
+
+    const deletedAdmins = await this.prismaService.pJAdmins.deleteMany({
       where: { idAdmin: { in: ids } },
     });
+
+    if (adminsToDelete.length > 0) {
+      await this.auditService.log({
+        action: AuditAction.DELETE,
+        actorId: actorId, // Quem deletou (User Logado)
+        pjId: adminsToDelete[0].idPJ,
+        targetEntity: 'PJAdmins',
+        targetId: ids.join(','),
+        description: `Cancelamento de ${deletedAdmins.count} usuários institucionais (${adminsToDelete
+          .map((a) => a.pf.nome)
+          .join(', ')})`,
+        metadata: {
+          deletedCount: deletedAdmins.count,
+          deletedUsers: adminsToDelete.map((a) => ({
+            idAdmin: a.idAdmin,
+            name: a.pf.nome,
+            email: a.pf.email,
+            cpf: a.pf.CPF,
+            role: a.role,
+          })),
+        },
+      });
+    }
   }
 
-  async deleteCorporateAdmins(ids: Array<string>) {
-    await this.prismaService.corporateAdmins.deleteMany({
+  async deleteCorporateAdmins(actorId: string, ids: Array<string>) {
+    const adminsToDelete = await this.prismaService.corporateAdmins.findMany({
+      where: { idCorporateAdmin: { in: ids } },
+      include: { pf: { select: { nome: true, email: true, CPF: true } } },
+    });
+
+    const deletedAdmins = await this.prismaService.corporateAdmins.deleteMany({
       where: { idCorporateAdmin: { in: ids } },
     });
+
+    if (adminsToDelete.length > 0) {
+      await this.auditService.log({
+        action: AuditAction.DELETE,
+        actorId: actorId,
+        pjId: adminsToDelete[0].idPJ,
+        targetEntity: 'CorporateAdmins',
+        targetId: ids.join(','),
+        description: `Cancelamento de ${deletedAdmins.count} usuários corporativos (${adminsToDelete
+          .map((a) => a.pf.nome)
+          .join(', ')})`,
+        metadata: {
+          deletedCount: deletedAdmins.count,
+          deletedUsers: adminsToDelete.map((a) => ({
+            idAdmin: a.idCorporateAdmin,
+            name: a.pf.nome,
+            email: a.pf.email,
+            cpf: a.pf.CPF,
+            role: a.role,
+          })),
+        },
+      });
+    }
   }
 
   async updateInstitutionalAdminRole(admins: Array<{ adminId: string; role: PJAdminRoleEnum }>) {

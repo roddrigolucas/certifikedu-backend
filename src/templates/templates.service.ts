@@ -10,11 +10,11 @@ import {
 } from './types/template.types';
 import { ICreateCertificatePreview, ICreateTemplateLambda } from '../requests/requests.interfaces';
 import { S3Service } from '../aws/s3/s3.service';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { BackgroundsService } from '../backgrounds/background.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { FontsService } from '../fonts/fonts.service';
-import { TQueryPromise } from '../_aux/types/_aux.types';
+import { TQueryPromise } from '../common/types/common.types';
 import { QRCodePositionEnum, User } from '@prisma/client';
 import { IStudentInfo } from './interfaces/templates.interfaces';
 import { randomUUID } from 'crypto';
@@ -239,11 +239,11 @@ export class TemplatesService {
     }
 
     if (templateData?.fontDesc?.connect?.fontId) {
-      lambdaData.font_description_url = await this.fontsService.getFontUrlById(templateData.fontDesc.connect.fontId);
+      lambdaData.font_description_url = `https://certifikedu-nest-files.s3.us-east-1.amazonaws.com/${await this.fontsService.getFontUrlById2(templateData.fontDesc.connect.fontId)}`;
     }
 
     if (templateData?.fontName?.connect?.fontId) {
-      lambdaData.font_description_url = await this.fontsService.getFontUrlById(templateData.fontName.connect.fontId);
+      lambdaData.font_description_url = await `https://certifikedu-nest-files.s3.us-east-1.amazonaws.com/${await this.fontsService.getFontUrlById2(templateData.fontName.connect.fontId)}`;
     }
 
     await this.requestsService.getOverlapImages(lambdaData);
@@ -387,11 +387,11 @@ export class TemplatesService {
     }
 
     if (templateData?.fontDesc?.connect?.fontId) {
-      lambdaData.font_description_url = `${this.auxService.certifikeduImages}/${await this.fontsService.getFontUrlById(templateData.fontDesc.connect.fontId)}`;
+      lambdaData.font_description_url = `https://certifikedu-nest-files.s3.us-east-1.amazonaws.com/${await this.fontsService.getFontUrlById2(templateData.fontDesc.connect.fontId)}`;
     }
 
     if (templateData?.fontName?.connect?.fontId) {
-      lambdaData.font_name_url = `${this.auxService.certifikeduImages}/${await this.fontsService.getFontUrlById(templateData.fontName.connect.fontId)}`;
+      lambdaData.font_name_url = `https://certifikedu-nest-files.s3.us-east-1.amazonaws.com/${await this.fontsService.getFontUrlById2(templateData.fontName.connect.fontId)}`;
     }
 
     await this.requestsService.getOverlapImages(lambdaData);

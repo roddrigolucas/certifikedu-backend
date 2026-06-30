@@ -1,0 +1,30 @@
+model AuditLog {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  action      AuditAction
+  description String?
+
+  actorId String
+  actor   User   @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  pjId String?
+  pj   PessoaJuridica? @relation(fields: [pjId], references: [idPJ], onDelete: Cascade)
+
+  targetEntity String // e.g., "Certificate", "PJAdmin", "User"
+  targetId     String
+
+  metadata Json? @db.JsonB
+
+  @@index([pjId])
+  @@index([actorId])
+  @@map("audit_logs")
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  EXPORT_REPORT
+  APPROVE_CERTIFICATE
+}

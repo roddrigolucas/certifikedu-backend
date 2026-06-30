@@ -51,6 +51,9 @@ model User {
 
   sessions Session[]
 
+  gamificationProfile GamificationProfile?
+  auditLogs           AuditLog[]
+
   @@unique([id, numeroDocumento, email])
   @@map("users")
 }

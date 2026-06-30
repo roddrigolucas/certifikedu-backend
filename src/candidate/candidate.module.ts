@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AbilitiesModule } from '../abilities/abilities.module';
-import { AuxModule } from '../_aux/_aux.module';
+import { AuxModule } from '../common/common.module';
 import { RequestsModule } from '../requests/requests.module';
 import { CandidateController } from './candidate.controller';
 import { CandidateService } from './candidate.service';

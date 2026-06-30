@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CertificateStatus, Prisma, UserStatus, UserType } from '@prisma/client';
+import { AuditAction, CertificateStatus, Prisma, UserStatus, UserType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { createHash } from 'crypto';
 import {
@@ -19,7 +19,7 @@ import {
   TUserWithPfAndProfileOutput,
   TUserWithPjAndLtiAndKeysOutput,
 } from './types/user.types';
-import { TPessoaFisicaOutput } from '../_aux/types/_aux.types';
+import { TPessoaFisicaOutput } from '../common/types/common.types';
 import {
   TCorporateAdminsWithPfOutput,
   TCorporateAdminsWithPjOutput,
@@ -33,6 +33,7 @@ import { IResponseUsersRawInfo } from '../auth/interfaces/auth.interfaces';
 import { UserImportsListDto } from '../pjinfo/dtos/students/students-input.dto';
 import { CoursesService } from '../courses/courses.service';
 import { SchoolsService } from '../schools/schools.service';
+import { AuditService } from 'src/audit/audit.service';
 
 @Injectable()
 export class UsersService {
@@ -40,7 +41,8 @@ export class UsersService {
     private readonly prismaService: PrismaService,
     private readonly schoolsService: SchoolsService,
     private readonly coursesService: CoursesService,
-  ) {}
+    private readonly auditService: AuditService,
+  ) { }
 
   async getUserById(userId: string): Promise<TUserOutput> {
     return await this.prismaService.user.findUnique({
@@ -328,29 +330,10 @@ export class UsersService {
     });
   }
 
-  async updatePfInfo(userId: string, data: TPessoaFisicaUpdateInput & { email?: string }): Promise<TPessoaFisicaOutput> {
-    const pfData = { ...data };
-    
-    // If email is provided and being updated, we must update the User model as well
-    if (pfData.email) {
-      // Find current user to check if email actually changed
-      const currentUser = await this.prismaService.user.findUnique({
-        where: { id: userId },
-      });
-      
-      if (currentUser && currentUser.email !== pfData.email) {
-        await this.prismaService.user.update({
-          where: { id: userId },
-          data: { email: pfData.email as string },
-        });
-      }
-    }
-
-    delete pfData.email;
-
+  async updatePfInfo(userId: string, data: TPessoaFisicaUpdateInput): Promise<TPessoaFisicaOutput> {
     return await this.prismaService.pessoaFisica.update({
       where: { userId: userId },
-      data: pfData as TPessoaFisicaUpdateInput,
+      data: data,
     });
   }
 
@@ -383,12 +366,20 @@ export class UsersService {
     });
   }
 
+  async updateUserEmail(userId: string, newEmail: string): Promise<void> {
+    await this.prismaService.user.update({
+      where: { email: userId },
+      data: { email: newEmail },
+    });
+  }
+
   async deleteUser(userId: string) {
     await this.prismaService.user.delete({
       where: { id: userId },
     });
   }
 
+  // TODO - Add audit log
   async associateUsersToSchool(
     schoolId: string,
     usersDocuments: Array<string>,
@@ -431,19 +422,40 @@ export class UsersService {
   async disassociateUsersFromSchool(
     schoolId: string,
     usersDocuments: Array<string>,
+    actorId: string,
   ): Promise<Array<TUserPfWithSchoolsOutput>> {
     const usersRecords = await this.getUsersPfByDocumentNumbers(usersDocuments);
 
-    const disconnects = usersRecords.map((user) => {
-      if (user.pessoaFisica.schools.map((school) => school.schoolId).includes(schoolId)) {
-        return { idPF: user.pessoaFisica.idPF };
-      }
-    });
+    const disconnects = usersRecords
+      .filter(user => user.pessoaFisica)
+      .map((user) => {
+        if (user.pessoaFisica.schools.map((school) => school.schoolId).includes(schoolId)) {
+          return { idPF: user.pessoaFisica.idPF };
+        }
+      })
+      .filter(id => id !== undefined);
 
     if (disconnects.length > 0) {
       await this.prismaService.schools.update({
         where: { schoolId: schoolId },
         data: { students: { disconnect: disconnects } },
+      });
+
+      await this.auditService.log({
+        action: AuditAction.DELETE, 
+        actorId: actorId, 
+        pjId: schoolId,   
+        targetEntity: 'User (Estudante)',
+        targetId: disconnects.map(d => d.idPF).join(','),
+        description: `Desvinculou ${disconnects.length} alunos da escola`,
+        metadata: {
+          removedCount: disconnects.length,
+          removedDocuments: usersDocuments,
+          snapshot: usersRecords.map(u => ({
+            name: u.pessoaFisica?.nome,
+            email: u.email
+          }))
+        }
       });
     }
 

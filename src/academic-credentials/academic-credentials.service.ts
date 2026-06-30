@@ -13,5 +13,4 @@ export class AcademicCredentialsService {
       data: data,
     });
   }
-
 }

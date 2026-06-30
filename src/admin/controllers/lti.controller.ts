@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from '../../auth/guard';
 import { Roles } from '../../users/decorators';
 import { RolesGuard } from '../../users/guards';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { UsersService } from '../../users/users.service';
 
 @ApiTags('ADMIN -- LTI')

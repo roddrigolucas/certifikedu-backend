@@ -1,6 +1,6 @@
 import { EducationLevelEnum } from "@prisma/client";
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsDate, IsEnum, IsString, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsBoolean, IsDate, IsEnum, IsString, ValidateNested } from "class-validator";
 import { ResponseAcademicCredentialsAPIDto } from "../academic-credentias/academic-credentials-response.dto";
 import { ResponseCurriculumAPIDto } from "../curriculums/curriculums-response.dto";
 import { ResponseTemplateDataAPIDto } from "../templates/templates-response.dto";
@@ -14,6 +14,9 @@ export class ResponseCourseAPIDto {
 
   @IsDate()
   updatedAt: Date;
+
+  @IsBoolean()
+  isAxis: boolean;
 
   @IsArray()
   @ArrayMinSize(1)

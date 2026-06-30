@@ -43,6 +43,7 @@ model PessoaJuridica {
   rawPJ RawPJ[]
 
   learningPaths LearningPaths[]
+  auditLogs     AuditLog[]
 
   @@unique([userId, CNPJ, email])
   @@unique([userId, idPJ])

@@ -37,7 +37,7 @@ import { CanvasModule } from './canvas/canvas.module';
 import { CorporateModule } from './corporate/corporate.module';
 import { CandidateModule } from './candidate/candidate.module';
 import { CanvasPlatformModule } from './canvas/platform/canvas-platform.module';
-import { AuxModule } from './_aux/_aux.module';
+import { AuxModule } from './common/common.module';
 import { PagarmeModule } from './payments/pagarme/pagarme.module';
 import { PdiModule } from './pdi/pdi.module';
 import { ResumesModule } from './resumes/resumes.module';
@@ -45,6 +45,8 @@ import { LearningPathsModule } from './learning-paths/path.module';
 import { EventsModule } from './events/events.module';
 import { MetabaseModule } from './metabase/metabase.module';
 import { InverseModule } from './inverse/inverse.module';
+import { LevelingModule } from './leveling/leveling.module';
+import { AuditModule } from './audit/audit.module';
 
 @Module({
   providers: [
@@ -92,6 +94,8 @@ import { InverseModule } from './inverse/inverse.module';
     EventsModule,
     MetabaseModule,
     InverseModule,
+    LevelingModule,
+    AuditModule,
   ],
   controllers: [AppController],
 })
@@ -103,4 +107,4 @@ export class AppModule {
       .apply(LoggerMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
-}
+}// Trigger reload after env update

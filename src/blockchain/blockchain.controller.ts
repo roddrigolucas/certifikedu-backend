@@ -13,14 +13,13 @@ import { Roles } from '../users/decorators';
 import { RolesGuard } from '../users/guards';
 import { BlockchainService } from './blockchain.service';
 import { ApiTags } from '@nestjs/swagger';
-import { QldbService } from '../aws/qldb/qldb.service';
 import { ResponseBlockchainDto } from './dtos/blockchain-response.dto';
 
 @ApiTags('PF -- Blockchain')
 @Controller('blockchain')
 @UseGuards(JwtGuard)
 export class BlockchainController {
-  constructor(private readonly blockchainService: BlockchainService, private readonly qldbService: QldbService) {}
+  constructor(private readonly blockchainService: BlockchainService) {}
 
   @UseGuards(RolesGuard)
   @Roles('enabled')
@@ -45,11 +44,11 @@ export class BlockchainController {
 
     const certificateData = await this.blockchainService.createCertificateInfoForLedger(certificate, userId);
 
-    const documentId = await this.qldbService.insertCertificateOnLedger(certificateData);
+    //const documentId = await this.qldbService.insertCertificateOnLedger(certificateData);
 
-    await this.blockchainService.updateInternalCertificateBlockchainStatus(certificate.certificateId, documentId);
+    //await this.blockchainService.updateInternalCertificateBlockchainStatus(certificate.certificateId, documentId);
 
-    return { documentId: documentId };
+    return { documentId: 'QLDB_DISABLED_TEMPORARILY' }; 
   }
 
   @UseGuards(RolesGuard)
@@ -70,6 +69,7 @@ export class BlockchainController {
       throw new ForbiddenException('this user does not own this certificate');
     }
 
-    return this.qldbService.getLedgerEntryInfo(certificate.blockchainUrl);
+    //return this.qldbService.getLedgerEntryInfo(certificate.blockchainUrl);
+    throw new BadRequestException('Blockchain verification is temporarily disabled due to migration.');
   }
 }

@@ -11,14 +11,14 @@ export class MetabaseService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
     private readonly smsService: SecretManagerService,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     this.METABASE_SITE_URL = this.configService.get('METABASE_SITE_URL');
     this.METABASE_SECRET_KEY = await this.smsService.getSecretFromKey('METABASE_SECRET_KEY');
 
-    if (!this.METABASE_SECRET_KEY || !this.METABASE_SITE_URL) {
-      console.warn('[Metabase] METABASE_SECRET_KEY or METABASE_SITE_URL not configured. Metabase reports will be disabled.');
+    if (!this.METABASE_SECRET_KEY || !this.METABASE_SECRET_KEY) {
+      throw new Error('METABASE_INFORMATION_NOT_PROVIDED');
     }
   }
 

@@ -1,4 +1,5 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
+import { QRCodePositionEnum } from "@prisma/client";
+import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength } from "class-validator";
 
 
 export class CreateOrUpdateTemplateAPIDto {
@@ -42,4 +43,8 @@ export class CreateOrUpdateTemplateAPIDto {
   @IsString()
   @IsOptional()
   expiresAt?: string;
+
+  @IsEnum(QRCodePositionEnum)
+  @IsOptional()
+  qrCodePosition?: QRCodePositionEnum;
 }

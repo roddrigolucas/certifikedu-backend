@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuxModule } from '../_aux/_aux.module';
+import { AuxModule } from '../common/common.module';
 import { AWSModule } from '../aws/aws.module';
 import { BackgroundsService } from './background.service';
 

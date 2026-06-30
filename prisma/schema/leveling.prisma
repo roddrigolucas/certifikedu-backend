@@ -1,0 +1,82 @@
+model GamificationProfile {
+  id       String   @id @default(uuid())
+  updateAt DateTime @updatedAt
+
+  currentXP    Int    @default(0)
+  currentLevel Int    @default(1)
+  currentTitle String @default("Iniciante")
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  missionProgress UserMissionProgress[]
+  xpHistory       XpHistory[]
+}
+
+model XpHistory {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  actionDescription String
+  xpEarned          Int
+
+  profileId String
+  profile   GamificationProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model MissionTemplate {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String
+  description String
+  xpReward    Int
+  isActive    Boolean @default(true)
+
+  badgeUrl String?
+
+  category GamificationCategory @default(MISSION)
+
+  type          MissionTriggerType
+  requiredCount Int                @default(1)
+  referenceId   String?
+
+  schoolId String?
+  school   Schools? @relation(fields: [schoolId], references: [schoolId], onDelete: Cascade)
+
+  userProgress UserMissionProgress[]
+}
+
+model UserMissionProgress {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status       MissionStatus @default(IN_PROGRESS)
+  currentCount Int           @default(0)
+
+  profileId String
+  profile   GamificationProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  missionId String
+  mission   MissionTemplate @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, missionId])
+}
+
+enum MissionTriggerType {
+  CERTIFICATE_EMISSION
+  COURSE_COMPLETION
+  PATH_COMPLETION
+}
+
+enum GamificationCategory {
+  MISSION
+  ACHIEVEMENT
+}
+
+enum MissionStatus {
+  IN_PROGRESS
+  COMPLETED
+}

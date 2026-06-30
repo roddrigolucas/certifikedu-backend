@@ -15,12 +15,22 @@ async function main() {
         email,
         numeroDocumento: '00000000000',
         type: 'PF',
+        status: 'ENABLED',
+        freeCertificates: true,
         tempName: 'Rodrigo Lucas'
       }
     });
     console.log('User created:', user.email);
   } else {
-    console.log('User already exists in Prisma:', user.email);
+    // Ensure existing user has correct status and freeCertificates
+    user = await prisma.user.update({
+      where: { email },
+      data: {
+        status: 'ENABLED',
+        freeCertificates: true,
+      }
+    });
+    console.log('User updated in Prisma:', user.email);
   }
 
   // 2. Create the credentials in auth_credentials

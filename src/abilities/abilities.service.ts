@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TQueryPromise } from '../_aux/types/_aux.types';
+import { TQueryPromise } from '../common/types/common.types';
 import { PrismaService } from '../prisma/prisma.service';
 import { IAbility, IAbilityInfo } from './interfaces/abilities.interfaces';
 import { TAbilityOnReviewCreateInput, TAbilityOnReviewOutput } from './types/abilities-on-review.types';
@@ -12,6 +12,7 @@ import {
   TAbilityOnCertificateOutput,
   TCategoryMetricsOutput,
 } from './types/abilities.types';
+import { RecommendationDto } from './dtos/abilities-response.dto';
 
 @Injectable()
 export class AbilitiesService {
@@ -254,5 +255,70 @@ export class AbilitiesService {
     });
 
     return newAbility.habilidadeId;
+  }
+
+  async getRecommendations(text: string): Promise<Array<RecommendationDto>> {
+    if (!text || text.trim() === '') {
+      return Promise.resolve([]);
+    }
+
+    // Remove punctuation and convert to lowercase keep accented characters
+    const words = text
+      .toLowerCase()
+      .replace(/[^\w\sÀ-ÿ]/g, '')
+      .split(/\s+/);
+
+    // Filter out Stop Words to avoid bad matches like "de", "com"
+    const stopWords = [
+      'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos', 'nas',
+      'para', 'por', 'com', 'um', 'uma', 'uns', 'umas', 'que', 'e', 'a', 'o',
+      'ao', 'aos', 'seu', 'sua', 'seus', 'suas', 'sobre', 'pelo', 'pela'
+    ];
+
+    const significantKeywords = words.filter(word => !stopWords.includes(word) && word.length > 3);
+    if (significantKeywords.length === 0) {
+      return Promise.resolve([]);
+    }
+
+    // Limit to top 10 significant keywords
+    const searchTerm = significantKeywords
+      .sort((a, b) => b.length - a.length)
+      .slice(0, 10)
+
+    const candidates = await this.prismaService.abilities.findMany({
+      where: {
+        isValid: true,
+        OR: significantKeywords.map((keyword) => ({
+          habilidade: {
+            contains: keyword,
+            mode: 'insensitive',
+          },
+        })),
+      },
+      take: 50,
+    });
+
+    const rankedCandidates = candidates.map((ability) => {
+      let score = 0;
+      const abilityName = ability.habilidade.toLowerCase();
+
+      searchTerm.forEach((keyword) => {
+        if (abilityName.includes(keyword)) {
+          score += keyword.length;
+        }
+      });
+
+      return { ...ability, score };
+    });
+
+    return rankedCandidates
+      .filter(ability => ability.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map((ability) => ({
+        label: ability.habilidade,
+        value: ability.habilidadeId,
+        category: ability.tema,
+      }));
   }
 }

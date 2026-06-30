@@ -14,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { BackgroundsService } from '../../backgrounds/background.service';
 import { SchoolsService } from '../../schools/schools.service';
 import { TTemplateCreateInput, TTemplateSchoolAbilitiesCourseData } from '../../templates/types/template.types';
@@ -24,6 +24,7 @@ import { TemplatesService } from '../../templates/templates.service';
 import { CreateOrUpdateTemplateAPIDto } from '../dtos/templates/templates-input.dto';
 import { ResponseTemplateDataAPIDto, ResponseTemplatesAPIDto } from '../dtos/templates/templates-response.dto';
 import { ApiKeyGuard } from '../guards/api_secret.guard';
+import { QRCodePositionEnum } from '@prisma/client';
 
 @ApiTags('API Templates')
 @UseGuards(ApiKeyGuard)
@@ -34,7 +35,7 @@ export class TemplatesAPIController {
     private readonly auxService: AuxService,
     private readonly schoolsService: SchoolsService,
     private readonly backgroundsService: BackgroundsService,
-  ) {}
+  ) { }
 
   @Post('templates/create')
   @UseInterceptors(FileInterceptor('imageLogo'))
@@ -52,6 +53,7 @@ export class TemplatesAPIController {
     } catch {
       throw new BadRequestException('Invalid hoursWorkload value');
     }
+
     const validAbilitiesIds = await this.auxService.getValidAbilityIds(dto.abilities);
 
     if (validAbilitiesIds.length === 0) {
@@ -95,11 +97,9 @@ export class TemplatesAPIController {
       school: { connect: { schoolId: dto.schoolId } },
       backgroundImages: { connect: { backgroundId: backgroundImage.backgroundId } },
       habilidades: { create: validAbilitiesIds.map((abilityId: string) => ({ habilidadeId: abilityId })) },
+      qrCodePosition: dto.qrCodePosition ?? QRCodePositionEnum.NULL,
+      courses: { create: dto.courseId ? { courseId: dto.courseId } : undefined },
     };
-
-    if (dto?.courseId) {
-      templateInfo.courses.create = { courseId: dto.courseId };
-    }
 
     if (imageLogo) {
       templateInfo.logoImage = await this.templateService.uploadLogoImage(

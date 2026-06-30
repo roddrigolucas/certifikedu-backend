@@ -8,8 +8,8 @@ import {
 import { PagarmeCustomerService } from '../pagarme/services/pagarme-customer.service';
 import { AddressService } from './address.service';
 import { TCustomerCreateInput, TCustomerOutput, TCustomerUpdateInput } from '../types/customer.types';
-import { TPessoaFisicaOutput } from '../../_aux/types/_aux.types';
-import { AuxService } from '../../_aux/_aux.service';
+import { TPessoaFisicaOutput } from '../../common/types/common.types';
+import { AuxService } from '../../common/common.service';
 
 @Injectable()
 export class CustomerService {

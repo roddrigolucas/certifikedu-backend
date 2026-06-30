@@ -27,7 +27,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { SESService } from '../aws/ses/ses.service';
 import { FontsService } from 'src/fonts/fonts.service';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { AbilitiesService } from '../abilities/abilities.service';
 import { SecretManagerService } from '../aws/secrets-manager/secrets-manager.service';
 import { PaymentsService } from '../payments/services/payments.service';
@@ -214,6 +214,7 @@ export class CertificatesController {
               certificateId: certificate.certificateId,
               certificateName: certificate.name,
               certificateDescription: certificate.description,
+              certificatePicture: certificate.certificatePicture,
               certificateAbilities: certificate.habilidades.map((ability) => {
                 return {
                   ability: ability.habilidade.habilidade,

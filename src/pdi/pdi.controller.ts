@@ -15,7 +15,7 @@ import {
 import { PdiService } from './pdi.service';
 import { GetUser } from 'src/auth/decorators';
 import { PdiStatus } from '@prisma/client';
-import { AuxService } from 'src/_aux/_aux.service';
+import { AuxService } from 'src/common/common.service';
 import { JwtGuard } from 'src/auth/guard';
 import { Roles } from '../users/decorators';
 import { RolesGuard } from '../users/guards';
@@ -30,10 +30,14 @@ import * as jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
 import { PdiAiService } from './pdi-ai.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Logger } from '@nestjs/common';
+import axios from 'axios';
 
 @ApiTags('PDI')
 @Controller('pdi')
 export class PdiController {
+  private readonly logger = new Logger(PdiController.name);
+
   constructor(
     private readonly pdiService: PdiService,
     private readonly pdiAiService: PdiAiService,
@@ -95,29 +99,62 @@ export class PdiController {
       throw new NotFoundException();
     }
 
+    const isPdiTextApproved = await this.requestsService.getApproveText({ texts: { ...dto } }).catch(() => true);
+
+    if (!isPdiTextApproved) {
+      throw new BadRequestException('PDI Text was not approved');
+    }
+
     const pdiId = randomUUID();
+    let steps: any[] = [];
 
-    // 1. Fetch user certificates
-    const certificates = await this.prisma.certificates.findMany({
-      where: { receptorId: userId },
-      include: {
-        habilidades: {
-          include: { habilidade: true }
-        }
+    // 1. Try FastAPI Python LLM Service
+    try {
+      const userContent = [
+        dto.goals || '',
+        `${dto.previousEducation || 'Nenhuma'} (Disponibilidade diária: ${dto.dailyTime || ''})`
+      ];
+
+      const url = `${this.auxService.pdiServiceUrl}/certifik_llm_v1/`;
+      this.logger.log(`Calling FastAPI PDI service at: ${url}`);
+      
+      const response = await axios.post(url, userContent, { timeout: 30000 });
+      if (response?.data?.text) {
+        steps = JSON.parse(response.data.text);
+        this.logger.log('PDI roadmap generated successfully using FastAPI service.');
       }
-    });
+    } catch (err) {
+      this.logger.warn('Failed to call FastAPI PDI service, falling back to local Gemini generator...', err.message);
+    }
 
-    // 2. Call local AI generator (synchronous delay 5-10s expected)
-    const generatedNodes = await this.pdiAiService.generatePdiNodes(
-      dto.title,
-      dto.goals,
-      dto.skills,
-      dto.previousEducation,
-      dto.dailyTime,
-      certificates
-    );
+    // 2. Fallback to local Gemini PdiAiService
+    if (!steps || steps.length === 0) {
+      try {
+        const certificates = await this.prisma.certificates.findMany({
+          where: { receptorId: userId },
+          include: {
+            habilidades: {
+              include: { habilidade: true }
+            }
+          }
+        });
 
-    // 3. Save initial PDI object
+        this.logger.log('Invoking local Gemini PdiAiService...');
+        steps = await this.pdiAiService.generatePdiNodes(
+          dto.title,
+          dto.goals,
+          dto.skills,
+          dto.previousEducation,
+          dto.dailyTime,
+          certificates
+        );
+      } catch (err) {
+        this.logger.error('Failed to generate PDI nodes from local Gemini generator', err);
+        throw new ServiceUnavailableException('Falha ao gerar o PDI com Inteligência Artificial. Tente novamente mais tarde.');
+      }
+    }
+
+    // 3. Save PDI and nodes to database
     const data: TPdiCreateInput = {
       pdiId: pdiId,
       title: dto.title,
@@ -131,11 +168,8 @@ export class PdiController {
 
     let pdi = await this.pdiService.createPdi(data);
 
-    // 4. Save generated AI nodes
-    if (generatedNodes && generatedNodes.length > 0) {
-      await this.pdiService.createPdiNodes(pdiId, generatedNodes);
-      
-      // refetch the PDI with included nodes
+    if (steps && steps.length > 0) {
+      await this.pdiService.createPdiNodes(pdiId, steps);
       pdi = await this.pdiService.getPdi(pdiId);
     }
 

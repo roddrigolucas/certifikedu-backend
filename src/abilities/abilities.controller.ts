@@ -5,15 +5,16 @@ import { RolesGuard } from '../users/guards';
 import { AbilitiesService } from './abilities.service';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateOrUpdateAbilityDto } from './dtos/abilities-input.dto';
-import { MUDARResponseAbilitiesDto, ResponseAbilitiesDto, ResponseAbilityDto } from './dtos/abilities-response.dto'
+import { AbilitiesRecommendationsResponseDto, MUDARResponseAbilitiesDto, ResponseAbilitiesDto, ResponseAbilityDto } from './dtos/abilities-response.dto'
 import { TAbilityOnReviewCreateInput } from './types/abilities-on-review.types';
 import { GetUser } from '../auth/decorators';
+import { GetRecommnedationsDto } from './dtos/abilities-recommendations.dto';
 
 @ApiTags('PF User -- Abilities')
 @Controller('abilities')
 @UseGuards(JwtGuard)
 export class AbilitiesController {
-  constructor(private readonly abilitiesService: AbilitiesService) {}
+  constructor(private readonly abilitiesService: AbilitiesService) { }
 
   @UseGuards(RolesGuard)
   @Roles('enabled')
@@ -95,5 +96,16 @@ export class AbilitiesController {
     const ability = await this.abilitiesService.createAbilityOnReview(data);
 
     return { ability: ability.habilidade, category: ability.tema };
+  }
+
+  @UseGuards(RolesGuard)
+  @Roles('enabled')
+  @Post('recommend')
+  async getAbilitiesRecommendations(
+    @Body() dto: GetRecommnedationsDto,
+  ): Promise<AbilitiesRecommendationsResponseDto> {
+    const recommendations = await this.abilitiesService.getRecommendations(dto.text);
+
+    return { abilities: recommendations };
   }
 }

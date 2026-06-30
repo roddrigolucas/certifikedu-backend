@@ -1,9 +1,3 @@
-/**
- * RequestsService — Serviço de comunicação com lambdas/microserviços externos.
- *
- * Versão cloud-free: remove assinatura AWS4 e faz chamadas HTTP diretas.
- * Para dev local, as lambdas podem ser substituídas por mocks ou serviços locais.
- */
 import {
   HttpException,
   HttpStatus,
@@ -41,8 +35,9 @@ import { HttpService } from '@nestjs/axios';
 import { CustomLogger } from '../logger/custom-logger.service';
 import { STSService } from '../aws/sts/sts.service';
 import { randomUUID } from 'crypto';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { ICertificateEventSQS } from 'src/certificates/interfaces/certificates.interfaces';
+import * as aws4 from 'aws4';
 
 @Injectable()
 export class RequestsService implements OnModuleInit {
@@ -54,24 +49,41 @@ export class RequestsService implements OnModuleInit {
     private readonly loggerService: CustomLogger,
     private readonly stsService: STSService,
     private readonly auxService: AuxService,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     this.axiosClient = this.httpService.axiosRef;
 
-    // Em modo local, usa URL configurável ou localhost
-    const lambdaUrl = this.config.get('LAMBDA_BASE_URL') || 'http://localhost:3013';
-    this.axiosClient.defaults.baseURL = lambdaUrl;
+    this.axiosClient.defaults.baseURL = await this.config.getOrThrow('LAMBDA_BASE_URL');
 
     if (this.auxService.localLambda) {
       this.axiosClient.defaults.baseURL = `http://192.168.1.101:8080`;
     }
 
-    // Interceptor de request — sem assinatura AWS4, apenas logging
     this.axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       const lambdaRequestId = randomUUID();
       config.headers['_requestId'] = lambdaRequestId;
-      config.headers['Content-Type'] = 'application/json';
+
+      const url = new URL(config.url!, config.baseURL);
+      const requestPayload = {
+        host: url.hostname,
+        path: url.pathname,
+        method: config.method?.toUpperCase() ?? 'POST',
+        body: config.data ? JSON.stringify(config.data) : undefined,
+        headers: { 'Content-Type': 'application/json' },
+        service: 'execute-api',
+        region: 'us-east-1',
+      };
+
+      const credentials = await this.stsService.getSignedCredentials();
+
+      aws4.sign(requestPayload, credentials);
+
+      config.headers['X-Amz-Security-Token'] = requestPayload.headers['X-Amz-Security-Token'];
+      config.headers['X-Amz-Date'] = requestPayload.headers['X-Amz-Date'];
+      config.headers['Content-Length'] = requestPayload.headers['Content-Length'];
+      config.headers['Authorization'] = requestPayload.headers['Authorization'];
+      config.headers['Host'] = requestPayload.headers['Host'];
 
       this.loggerService.info({
         message: `Lambda Request`,
@@ -85,7 +97,6 @@ export class RequestsService implements OnModuleInit {
       return config;
     });
 
-    // Interceptor de response — mantém lógica original
     this.axiosClient.interceptors.response.use(
       (response: AxiosResponse) => {
         this.loggerService.info({
@@ -146,6 +157,7 @@ export class RequestsService implements OnModuleInit {
         attempts++;
         const response = await this.axiosClient.post(lambda, data);
         success = true;
+
         return response.data;
       } catch (err) {
         if (attempts >= tries) {
@@ -163,7 +175,12 @@ export class RequestsService implements OnModuleInit {
 
   async getApproveText(data: ILambdaValidateText): Promise<boolean> {
     const response = await this.axiosClient.post('/approveTextAutomatically', data);
-    return response.status === 200;
+
+    if (response.status !== 200) {
+      return false;
+    }
+
+    return true;
   }
 
   async bakeOpenBadge(data: IBakeOpenBadge) {
@@ -180,12 +197,14 @@ export class RequestsService implements OnModuleInit {
 
   async resumePdfLambda(data: ICreateResumePdfLambda): Promise<Boolean> {
     const response = await this.axiosClient.post<IResponseResumePdf>('/SaveEmailTemplate', data);
+
     return response.data?.success ?? false;
   }
 
   async jobOpportunityLambda(data: INewJobLambda): Promise<Array<IJobCandidateResponse>> {
     if (this.auxService.localLambda) {
       const response = await this.requestWithRetry<{ body: string }>('/GenerateEmbeddingsProfessionalProfile', data);
+
       return JSON.parse(response.body).data as Array<IJobCandidateResponse>;
     }
 
@@ -193,6 +212,7 @@ export class RequestsService implements OnModuleInit {
       '/GenerateEmbeddingsProfessionalProfile',
       data,
     );
+
     return response.data;
   }
 
@@ -212,12 +232,14 @@ export class RequestsService implements OnModuleInit {
     if (!this.auxService.localLambda) {
       return null;
     }
+
     return await this.axiosClient.post('/SQS', data);
   }
 
   async triggerPdiService(data: ICreatePdi): Promise<boolean> {
     try {
       await this.requestWithRetry(`${this.auxService.pdiServiceUrl}/generate_plan`, data);
+
       return true;
     } catch (err) {
       return false;

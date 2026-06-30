@@ -25,6 +25,18 @@ export class FontsService {
     return resp.fontId;
   }
 
+  async getFontUrlById2(fontId: string): Promise<string> {
+    const resp = await this.prismaService.fonts.findUnique({
+      where: { fontId: fontId },
+    });
+
+    if (!resp) {
+      return null;
+    }
+
+    return resp.ttfUrl;
+  }
+
   async checkFontById(fontId: string): Promise<boolean> {
     const font = await this.prismaService.fonts.findUnique({
       where: { fontId: fontId },

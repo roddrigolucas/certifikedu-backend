@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { TUserOutput, TUserPfAndPjOutput, TUserPfOutput, TUserPjOutput } from '../users/types/user.types';
 import { TUserCreateInput } from './types/auth.types';
 import { TemplatesService } from '../templates/templates.service';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { CertificatesService } from '../certificates/certificates.service';
 import { IResponseUsersRawInfo } from './interfaces/auth.interfaces';
 import { SESService } from '../aws/ses/ses.service';
@@ -93,10 +93,18 @@ export class AuthService {
 
   async signUpPjUser(data: TUserCreateInput, passwordString: string): Promise<TUserPjOutput> {
     await this.createAuthCredentials(data.email, passwordString, 'PJ');
+    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
+    if (isMock) {
+      data.status = 'ENABLED';
+    }
     return this.createUserPjRecord(data);
   }
 
   async signUpPfUserWithoutCognito(data: TUserCreateInput) {
+    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
+    if (isMock) {
+      data.status = 'ENABLED';
+    }
     const user = await this.createUserPfRecord(data);
     const userName = user.tempName ?? '';
     await this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, userName);
@@ -121,10 +129,17 @@ export class AuthService {
 
   async signUpPfUser(data: TUserCreateInput, passwordString: string): Promise<TUserPfOutput> {
     await this.createAuthCredentials(data.email, passwordString, 'PF');
+    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
+    if (isMock) {
+      data.status = 'ENABLED';
+    }
     const user = await this.createUserPfRecord(data);
     await this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, user.pessoaFisica.nome);
     await this.templatesService.createWelcomeTemplateCertificate(user, user.pessoaFisica.nome);
     await this.paymentsService.addNewUserToPaymentsInfra(user);
+    if (isMock) {
+      await this.paymentsService.createRawUserSubscription(user.id);
+    }
     this.sesService.sendRawEmail(user.pessoaFisica.nome, user.email, user.pessoaFisica.telefone);
     return user;
   }
@@ -150,6 +165,10 @@ export class AuthService {
     const userName = data?.tempName ?? '';
     this.sesService.sendNewUserPassword(data.email, passwordString, userName);
 
+    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
+    if (isMock) {
+      data.status = 'ENABLED';
+    }
     const user = await this.createRawUserRecord(data);
     this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, userName);
     this.templatesService.createWelcomeTemplateCertificate(user, user.tempName ?? '');

@@ -16,7 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { CertificateStatus, User } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { AbilitiesService } from '../../abilities/abilities.service';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { CertificatesService } from '../../certificates/certificates.service';
 import { TCertificatesCreateInput } from '../../certificates/types/certificates.types';
 import { SchoolsService } from '../../schools/schools.service';
@@ -26,6 +26,8 @@ import { DateFormat } from '../../interceptors/dateformat.interceptor';
 import { CreateNewCertificateAPIDto } from '../dtos/certificates/certificates-input.dto';
 import { ResponseCertificatesAPIDto } from '../dtos/certificates/certificates-response.dto';
 import { ApiKeyGuard } from '../guards/api_secret.guard';
+import { TemplatesService } from 'src/templates/templates.service';
+import { StudentInfoDto } from 'src/templates/dtos/templates-input.dto';
 
 @ApiTags('API Certificates')
 @Controller('api/v1')
@@ -37,6 +39,7 @@ export class CertificatesAPIController {
     private readonly auxService: AuxService,
     private readonly schoolsService: SchoolsService,
     private readonly abilitiesService: AbilitiesService,
+    private readonly templatesService: TemplatesService,
   ) {}
 
   @UseInterceptors(
@@ -46,7 +49,7 @@ export class CertificatesAPIController {
     ]),
   )
   @UseInterceptors(new DateFormat(['issuedAt', 'expiresAt', 'createdAt', 'updatedAt']))
-  @Post('certificate')
+  @Post('create/certificate')
   async createCertificateAPI(
     @GetUser() user: User,
     @UploadedFiles() files: { evidences?: Array<Express.Multer.File>; narrative?: Array<Express.Multer.File> },
@@ -170,6 +173,27 @@ export class CertificatesAPIController {
         };
       }),
     };
+  }
+
+  @UseInterceptors(new DateFormat(['issuedAt']))
+  @Post('/create/certificate/template')
+  async createTemplateCertificate(
+    @GetUser() user: User,
+    @Body() studentInfo: StudentInfoDto
+  ): Promise<{ success: boolean }> {
+    const template = await this.templatesService.getTemplateById(studentInfo.templateId);
+    if (!template) {
+      throw new NotFoundException('Template not found');
+    }
+
+    const pj = await this.auxService.getPjInfo(user.id);
+    if (template.school.ownerUserId !== pj.idPJ) {
+      throw new ForbiddenException('This user does not own this template');
+    }
+
+    await this.certificateService.issueCertificateFromTemplate(studentInfo, template);
+
+    return { success: true };
   }
 
   @UseInterceptors(new DateFormat(['issuedAt', 'expiresAt', 'createdAt', 'updatedAt']))

@@ -8,7 +8,7 @@ import { CandidateService } from '../candidate/candidate.service';
 import { S3Service } from '../aws/s3/s3.service';
 import { SQSService } from '../aws/sqs/sqs.service';
 import { AbilitiesService } from '../abilities/abilities.service';
-import { AuxService } from '../_aux/_aux.service';
+import { AuxService } from '../common/common.service';
 import { UsersService } from '../users/users.service';
 import { TTemplateSchoolAbilitiesOutput } from '../templates/types/template.types';
 import { IResponseOpenBadgeClass } from '../openbadge/interfaces/openbadge.interfaces';
@@ -63,7 +63,7 @@ export class CertificatesService {
     private readonly sqsService: SQSService,
     private readonly usersService: UsersService,
     private readonly learningPaths: LearningPathService,
-  ) {}
+  ) { }
 
   async getCertificateById(certificateId: string): Promise<TCertificatesWithAbilitiesAndHashOutput> {
     return await this.prismaService.certificates.findUnique({
@@ -318,9 +318,11 @@ export class CertificatesService {
 
     await Promise.all([
       this.createCertificatePicture(certificate, hash),
-      this.blockchainService.insertNewCertificate(certificate.emissorId, certificate),
       this.createCertificateOpenBadge(certificate, certificate.emissorEmail, school),
-      this.requestService.updateProfileAbilitiesLambda(updated_abilities),
+      // FIXME - Disables blockchain temporarily
+      // this.blockchainService.insertNewCertificate(certificate.emissorId, certificate),
+      // FIXME - Disables abilities update temporarily I need PDI fixed
+      // this.requestService.updateProfileAbilitiesLambda(updated_abilities),
     ]);
   }
 
@@ -343,7 +345,8 @@ export class CertificatesService {
 
     const promises = [];
     promises.push(this.createCertificatePicture(certificate, hash));
-    promises.push(this.blockchainService.insertNewCertificate(certificate.emissorId, certificate));
+    // FIXME - Disables blockchain temporarily
+    // promises.push(this.blockchainService.insertNewCertificate(certificate.emissorId, certificate));
 
     if (updated_abilities) {
       promises.push(this.requestService.updateProfileAbilitiesLambda(updated_abilities));
@@ -359,6 +362,17 @@ export class CertificatesService {
   async createSelfEmmitedCertificate(
     certificateData: TCertificatesCreateInput,
   ): Promise<TCertificatesWithAbilitiesAndHashOutput> {
+    // REVIEW
+    // if (certificateData.basicSubscription?.connect?.userSubscriptionId === '' ||
+    //   certificateData.basicSubscription?.connect?.userSubscriptionId === undefined) {
+    //   delete certificateData.basicSubscription;
+    // }
+
+    // if (certificateData.subscription?.connect?.subscriptionId === '' ||
+    //   certificateData.subscription?.connect?.subscriptionId === undefined) {
+    //   delete certificateData.subscription;
+    // }
+
     const data: ILambdaValidateText = {
       texts: {
         title: certificateData.name,
@@ -558,7 +572,7 @@ export class CertificatesService {
   }
 
   async issueCertificateFromTemplate(
-    studentInfo: ICertificateReceptorInfo,
+    studentInfo: ICertificateReceptorInfo & { issuedAt?: string },
     templateInfo: TTemplateSchoolAbilitiesOutput,
     emissionId?: string,
   ) {
@@ -581,7 +595,7 @@ export class CertificatesService {
       status: CertificateStatus.ENABLED,
       name: templateInfo.name,
       cargaHoraria: templateInfo.cargaHoraria,
-      issuedAt: templateInfo.issuedAt,
+      issuedAt: studentInfo?.issuedAt ?? templateInfo.issuedAt,
       paymentType: 'free',
       certificatePicture: this.auxService.getCertificatePicturePath(
         templateInfo.school.userId.userId,
@@ -666,7 +680,7 @@ export class CertificatesService {
     };
 
     if (templateInfo.fontNameId && (await this.fontsService.checkFontById(templateInfo.fontNameId))) {
-      imageInfo.font_name_url = await this.fontsService.getFontUrlById(templateInfo.fontNameId);
+      imageInfo.font_name_url = `https://certifikedu-nest-files.s3.us-east-1.amazonaws.com/${await this.fontsService.getFontUrlById2(templateInfo.fontNameId)}`;
     }
 
     const eventData: ICertificateEventSQS = {
@@ -699,7 +713,7 @@ export class CertificatesService {
       await this.requestService.sendLocalSqsRequest(eventData);
     }
 
-    await this.blockchainService.insertNewCertificate(certificate.emissorId, certificate);
+    //await this.blockchainService.insertNewCertificate(certificate.emissorId, certificate);
 
     return { success: true };
   }

@@ -13,7 +13,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../../auth/auth.service';
 import { TPessoaFisicaCreateWoUserInput, TUserCreateInput } from '../../auth/types/auth.types';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { CognitoService } from '../../aws/cognito/cognito.service';
 import { SESService } from '../../aws/ses/ses.service';
 import { SchoolsService } from '../../schools/schools.service';
@@ -22,6 +22,8 @@ import { GetUser } from '../../auth/decorators';
 import { AddUserToSchoolAPIDto, CreateNewUserAPIDto } from '../dtos/user/user-input.dto';
 import { UserInfoAPIDto } from '../dtos/user/user-response.dto';
 import { ApiKeyGuard } from '../guards/api_secret.guard';
+import { BackgroundsService } from 'src/backgrounds/background.service';
+import { ResponseBackgroundImagePjInfoDto } from 'src/pjinfo/dtos/backgrounds/backgrounds-response.dto';
 
 @ApiTags('API Users')
 @UseGuards(ApiKeyGuard)
@@ -34,6 +36,7 @@ export class UsersAPIController {
     private readonly cognitoService: CognitoService,
     private readonly sesService: SESService,
     private readonly userService: UsersService,
+    private readonly backgroundsService: BackgroundsService,
   ) { }
 
   @Post('create/user')
@@ -191,5 +194,26 @@ export class UsersAPIController {
       }),
       notFound: userSchoolInfo.documentNumbers.filter((documentNumber) => !foundDocuments.includes(documentNumber)),
     };
+  }
+
+  @Get('backgrounds')
+  async getBackgroundImage(@GetUser('id') userId: string): Promise<ResponseBackgroundImagePjInfoDto> {
+    try {
+      const pj = await this.auxService.getPjInfo(userId);
+      const images = await this.backgroundsService.getPrivateBackgroundImagesRecords(pj.idPJ);
+
+      return {
+        backgrounds: images.map((image) => {
+          return {
+            backgroundId: image.backgroundId,
+            backgroundUrl: image.imageUrl,
+
+            isPublic: image.isPublic,
+          };
+        }),
+      };
+    } catch (error) {
+      throw new BadRequestException('Could not fetch background images. Check if PJ info is correct.');
+    }
   }
 }

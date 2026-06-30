@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   NotFoundException,
@@ -13,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TAcademicCredentialsOutput } from '../../academic-credentials/types/academic-credentials.types';
-import { AuxService } from '../../_aux/_aux.service';
+import { AuxService } from '../../common/common.service';
 import { TSchoolCreateInput, TSchoolOutput, TSchoolUpdateInput } from '../../schools/types/schools.types';
 import { GetUser } from '../../auth/decorators';
 import { DateFormat } from '../../interceptors/dateformat.interceptor';
@@ -53,7 +54,7 @@ export class SchoolsAPIController {
       userId: { connect: { idPJ: pj.idPJ } },
     };
 
-    const school = await this.schoolsService.createSchool(schoolData);
+    const school = await this.schoolsService.createOrReactivateSchool(schoolData, userId);
 
     return this.getSchoolResponse(school);
   }
@@ -150,6 +151,32 @@ export class SchoolsAPIController {
       ...schoolResponse,
       credentials: this.getCredentialsResponse(credential),
     };
+  }
+
+  @Delete('school/:id')
+  async deleteSchoolAPI(
+    @GetUser('id') userId: string,
+    @Param('id') schoolId: string,
+  ): Promise<{ message: string }> {
+    const pj = await this.auxService.getPjInfo(userId);
+
+    const schoolRecord = await this.schoolsService.getSchoolById(schoolId);
+
+    if (!schoolRecord) {
+      throw new NotFoundException('School not found.');
+    }
+
+    if (schoolRecord.isCanvas) {
+      throw new ForbiddenException('This school cannot be deleted.');
+    }
+
+    if (schoolRecord.ownerUserId != pj.idPJ) {
+      throw new ForbiddenException('This school cannot be deleted by this user.');
+    }
+
+    await this.schoolsService.deleteSchool(schoolId, userId);
+
+    return { message: 'School deleted successfully' };
   }
 
   private getSchoolResponse(school: TSchoolOutput): ResponseSchoolAPIDto {
