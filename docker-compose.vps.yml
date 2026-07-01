@@ -13,6 +13,12 @@ services:
     networks:
       - net
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - net
+
   backend:
     build:
       context: ./certifikedu-backend

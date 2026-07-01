@@ -1,14 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 import { ICertificateEventSQS } from 'src/certificates/interfaces/certificates.interfaces';
 
 @Injectable()
 export class SQSService {
-  constructor() { }
+  private readonly logger = new Logger(SQSService.name);
+
+  constructor(@InjectQueue('certificates-queue') private readonly certificatesQueue: Queue) { }
 
   async sendEvent(data: ICertificateEventSQS, messageGroupId: string) {
-    // Local mode: process event synchronously (log it)
-    console.log(`[LocalQueue] Event received for group "${messageGroupId}":`, JSON.stringify(data));
-    // In production, this would be processed by a queue consumer
-    // For local dev, the event is logged and can be picked up by the calling service directly
+    this.logger.log(`[Queue] Adding event to queue for group "${messageGroupId}"`);
+    await this.certificatesQueue.add('process-certificate', data, {
+      removeOnComplete: true,
+      removeOnFail: false,
+    });
   }
 }

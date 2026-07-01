@@ -319,8 +319,7 @@ export class CertificatesService {
     await Promise.all([
       this.createCertificatePicture(certificate, hash),
       this.createCertificateOpenBadge(certificate, certificate.emissorEmail, school),
-      // FIXME - Disables blockchain temporarily
-      // this.blockchainService.insertNewCertificate(certificate.emissorId, certificate),
+      this.blockchainService.insertNewCertificate(certificate.emissorId, certificate),
       // FIXME - Disables abilities update temporarily I need PDI fixed
       // this.requestService.updateProfileAbilitiesLambda(updated_abilities),
     ]);
@@ -345,8 +344,7 @@ export class CertificatesService {
 
     const promises = [];
     promises.push(this.createCertificatePicture(certificate, hash));
-    // FIXME - Disables blockchain temporarily
-    // promises.push(this.blockchainService.insertNewCertificate(certificate.emissorId, certificate));
+    promises.push(this.blockchainService.insertNewCertificate(certificate.emissorId, certificate));
 
     if (updated_abilities) {
       promises.push(this.requestService.updateProfileAbilitiesLambda(updated_abilities));
@@ -713,7 +711,7 @@ export class CertificatesService {
       await this.requestService.sendLocalSqsRequest(eventData);
     }
 
-    //await this.blockchainService.insertNewCertificate(certificate.emissorId, certificate);
+    await this.blockchainService.insertNewCertificate(certificate.emissorId, certificate);
 
     return { success: true };
   }

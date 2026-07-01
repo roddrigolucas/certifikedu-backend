@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { createHash } from 'crypto';
 import { PrismaService } from '../prisma/prisma.service';
 import { TCertificatesWithAbilitiesOutput } from '../certificates/types/certificates.types';
 import { ICertificateLedger } from './interfaces/blockchain.interfaces';
@@ -44,9 +45,10 @@ export class BlockchainService {
   async insertNewCertificate(userId: string, certificate: TCertificatesWithAbilitiesOutput) {
     const certificateLedgerData = await this.createCertificateInfoForLedger(certificate, userId);
 
-    //const documentId = await this.qldbService.insertCertificateOnLedger(certificateLedgerData);
+    // Gera um Hash SHA-256 local contendo as informações críticas do certificado
+    const dataString = JSON.stringify(certificateLedgerData);
+    const documentId = createHash('sha256').update(dataString).digest('hex');
 
-    //await this.updateInternalCertificateBlockchainStatus(certificate.certificateId, documentId);
-    await this.updateInternalCertificateBlockchainStatus(certificate.certificateId, 'QLDB_DISABLED_MIGRATION');
+    await this.updateInternalCertificateBlockchainStatus(certificate.certificateId, documentId);
   }
 }

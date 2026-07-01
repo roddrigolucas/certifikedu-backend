@@ -10,7 +10,7 @@ import { RequestIdMiddleware } from './logger/request-id.middleware';
 import { LoggerMiddleware } from './logger/logger.middleware';
 
 //MODULES
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CertificatesModule } from './certificates/certificates.module';
@@ -23,6 +23,7 @@ import { ApiModule } from './api/api.module';
 import { EmailsModule } from './emails/emails.module';
 import { TemplatesModule } from './templates/templates.module';
 import { PJUsersModule } from './pjusers/pjusers.module';
+import { BullModule } from '@nestjs/bullmq';
 import { PJInfoModule } from './pjinfo/pjinfo.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RequestsModule } from './requests/requests.module';
@@ -62,6 +63,16 @@ import { AuditModule } from './audit/audit.module';
     },
   ],
   imports: [
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        connection: {
+          host: configService.get('REDIS_HOST') || 'redis',
+          port: configService.get('REDIS_PORT') || 6379,
+        },
+      }),
+      inject: [ConfigService],
+    }),
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
     EmailsModule,

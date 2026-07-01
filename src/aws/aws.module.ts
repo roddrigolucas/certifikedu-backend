@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { BullModule } from '@nestjs/bullmq';
 import { SQSService } from './sqs/sqs.service';
 import { S3Service } from './s3/s3.service';
 import { SESService } from './ses/ses.service';
@@ -22,6 +23,9 @@ import { LoggerModule } from '../logger/logger.module';
         secret: configService.getOrThrow('JWT_SECRET'),
         signOptions: { expiresIn: configService.get('JWT_EXPIRATION') || '7d' },
       }),
+    }),
+    BullModule.registerQueue({
+      name: 'certificates-queue',
     }),
   ],
   providers: [SQSService, S3Service, SESService, SecretManagerService, QldbService, CognitoService, STSService],
