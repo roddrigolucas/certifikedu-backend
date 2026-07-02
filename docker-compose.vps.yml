@@ -49,7 +49,7 @@ services:
 
   website:
     build:
-      context: ./site
+      context: ../website
       dockerfile: Dockerfile.prod
       args:
         - NEXT_PUBLIC_APP_URL=http://31.97.91.29
