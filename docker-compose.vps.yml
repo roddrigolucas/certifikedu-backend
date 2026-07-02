@@ -21,10 +21,10 @@ services:
 
   backend:
     build:
-      context: ./certifikedu-backend
+      context: .
       dockerfile: Dockerfile.prod
     restart: always
-    env_file: ./certifikedu-backend/.env
+    env_file: ./.env
     environment:
       - DATABASE_URL=postgresql://postgres:123@database:5432/certifikedu
     depends_on:
@@ -36,7 +36,7 @@ services:
 
   frontend:
     build:
-      context: ./plataform
+      context: ../frontend
       dockerfile: Dockerfile.prod
       args:
         - VITE_API_URL=http://31.97.91.29:3001
@@ -60,7 +60,7 @@ services:
         - SANITY_API_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
         - SANITY_API_READ_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
     restart: always
-    env_file: ./site/.env
+    env_file: ../website/.env
     ports:
       - "80:3000"
     networks:
