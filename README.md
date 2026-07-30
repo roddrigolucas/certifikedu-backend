@@ -71,3 +71,8 @@ $ dotenv -e .env.test -- prisma studio
 The dev service comes up in http://localhost:3000. The tests are in port 3333. There is a Swagger service up in /swagger with routes mapping and constraints.  
 
 There are requests.http files in both users and certificates that can be used to requisition the server through VSCode. The extention REST Client is required.
+
+## Deployment
+
+This repository is configured with GitHub Actions to automatically deploy to the Hostinger VPS on every push to the `main` or `master` branches.
+
