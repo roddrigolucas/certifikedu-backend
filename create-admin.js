@@ -6,7 +6,7 @@ async function main() {
   const hash = await bcrypt.hash('Admin123!', 10);
   
   await prisma.$executeRawUnsafe(
-    `INSERT INTO "User" (id, email, type, "numeroDocumento", status, "createdAt", "updatedAt") 
+    `INSERT INTO users (id, email, type, "numeroDocumento", status, "createdAt", "updatedAt") 
      VALUES (gen_random_uuid(), 'admin@certifikedu.com', 'PJ', '00000000000', 'ENABLED', NOW(), NOW()) 
      ON CONFLICT (email) DO NOTHING`
   );

@@ -46,7 +46,7 @@ export class PaymentsService {
       select: { CertificateCreditId: true },
     });
 
-    return certificateCredit.CertificateCreditId;
+    return certificateCredit?.CertificateCreditId ?? null;
   }
 
   async getUserAvailableCertificateCredis(customerId: string): Promise<number> {

@@ -4,19 +4,29 @@ services:
     image: postgres:13-alpine
     restart: always
     environment:
-      POSTGRES_PASSWORD: 123
-      POSTGRES_USER: postgres
-      POSTGRES_DB: certifikedu
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-CertifikEDU2024Secure!}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-certifikedu}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
       - net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7-alpine
     restart: always
     networks:
       - net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   backend:
     build:
@@ -25,11 +35,18 @@ services:
     restart: always
     env_file: ./.env
     environment:
-      - DATABASE_URL=postgresql://postgres:123@database:5432/certifikedu
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-CertifikEDU2024Secure!}@database:5432/${POSTGRES_DB:-certifikedu}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - "3001:3001"
+    volumes:
+      - uploads:/usr/src/app/uploads
     networks:
       - net
 
@@ -59,7 +76,6 @@ services:
         - SANITY_API_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
         - SANITY_API_READ_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
     restart: always
-    env_file: ../website/.env
     ports:
       - "80:3000"
     networks:
@@ -67,6 +83,7 @@ services:
 
 volumes:
   pgdata:
+  uploads:
 
 networks:
   net:

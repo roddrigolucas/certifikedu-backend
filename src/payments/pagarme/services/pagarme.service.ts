@@ -145,11 +145,13 @@ export class PagarmeService implements OnModuleInit {
           return mockResponse(200, {
             id: 'card_' + Math.random().toString(36).substring(7),
             brand: 'Visa',
+            first_six_digits: data?.number ? data.number.slice(0, 6) : '424242',
             last_four_digits: data?.number ? data.number.slice(-4) : '4321',
             exp_month: data?.exp_month || 12,
             exp_year: data?.exp_year || 30,
             holder_name: data?.holder_name || 'TITULAR MOCK',
             holder_document: data?.holder_document || '12345678909',
+            status: 'active',
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           });
@@ -162,11 +164,13 @@ export class PagarmeService implements OnModuleInit {
               {
                 id: 'card_mock_id',
                 brand: 'Visa',
+                first_six_digits: '424242',
                 last_four_digits: '4321',
                 exp_month: 12,
                 exp_year: 30,
                 holder_name: 'TITULAR MOCK',
                 holder_document: '12345678909',
+                status: 'active',
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
               }
@@ -313,7 +317,7 @@ export class PagarmeService implements OnModuleInit {
         }
 
         // GET /plans
-        if (method === 'GET' && (url === '/plans' || url === '/plans/')) {
+        if (method === 'GET' && (url.startsWith('/plans?') || url === '/plans' || url === '/plans/')) {
           return mockResponse(200, {
             data: [],
             paging: { total: 0 },

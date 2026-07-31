@@ -143,6 +143,23 @@ export class RequestsService implements OnModuleInit {
           );
         } else {
           this.loggerService.error(error);
+
+          if (this.auxService.isLocal && (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND')) {
+            this.loggerService.warn({
+              message: `Local Lambda service is down/offline at ${error.config?.baseURL}. Emulating successful response for ${error.config?.url}.`,
+              method: error.config?.method?.toUpperCase(),
+              url: error.config?.url,
+            });
+
+            return {
+              data: { success: true, message: 'Mocked response' },
+              status: 200,
+              statusText: 'OK',
+              headers: {},
+              config: error.config,
+            };
+          }
+
           throw new InternalServerErrorException(`Error sending request to lambda: ${error.message}`);
         }
       },
