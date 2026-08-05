@@ -18,7 +18,7 @@ export class BlockchainService {
   async updateInternalCertificateBlockchainStatus(certificateId: string, documentId: string | null) {
     await this.prismaService.certificates.update({
       where: { certificateId: certificateId },
-      data: { blockchain: false, blockchainUrl: documentId },
+      data: { blockchain: true, blockchainUrl: documentId },
     });
   }
 

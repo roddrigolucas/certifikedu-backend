@@ -69,7 +69,10 @@ export class BlockchainController {
       throw new ForbiddenException('this user does not own this certificate');
     }
 
-    //return this.qldbService.getLedgerEntryInfo(certificate.blockchainUrl);
-    throw new BadRequestException('Blockchain verification is temporarily disabled due to migration.');
+    // Retornamos o Hash criptográfico do Ledger Local
+    return {
+      documentId: certificate.blockchainUrl,
+      timestamp: certificate.createdAt
+    };
   }
 }

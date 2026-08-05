@@ -50,7 +50,7 @@ export class S3Service {
         path: key,
       } as Express.Multer.File;
     } catch (e) {
-      this.logger.error(`Error getting image buffer: ${e.message}`);
+      this.logger.error({ message: `Error getting image buffer: ${e.message}` });
       throw e;
     }
   }
@@ -108,7 +108,7 @@ export class S3Service {
       });
       await this.s3Client.send(command);
     } catch (e) {
-      this.logger.error(`Error copying file: ${e.message}`);
+      this.logger.error({ message: `Error copying file: ${e.message}` });
       return { success: false };
     }
     return { success: true };
@@ -122,7 +122,7 @@ export class S3Service {
       });
       await this.s3Client.send(command);
     } catch (e) {
-      this.logger.error(`Error deleting file: ${e.message}`);
+      this.logger.error({ message: `Error deleting file: ${e.message}` });
       return { success: false };
     }
     return { success: true };
