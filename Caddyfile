@@ -14,7 +14,9 @@ api.certifikedu.com.br {
     }
 
     # API Backend
-    reverse_proxy backend:3001
+    handle {
+        reverse_proxy backend:3001
+    }
 }
 
 # Console do MinIO (opcional, para administracao)
