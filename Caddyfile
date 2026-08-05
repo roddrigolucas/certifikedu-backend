@@ -1,0 +1,23 @@
+certifikedu.com.br {
+    reverse_proxy website:3000
+}
+
+app.certifikedu.com.br {
+    reverse_proxy frontend:80
+}
+
+api.certifikedu.com.br {
+    # Proxy para arquivos do MinIO (S3 local)
+    # URLs como /s3/bucket-name/path/to/file
+    handle_path /s3/* {
+        reverse_proxy minio:9000
+    }
+
+    # API Backend
+    reverse_proxy backend:3001
+}
+
+# Console do MinIO (opcional, para administracao)
+minio.certifikedu.com.br {
+    reverse_proxy minio:9001
+}

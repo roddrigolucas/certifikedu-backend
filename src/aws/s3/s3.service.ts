@@ -2,85 +2,96 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CustomLogger } from '../../logger/custom-logger.service';
 import { Readable } from 'stream';
-import * as fs from 'fs';
-import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  CopyObjectCommand,
+  DeleteObjectCommand
+} from '@aws-sdk/client-s3';
 
 @Injectable()
 export class S3Service {
-  private readonly uploadDir: string;
+  private s3Client: S3Client;
 
   constructor(
     private logger: CustomLogger,
     private configService: ConfigService,
   ) {
-    this.uploadDir = this.configService.get('UPLOAD_DIR') || './uploads';
-    // Ensure upload directory exists
-    if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir, { recursive: true });
-    }
-  }
-
-  private getLocalPath(bucketName: string, key: string): string {
-    const dir = path.join(this.uploadDir, bucketName);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    return path.join(dir, key.replace(/\//g, '_'));
+    this.s3Client = new S3Client({
+      region: this.configService.get('AWS_REGION') || 'us-east-1',
+      endpoint: this.configService.get('AWS_ENDPOINT') || 'http://minio:9000',
+      forcePathStyle: true, // Required for MinIO
+      credentials: {
+        accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID') || 'minioadmin',
+        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY') || 'minioadmin',
+      },
+    });
   }
 
   async getImageBuffer(bucketName: string, key: string, fileType: string): Promise<Express.Multer.File> {
-    const filePath = this.getLocalPath(bucketName, key);
+    try {
+      const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
+      const response = await this.s3Client.send(command);
+      const stream = response.Body as Readable;
 
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`);
+      const buffer = await this.streamToBuffer(stream);
+
+      return {
+        fieldname: 'file',
+        originalname: `logo_image.${fileType}`,
+        encoding: '7bit',
+        size: buffer.length,
+        mimetype: response.ContentType || 'image/png',
+        buffer: buffer,
+        stream: Readable.from(buffer),
+        destination: '',
+        filename: `logo_image.${fileType}`,
+        path: key,
+      } as Express.Multer.File;
+    } catch (e) {
+      this.logger.error(`Error getting image buffer: ${e.message}`);
+      throw e;
     }
-
-    const buffer = fs.readFileSync(filePath);
-
-    const multerFile: Express.Multer.File = {
-      fieldname: 'file',
-      originalname: `logo_image.${fileType}`,
-      encoding: '7bit',
-      size: buffer.length,
-      mimetype: 'image/png',
-      buffer: buffer,
-      stream: Readable.from(buffer),
-      destination: '',
-      filename: `logo_image.${fileType}`,
-      path: filePath,
-    };
-
-    return multerFile;
   }
 
   async uploadBuffer(bucket: string, key: string, buffer: Buffer) {
-    const filePath = this.getLocalPath(bucket, key);
-    fs.writeFileSync(filePath, buffer);
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: buffer,
+    });
+    await this.s3Client.send(command);
   }
 
   async uploadFile(bucket: string, key: string, file: Express.Multer.File) {
-    const filePath = this.getLocalPath(bucket, key);
-    fs.writeFileSync(filePath, file.buffer);
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
+    await this.s3Client.send(command);
   }
 
   async getObject(bucketName: string, key: string): Promise<Readable> {
-    const filePath = this.getLocalPath(bucketName, key);
-
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`File not found: ${filePath}`);
-    }
-
-    return fs.createReadStream(filePath);
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
+    const response = await this.s3Client.send(command);
+    return response.Body as Readable;
   }
 
   async getBase64FromBuffer(readable: Readable): Promise<string> {
-    const chunks: Buffer[] = [];
-    for await (const chunk of readable) {
-      chunks.push(chunk);
-    }
-    const buffer = Buffer.concat(chunks);
+    const buffer = await this.streamToBuffer(readable);
     return buffer.toString('base64');
+  }
+
+  private async streamToBuffer(stream: Readable): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      stream.on('error', (err) => reject(err));
+      stream.on('end', () => resolve(Buffer.concat(chunks)));
+    });
   }
 
   async copyFile(
@@ -90,28 +101,30 @@ export class S3Service {
     destinationKey: string,
   ): Promise<{ success: boolean }> {
     try {
-      const srcPath = this.getLocalPath(sourceBucket, sourceKey);
-      const dstPath = this.getLocalPath(destinationBucket, destinationKey);
-      fs.copyFileSync(srcPath, dstPath);
+      const command = new CopyObjectCommand({
+        CopySource: `${sourceBucket}/${sourceKey}`,
+        Bucket: destinationBucket,
+        Key: destinationKey,
+      });
+      await this.s3Client.send(command);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(`Error copying file: ${e.message}`);
       return { success: false };
     }
-
     return { success: true };
   }
 
   async deleteFile(sourceBucket: string, sourceKey: string): Promise<{ success: boolean }> {
     try {
-      const filePath = this.getLocalPath(sourceBucket, sourceKey);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
+      const command = new DeleteObjectCommand({
+        Bucket: sourceBucket,
+        Key: sourceKey,
+      });
+      await this.s3Client.send(command);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(`Error deleting file: ${e.message}`);
       return { success: false };
     }
-
     return { success: true };
   }
 

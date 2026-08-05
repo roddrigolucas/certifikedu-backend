@@ -45,7 +45,8 @@ export class AuxService implements OnModuleInit {
       const lambdaEnvironment = await this.configService.getOrThrow('LOCAL_LAMBDA');
       if (lambdaEnvironment === 'true') {
         this.localLambda = true;
-        this.pdiServiceUrl = 'http://192.168.1.75:3013';
+        // Use o AI_SERVICE_BASE_URL configurado, ou fallback para o gateway
+        this.pdiServiceUrl = this.configService.get('AI_SERVICE_BASE_URL') || this.pdiServiceUrl;
       } else {
         this.localLambda = false;
       }

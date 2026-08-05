@@ -57,33 +57,35 @@ export class RequestsService implements OnModuleInit {
     this.axiosClient.defaults.baseURL = await this.config.getOrThrow('LAMBDA_BASE_URL');
 
     if (this.auxService.localLambda) {
-      this.axiosClient.defaults.baseURL = `http://192.168.1.101:8080`;
+      this.axiosClient.defaults.baseURL = `http://certifikedu-ai-gateway:8080`;
     }
 
     this.axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
       const lambdaRequestId = randomUUID();
       config.headers['_requestId'] = lambdaRequestId;
 
-      const url = new URL(config.url!, config.baseURL);
-      const requestPayload = {
-        host: url.hostname,
-        path: url.pathname,
-        method: config.method?.toUpperCase() ?? 'POST',
-        body: config.data ? JSON.stringify(config.data) : undefined,
-        headers: { 'Content-Type': 'application/json' },
-        service: 'execute-api',
-        region: 'us-east-1',
-      };
+      if (!this.auxService.localLambda) {
+        const url = new URL(config.url!, config.baseURL);
+        const requestPayload = {
+          host: url.hostname,
+          path: url.pathname,
+          method: config.method?.toUpperCase() ?? 'POST',
+          body: config.data ? JSON.stringify(config.data) : undefined,
+          headers: { 'Content-Type': 'application/json' },
+          service: 'execute-api',
+          region: 'us-east-1',
+        };
 
-      const credentials = await this.stsService.getSignedCredentials();
+        const credentials = await this.stsService.getSignedCredentials();
 
-      aws4.sign(requestPayload, credentials);
+        aws4.sign(requestPayload, credentials);
 
-      config.headers['X-Amz-Security-Token'] = requestPayload.headers['X-Amz-Security-Token'];
-      config.headers['X-Amz-Date'] = requestPayload.headers['X-Amz-Date'];
-      config.headers['Content-Length'] = requestPayload.headers['Content-Length'];
-      config.headers['Authorization'] = requestPayload.headers['Authorization'];
-      config.headers['Host'] = requestPayload.headers['Host'];
+        config.headers['X-Amz-Security-Token'] = requestPayload.headers['X-Amz-Security-Token'];
+        config.headers['X-Amz-Date'] = requestPayload.headers['X-Amz-Date'];
+        config.headers['Content-Length'] = requestPayload.headers['Content-Length'];
+        config.headers['Authorization'] = requestPayload.headers['Authorization'];
+        config.headers['Host'] = requestPayload.headers['Host'];
+      }
 
       this.loggerService.info({
         message: `Lambda Request`,

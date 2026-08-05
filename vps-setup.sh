@@ -9,9 +9,9 @@ set -e  # Aborta em caso de erro
 
 VPS_USER="root"
 DEPLOY_DIR="/root/deploy"
-BACKEND_REPO="git@github.com:roddrigolucas/certifikedu-backend.git"
-FRONTEND_REPO="git@github.com:roddrigolucas/certifikedu-frontend.git"
-WEBSITE_REPO="git@github.com:roddrigolucas/site.git"
+BACKEND_REPO="https://github.com/roddrigolucas/certifikedu-backend.git"
+FRONTEND_REPO="https://github.com/roddrigolucas/certifikedu-frontend.git"
+WEBSITE_REPO="https://github.com/roddrigolucas/site.git"
 
 echo "======================================================"
 echo "  CertifikEDU — VPS Bootstrap"

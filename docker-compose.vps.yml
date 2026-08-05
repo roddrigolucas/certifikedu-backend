@@ -35,16 +35,23 @@ services:
     restart: always
     env_file: ./.env
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-CertifikEDU2024Secure!}@database:5432/${POSTGRES_DB:-certifikedu}
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-CertifikEDU2024Secure!}@database:5432/${POSTGRES_DB:-certifikedu}?schema=backend
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      # MinIO / S3 local
+      - AWS_ENDPOINT=http://minio:9000
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
+      # Lambdas locais via gateway NGINX
+      - LAMBDA_BASE_URL=http://certifikedu-ai-gateway:8080
+      - AI_SERVICE_BASE_URL=http://certifikedu-ai-gateway:8080
+      - LOCAL_LAMBDA=true
     depends_on:
       database:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports:
-      - "3001:3001"
     volumes:
       - uploads:/usr/src/app/uploads
     networks:
@@ -55,11 +62,9 @@ services:
       context: ../frontend
       dockerfile: Dockerfile.prod
       args:
-        - VITE_API_URL=http://31.97.91.29:3001
-        - VITE_APPLICATION_URL=http://31.97.91.29:3000
+        - VITE_API_URL=https://api.certifikedu.com.br
+        - VITE_APPLICATION_URL=https://app.certifikedu.com.br
     restart: always
-    ports:
-      - "3000:80"
     networks:
       - net
 
@@ -68,22 +73,75 @@ services:
       context: ../website
       dockerfile: Dockerfile.prod
       args:
-        - NEXT_PUBLIC_APP_URL=http://31.97.91.29
-        - NEXT_PUBLIC_PLATFORM_URL=http://31.97.91.29:3000
+        - NEXT_PUBLIC_APP_URL=https://certifikedu.com.br
+        - NEXT_PUBLIC_PLATFORM_URL=https://app.certifikedu.com.br
         - SKIP_ENV_VALIDATION=true
         - NEXT_PUBLIC_SANITY_DATASET=staging
         - NEXT_PUBLIC_SANITY_PROJECT_ID=cil3po11
         - SANITY_API_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
         - SANITY_API_READ_TOKEN=ske6uDg7oWbqHfex8ZaFoMHKNFlhWj12D08oz234SYlMdAvbzJNEQ1BhXYWvCSZ8VYprPu3Uf2uEeWxsnaWGKvaOegcWVNiVC01gqp3BeGh1aK4eO8snsgbB0lwcKV4GOTUlHO76yLIhYyDoePKdeQ5isjeCJHoMEpDgR7Iwtz60I8uvQhER
     restart: always
+    networks:
+      - net
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
     ports:
-      - "80:3000"
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - net
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-mc:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb myminio/certifikedu-nest-files --ignore-existing;
+      /usr/bin/mc mb myminio/certifikedu-email-templates-prod --ignore-existing;
+      /usr/bin/mc mb myminio/serve-images-plataform-prod --ignore-existing;
+      /usr/bin/mc mb myminio/creact-app-certifik-edu --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/serve-images-plataform-prod;
+      /usr/bin/mc anonymous set download myminio/certifikedu-nest-files;
+      exit 0;
+      "
+    networks:
+      - net
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - net
 
 volumes:
   pgdata:
   uploads:
+  minio_data:
+  caddy_data:
+  caddy_config:
 
 networks:
   net:
