@@ -386,6 +386,15 @@ export class CertificatesController {
       });
     }
 
+    if (data.emailInfo?.email) {
+      const email = data.emailInfo.email;
+      const imageUrl = data.emailInfo.templateData?.imageUrl;
+      const name = data.emailInfo.templateData?.name;
+      if (email && imageUrl && name) {
+        await this.sesService.sendTemplateCreatedCertificate(email, name, imageUrl);
+      }
+    }
+
     return { success: true };
   }
 

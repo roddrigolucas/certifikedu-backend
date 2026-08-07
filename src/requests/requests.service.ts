@@ -193,6 +193,10 @@ export class RequestsService implements OnModuleInit {
   }
 
   async getApproveText(data: ILambdaValidateText): Promise<boolean> {
+    if (this.auxService.isLocal || this.auxService.localLambda) {
+      return true;
+    }
+
     const response = await this.axiosClient.post('/approveTextAutomatically', data);
 
     if (response.status !== 200) {
@@ -252,7 +256,13 @@ export class RequestsService implements OnModuleInit {
       return null;
     }
 
-    return await this.axiosClient.post('/SQS', data);
+    return await this.axiosClient.post('/SQS', {
+      Records: [
+        {
+          body: JSON.stringify(data),
+        },
+      ],
+    });
   }
 
   async triggerPdiService(data: ICreatePdi): Promise<boolean> {

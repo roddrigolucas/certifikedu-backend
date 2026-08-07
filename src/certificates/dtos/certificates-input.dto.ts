@@ -80,4 +80,7 @@ export class SQSLambdaRequestDto {
 
   @IsString()
   sqs_secret: string;
+
+  @IsOptional()
+  emailInfo?: any;
 }
