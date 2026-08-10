@@ -38,6 +38,7 @@ import { InverseModule } from 'src/inverse/inverse.module';
 import { InversePjInfoController } from './controllers/inverse.controller';
 import { FontsInstitutionalController } from './controllers/fonts.controller';
 import { AuditModule } from 'src/audit/audit.module';
+import { ReportsController } from './controllers/reports.controller';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { AuditModule } from 'src/audit/audit.module';
     FontsInstitutionalController,
     MetabasePjInfoController,
     InversePjInfoController,
+    ReportsController,
   ],
   providers: [],
   exports: [],

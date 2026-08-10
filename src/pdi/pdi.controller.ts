@@ -73,7 +73,7 @@ export class PdiController {
     const pf = await this.auxService.getPfInfo(userId);
 
     if (!pf) {
-      throw new NotFoundException();
+      return { pdis: [] };
     }
 
     const pdis = await this.pdiService.listPdi(pf.idPF);
