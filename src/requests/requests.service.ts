@@ -219,6 +219,10 @@ export class RequestsService implements OnModuleInit {
   }
 
   async resumePdfLambda(data: ICreateResumePdfLambda): Promise<Boolean> {
+    if (this.auxService.isLocal || this.auxService.localLambda) {
+      return true;
+    }
+
     const response = await this.axiosClient.post<IResponseResumePdf>('/SaveEmailTemplate', data);
 
     return response.data?.success ?? false;
