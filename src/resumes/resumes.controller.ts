@@ -109,7 +109,7 @@ export class ResumesController {
 
     const success = await this.requestService.resumePdfLambda(lambdaData);
 
-    if (success) {
+    if (!success) {
       throw new ServiceUnavailableException('Lambda unable to create PDF file')
     }
 
@@ -189,7 +189,7 @@ export class ResumesController {
 
     const success = await this.requestService.resumePdfLambda(lambdaData);
 
-    if (success) {
+    if (!success) {
       throw new ServiceUnavailableException('Lambda unable to create PDF file')
     }
 
