@@ -374,17 +374,19 @@ export class CertificatesController {
 
     if (!certificateShare) throw new NotFoundException('Certificate not found');
 
+    const updatePayload: any = {
+      successStatus: CertificateSuccessStatus.SUCCESS,
+    };
+
     if (data.openBadgeSuccess) {
       const openBadgeData = await this.certificateService.getOpenBadgeJsonsPaths(certificateShare.certificateId);
-
-      await this.certificateService.updateCertificateRecord(certificateShare.certificateId, {
-        successStatus: CertificateSuccessStatus.SUCCESS,
-        openBadge: true,
-        openBadgeModel: {
-          create: openBadgeData,
-        },
-      });
+      updatePayload.openBadge = true;
+      updatePayload.openBadgeModel = {
+        create: openBadgeData,
+      };
     }
+
+    await this.certificateService.updateCertificateRecord(certificateShare.certificateId, updatePayload);
 
     if (data.emailInfo?.email) {
       const email = data.emailInfo.email;
