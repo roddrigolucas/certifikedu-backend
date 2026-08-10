@@ -214,7 +214,11 @@ export class CertificatesController {
               certificateId: certificate.certificateId,
               certificateName: certificate.name,
               certificateDescription: certificate.description,
-              certificatePicture: certificate.certificatePicture,
+              certificatePicture: certificate.certificatePicture
+                ? certificate.certificatePicture.startsWith('http')
+                  ? certificate.certificatePicture
+                  : `${this.auxService.certifikeduImages}/${certificate.certificatePicture}`
+                : null,
               certificateAbilities: certificate.habilidades.map((ability) => {
                 return {
                   ability: ability.habilidade.habilidade,
@@ -255,6 +259,11 @@ export class CertificatesController {
             issuer: certificate.emissorName,
             statedIssuer: certificate.statedIssuer,
             createdAt: certificate.createdAt.toString(),
+            certificatePicture: certificate.certificatePicture
+              ? certificate.certificatePicture.startsWith('http')
+                ? certificate.certificatePicture
+                : `${this.auxService.certifikeduImages}/${certificate.certificatePicture}`
+              : null,
             evidences: await this.certificateService.getCertificatesEvidencesCount(certificate.certificateId),
           };
         }),

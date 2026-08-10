@@ -161,6 +161,10 @@ class ResponseUserLastCertificateDto {
   @IsString()
   @IsNotEmpty()
   createdAt: string;
+
+  @IsString()
+  @IsOptional()
+  certificatePicture?: string;
 }
 
 export class ResponseUserLastCertificatesDto {
@@ -182,6 +186,10 @@ class ResponseCertificateBasicInfoDto {
   @IsString()
   @IsNotEmpty()
   certificateDescription: string;
+
+  @IsString()
+  @IsOptional()
+  certificatePicture?: string;
 
   @IsArray()
   @ValidateNested({ each: true })
