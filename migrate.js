@@ -8,12 +8,12 @@ async function runMigration() {
   try {
     const password = 'Cateto26';
     // AWS RDS Connection
-    const awsDbUrl = `postgresql://postgres:${encodeURIComponent(password)}@database-1.cfpa5thrzo8h.us-east-1.rds.amazonaws.com:5432/nest?schema=public`;
+    const awsDbUrl = `postgresql://postgres:${encodeURIComponent(password)}@database-1.cfpa5thrzo8h.us-east-1.rds.amazonaws.com:5432/nest?schema=backend`;
     awsPrisma = new PrismaClient({ datasources: { db: { url: awsDbUrl } } });
     console.log('Connected to AWS RDS database.');
 
     // Local / VPS Database Connection
-    const localDbUrl = process.env.DATABASE_URL || 'postgresql://postgres:123@localhost:5434/nest?schema=public';
+    const localDbUrl = process.env.DATABASE_URL || 'postgresql://postgres:123@localhost:5434/nest?schema=backend';
     localPrisma = new PrismaClient({ datasources: { db: { url: localDbUrl } } });
     console.log('Connected to Local/VPS database.');
 
