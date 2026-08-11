@@ -618,11 +618,7 @@ export class TemplatesInstitutionalController {
       issuedAt: templateRecord.issuedAt,
       expiresAt: templateRecord.expiresAt,
       backgroundId: templateRecord.backgroundId,
-      imageTemplateUrl: templateRecord.certificatePicture
-        ? templateRecord.certificatePicture.startsWith('http')
-          ? templateRecord.certificatePicture
-          : `${this.auxService.certifikeduImages}/${templateRecord.certificatePicture}`
-        : null,
+      imageTemplateUrl: templateRecord.certificatePicture,
       logoImage: templateRecord.logoImage,
       descriptionImage: templateRecord.descriptionImage,
       qrCodePosition: templateRecord.qrCodePosition,
