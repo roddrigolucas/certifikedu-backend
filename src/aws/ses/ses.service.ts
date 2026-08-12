@@ -14,11 +14,30 @@ export class SESService implements OnModuleInit {
     this.sourceEmailAddress = this.configService.get('SOURCE_EMAIL') || 'noreply@certifikedu.local';
     this.adminEmail = this.configService.get('ADMIN_EMAIL') || 'admin@certifikedu.local';
 
-    this.transporter = nodemailer.createTransport({
-      host: this.configService.get('SMTP_HOST') || 'localhost',
-      port: parseInt(this.configService.get('SMTP_PORT') || '1025'),
-      ignoreTLS: true,
-    });
+    const smtpHost = this.configService.get('SMTP_HOST') || 'localhost';
+    const smtpPort = parseInt(this.configService.get('SMTP_PORT') || '1025');
+    const smtpUser = this.configService.get('SMTP_USER');
+    const smtpPass = this.configService.get('SMTP_PASS');
+
+    const transportConfig: any = {
+      host: smtpHost,
+      port: smtpPort,
+    };
+
+    if (smtpUser && smtpPass) {
+      transportConfig.auth = {
+        user: smtpUser,
+        pass: smtpPass,
+      };
+      transportConfig.secure = smtpPort === 465;
+      transportConfig.tls = {
+        rejectUnauthorized: false
+      };
+    } else {
+      transportConfig.ignoreTLS = true;
+    }
+
+    this.transporter = nodemailer.createTransport(transportConfig);
   }
 
   async sendRawEmail(nome: string, email: string, phone?: string) {
