@@ -447,4 +447,10 @@ export class CertificatesController {
 
     return { success: true };
   }
+
+  @Post('admin/reprocess-pending')
+  async reprocessPendingCertificates(): Promise<{ success: boolean; count: number }> {
+    const count = await this.certificateService.reprocessPendingCertificates();
+    return { success: true, count };
+  }
 }

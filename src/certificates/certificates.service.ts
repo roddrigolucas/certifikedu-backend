@@ -804,4 +804,65 @@ export class CertificatesService {
 
     return { events, receptorsInfo };
   }
+
+  async reprocessPendingCertificates(): Promise<number> {
+    const pendingCertificates = await this.prismaService.certificates.findMany({
+      where: {
+        emissorId: '51ea59d8-c1cf-4101-b612-8ea50343a689',
+        successStatus: CertificateSuccessStatus.PENDING,
+      },
+      include: {
+        template: {
+          include: {
+            school: {
+              include: {
+                userId: true,
+              },
+            },
+            habilidades: {
+              include: {
+                habilidade: true,
+              },
+            },
+            courses: {
+              include: {
+                course: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    let count = 0;
+    for (const cert of pendingCertificates) {
+      if (!cert.template) continue;
+
+      const studentInfo = {
+        docNumber: cert.receptorDoc,
+        email: cert.receptorEmail || '',
+        name: cert.receptorName || '',
+        issuedAt: cert.issuedAt ? cert.issuedAt.toISOString() : undefined,
+      };
+
+      await this.prismaService.certificates.delete({
+        where: { certificateId: cert.certificateId },
+      });
+
+      const mappedTemplate: any = {
+        ...cert.template,
+        habilidades: cert.template.habilidades.map((h) => h.habilidade),
+      };
+
+      await this.issueCertificateFromTemplate(
+        studentInfo,
+        mappedTemplate,
+        cert.emissionId || undefined,
+      );
+
+      count++;
+    }
+
+    return count;
+  }
 }
