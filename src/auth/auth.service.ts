@@ -234,4 +234,12 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token inválido ou expirado');
     }
   }
+
+  async updateUserPassword(email: string, passwordString: string): Promise<void> {
+    const authRecord = await this.prismaService.authCredentials.findUnique({ where: { email } });
+    if (!authRecord) {
+      throw new BadRequestException('Credenciais de autenticação não encontradas.');
+    }
+    await this.createAuthCredentials(email, passwordString, authRecord.user_type);
+  }
 }

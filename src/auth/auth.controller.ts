@@ -5,6 +5,7 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseAuthDto, ResponseUsersRawInfoDto } from './dto/auth-response.dto';
 import { AuthenticateRequestDto, AuthPfDto, AuthPjDto, RawUserDto, ResetUserPasswordDto } from './dto/auth-input.dto';
 import { AuxService } from '../common/common.service';
+import { GetUser } from './decorators';
 import {
   TPessoaFisicaCreateWoUserInput,
   TPessoaJuridicaCreateWoUserInput,
@@ -191,5 +192,19 @@ export class AuthController {
   @Get('me')
   async getMe(@Req() req: any) {
     return req.user;
+  }
+
+  @UseGuards(JwtGuard)
+  @ApiBearerAuth()
+  @Post('update-password')
+  async updatePassword(
+    @GetUser('email') email: string,
+    @Body() dto: { newPassword?: string },
+  ) {
+    if (!dto.newPassword || dto.newPassword.length < 6) {
+      throw new BadRequestException('A senha deve ter no mínimo 6 caracteres');
+    }
+    await this.authService.updateUserPassword(email, dto.newPassword);
+    return { success: true };
   }
 }
