@@ -6,7 +6,7 @@ model PessoaFisica {
   userId String @unique
   CPF    String @unique
   email  String @unique
-  user   User   @relation(fields: [userId, CPF, email], references: [id, numeroDocumento, email], onDelete: Cascade)
+  user   User   @relation(fields: [userId, CPF, email], references: [id, numeroDocumento, email], onDelete: Cascade, onUpdate: Cascade)
 
   nome             String
   telefone         String

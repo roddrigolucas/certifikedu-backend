@@ -116,3 +116,20 @@ export class UpdatePfInfoDto {
   @IsOptional()
   additionalDetails?: string;
 }
+
+export class ChangeEmailRequestDto {
+  @IsEmail()
+  newEmail: string;
+}
+
+export class ChangeEmailVerifyDto {
+  @IsEmail()
+  oldEmail: string;
+
+  @IsEmail()
+  newEmail: string;
+
+  @IsString()
+  code: string;
+}
+

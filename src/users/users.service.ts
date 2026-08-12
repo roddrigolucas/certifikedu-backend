@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { AuditAction, CertificateStatus, Prisma, UserStatus, UserType } from '@prisma/client';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { AuditAction, CertificateStatus, Prisma, User, UserStatus, UserType } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { createHash } from 'crypto';
+import { SESService } from '../aws/ses/ses.service';
 import {
   TDocumentPictureCreateInput,
   TDocumentPictureOutput,
@@ -42,6 +43,7 @@ export class UsersService {
     private readonly schoolsService: SchoolsService,
     private readonly coursesService: CoursesService,
     private readonly auditService: AuditService,
+    private readonly sesService: SESService,
   ) { }
 
   async getUserById(userId: string): Promise<TUserOutput> {
@@ -370,6 +372,111 @@ export class UsersService {
     await this.prismaService.user.update({
       where: { email: userId },
       data: { email: newEmail },
+    });
+  }
+
+  async requestEmailChange(user: User, newEmail: string): Promise<void> {
+    const cleanNewEmail = newEmail.trim().toLowerCase();
+
+    // Check if newEmail is already in use
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { email: cleanNewEmail },
+    });
+    if (existingUser) {
+      throw new BadRequestException('Este e-mail já está cadastrado em outra conta.');
+    }
+
+    // Generate a 6-digit verification code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save change request
+    await this.prismaService.emailChangeVerification.create({
+      data: {
+        oldEmail: user.email,
+        newEmail: cleanNewEmail,
+        code,
+        expiresAt: new Date(Date.now() + 15 * 60 * 1000), // expires in 15 mins
+      },
+    });
+
+    // Send the verification code to the new email
+    await this.sesService.sendEmail(
+      cleanNewEmail,
+      'Código de Validação para Alteração de E-mail',
+      {
+        "Código de Validação": code,
+        "Mensagem": "Use o código acima na plataforma para confirmar a alteração do seu e-mail."
+      }
+    );
+  }
+
+  async verifyEmailChange(oldEmail: string, newEmail: string, code: string): Promise<void> {
+    const cleanOldEmail = oldEmail.trim().toLowerCase();
+    const cleanNewEmail = newEmail.trim().toLowerCase();
+    const cleanCode = code.trim();
+
+    // Find verification record
+    const record = await this.prismaService.emailChangeVerification.findFirst({
+      where: {
+        oldEmail: cleanOldEmail,
+        newEmail: cleanNewEmail,
+        code: cleanCode,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (!record) {
+      throw new BadRequestException('Código inválido. Verifique o código e tente novamente.');
+    }
+
+    if (new Date() > record.expiresAt) {
+      throw new BadRequestException('Código expirado. Solicite um novo código.');
+    }
+
+    // Check again if newEmail has been registered in the meantime
+    const existingUser = await this.prismaService.user.findUnique({
+      where: { email: cleanNewEmail },
+    });
+    if (existingUser) {
+      throw new BadRequestException('Este e-mail já está cadastrado em outra conta.');
+    }
+
+    // Execute database updates in a transaction
+    await this.prismaService.$transaction(async (tx) => {
+      // 1. Update User table. Because of ON UPDATE CASCADE, it updates email in:
+      // - User
+      // - PessoaFisica
+      // - PessoaJuridica
+      await tx.user.update({
+        where: { email: cleanOldEmail },
+        data: { email: cleanNewEmail },
+      });
+
+      // 2. Update AuthCredentials table (the login password table)
+      const auth = await tx.authCredentials.findUnique({
+        where: { email: cleanOldEmail },
+      });
+      if (auth) {
+        await tx.authCredentials.create({
+          data: {
+            email: cleanNewEmail,
+            password_hash: auth.password_hash,
+            user_type: auth.user_type,
+            status: auth.status,
+          },
+        });
+        await tx.authCredentials.delete({
+          where: { email: cleanOldEmail },
+        });
+      }
+    });
+
+    // Delete verification requests
+    await this.prismaService.emailChangeVerification.deleteMany({
+      where: {
+        oldEmail: cleanOldEmail,
+        newEmail: cleanNewEmail,
+      },
     });
   }
 

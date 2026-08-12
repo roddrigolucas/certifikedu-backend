@@ -6,7 +6,7 @@ model PessoaJuridica {
   userId           String                  @unique
   CNPJ             String                  @unique
   email            String                  @unique
-  user             User                    @relation(fields: [userId, CNPJ, email], references: [id, numeroDocumento, email], onDelete: Cascade)
+  user             User                    @relation(fields: [userId, CNPJ, email], references: [id, numeroDocumento, email], onDelete: Cascade, onUpdate: Cascade)
   ltiConfiguration CanvasLTIConfiguration?
 
   razaoSocial          String

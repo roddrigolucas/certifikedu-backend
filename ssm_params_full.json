@@ -1,0 +1,13 @@
+{
+    "InstanceIds": [
+        "i-03785def7842c6a4e"
+    ],
+    "DocumentName": "AWS-RunShellScript",
+    "Parameters": {
+        "commands": [
+            "export PGPASSWORD='HC3PSAZguf2XWV74aKnwqt'",
+            "pg_dump -h database-1.cfpa5thrzo8h.us-east-1.rds.amazonaws.com -p 5432 -U prisma_user -d nest --data-only --inserts --on-conflict-do-nothing -n backend -f /tmp/full_schema_migration.sql",
+            "aws s3 cp /tmp/full_schema_migration.sql s3://certifikedu-migration-temp-bucket-2026/full_schema_migration.sql"
+        ]
+    }
+}

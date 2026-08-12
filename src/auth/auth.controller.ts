@@ -13,6 +13,8 @@ import {
 } from './types/auth.types';
 import { IResponseUsersRawInfo } from './interfaces/auth.interfaces';
 import { JwtGuard } from './guard/jwt.guard';
+import { UsersService } from '../users/users.service';
+import { ChangeEmailVerifyDto } from '../users/dtos/users-input.dto';
 
 @ApiTags('Public -- Authentication')
 @Controller('auth')
@@ -20,6 +22,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly auxService: AuxService,
+    private readonly usersService: UsersService,
   ) { }
 
   @Post('signup/pj')
@@ -124,6 +127,13 @@ export class AuthController {
   @Patch('reset')
   async resetRawUserPassword(@Body() dto: ResetUserPasswordDto): Promise<{ hasAccount: boolean; isRaw: boolean }> {
     return await this.authService.resetRawUserPassword(dto.email);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('change-email/verify')
+  async verifyEmailChange(@Body() dto: ChangeEmailVerifyDto): Promise<{ status: string }> {
+    await this.usersService.verifyEmailChange(dto.oldEmail, dto.newEmail, dto.code);
+    return { status: 'Success' };
   }
 
   @HttpCode(HttpStatus.OK)

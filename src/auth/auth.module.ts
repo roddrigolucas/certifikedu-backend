@@ -10,6 +10,7 @@ import { CertificatesModule } from '../certificates/certificates.module';
 import { AuxModule } from '../common/common.module';
 import { TemplatesModule } from '../templates/templates.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { JwtModule } from '@nestjs/jwt';
     LoggerModule,
     PaymentsModule,
     CertificatesModule,
-    TemplatesModule
+    TemplatesModule,
+    UsersModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

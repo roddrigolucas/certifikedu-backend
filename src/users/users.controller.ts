@@ -23,7 +23,7 @@ import { AuxService } from '../common/common.service';
 import { SESService } from '../aws/ses/ses.service';
 import { PaymentsService } from '../payments/services/payments.service';
 import { S3Service } from '../aws/s3/s3.service';
-import { SyncEmailByBodyDto, UpdatePfInfoDto, UpdateRawUserDto } from './dtos/users-input.dto';
+import { SyncEmailByBodyDto, UpdatePfInfoDto, UpdateRawUserDto, ChangeEmailRequestDto } from './dtos/users-input.dto';
 
 import { EnvironmentEnum } from '../pjusers/dtos/pjusers-input.dto';
 import { TDocumentPictureCreateInput, TPessoaFisicaCreateInput, TPessoaFisicaUpdateInput } from './types/user.types';
@@ -97,6 +97,16 @@ export class UsersController {
     console.log(userId, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
     await this.userService.updateUserEmail(userId, newEmail);
 
+    return { status: 'Success' };
+  }
+
+  @Roles('enabled')
+  @Post('change-email/request')
+  async requestEmailChange(
+    @GetUser() user: User,
+    @Body() dto: ChangeEmailRequestDto,
+  ): Promise<{ status: string }> {
+    await this.userService.requestEmailChange(user, dto.newEmail);
     return { status: 'Success' };
   }
 

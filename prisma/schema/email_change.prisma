@@ -1,0 +1,13 @@
+model EmailChangeVerification {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  oldEmail  String
+  newEmail  String
+  code      String
+
+  @@index([oldEmail])
+  @@index([code])
+  @@map("email_change_verifications")
+}
