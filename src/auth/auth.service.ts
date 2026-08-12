@@ -101,10 +101,8 @@ export class AuthService {
   }
 
   async signUpPfUserWithoutCognito(data: TUserCreateInput) {
-    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
-    if (isMock) {
-      data.status = 'ENABLED';
-    }
+    // Usuários criados por PJ com dados completos são auto-validados
+    data.status = 'ENABLED';
     const user = await this.createUserPfRecord(data);
     const userName = user.tempName ?? '';
     await this.certificatesService.addUserCertificates(user.id, user.numeroDocumento, userName);
@@ -164,6 +162,11 @@ export class AuthService {
 
     const userName = data?.tempName ?? '';
     this.sesService.sendNewUserPassword(data.email, passwordString, userName);
+
+    // Se o usuário tem nome e CPF (cadastrado por PJ), auto-validar
+    if (data.tempName && data.numeroDocumento) {
+      data.status = 'ENABLED';
+    }
 
     const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
     if (isMock) {
