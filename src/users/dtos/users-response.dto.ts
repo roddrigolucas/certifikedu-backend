@@ -97,6 +97,10 @@ class NaturalPersonDto {
   @IsOptional()
   @IsString()
   additionalDetails: string;
+
+  @IsOptional()
+  @IsString()
+  alternativeEmail?: string;
 }
 
 class CorporateAndInstitutionalPjDto {

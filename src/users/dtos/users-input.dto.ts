@@ -115,6 +115,11 @@ export class UpdatePfInfoDto {
   @IsString()
   @IsOptional()
   additionalDetails?: string;
+
+  @IsString()
+  @IsOptional()
+  @IsEmail()
+  alternativeEmail?: string;
 }
 
 export class ChangeEmailRequestDto {

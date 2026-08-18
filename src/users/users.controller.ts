@@ -182,6 +182,8 @@ export class UsersController {
       bairro: dto?.neighborhood ?? pf.bairro,
       rua: dto?.street ?? pf.rua,
       numero: dto?.number ?? pf.numero,
+      complemento: dto?.additionalDetails ?? pf.complemento,
+      alternativeEmail: dto?.alternativeEmail ?? pf.alternativeEmail,
     };
 
     const pessoaFisica = await this.userService.updatePfInfo(userId, data);
@@ -208,6 +210,7 @@ export class UsersController {
               street: pessoaFisica.rua,
               number: pessoaFisica.numero,
               additionalDetails: pessoaFisica.complemento,
+              alternativeEmail: pessoaFisica.alternativeEmail,
             },
           },
         },
@@ -308,6 +311,7 @@ export class UsersController {
               street: user.pessoaFisica.rua,
               number: user.pessoaFisica.numero,
               additionalDetails: user.pessoaFisica.complemento,
+              alternativeEmail: user.pessoaFisica.alternativeEmail,
             },
           },
           userCards: userCards.map((card) => {
