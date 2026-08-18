@@ -1,4 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards, NotFoundException, Put, InternalServerErrorException, ServiceUnavailableException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards, NotFoundException, Put, InternalServerErrorException, ServiceUnavailableException, UploadedFile, UseInterceptors, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ResumeParserService } from './resume-parser.service';
 import { GetUser } from 'src/auth/decorators';
 import { JwtGuard } from 'src/auth/guard';
 import { Roles } from '../users/decorators';
@@ -44,6 +46,7 @@ export class ResumesController {
     private readonly resumeService: ResumesService,
     private readonly auxService: AuxService,
     private readonly requestService: RequestsService,
+    private readonly resumeParserService: ResumeParserService,
   ) { }
 
   @UseGuards(JwtGuard, RolesGuard)
@@ -63,6 +66,17 @@ export class ResumesController {
     }
 
     return this.mapResumeResponse(resume);
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles('enabled')
+  @Post('parse')
+  @UseInterceptors(FileInterceptor('file'))
+  async parseResume(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Nenhum arquivo enviado.');
+    }
+    return await this.resumeParserService.parsePdf(file.buffer);
   }
 
   @UseGuards(JwtGuard, RolesGuard)

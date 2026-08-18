@@ -330,6 +330,11 @@
     protobufjs "^7.5.4"
     ws "^8.18.0"
 
+"@google/generative-ai@^0.24.1":
+  version "0.24.1"
+  resolved "https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.1.tgz"
+  integrity sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==
+
 "@ioredis/commands@1.5.1":
   version "1.5.1"
   resolved "https://registry.npmjs.org/@ioredis/commands/-/commands-1.5.1.tgz"
@@ -1076,6 +1081,13 @@
   integrity sha512-aciLyx+wDwT2t2/kJGJR2AEeBz0nJU4WuRX04Wu9Dqc5lSUtwu0WERPHYsLhF9PtseiAMPBGNUOtFjxZ56prsg==
   dependencies:
     "@types/express" "*"
+
+"@types/pdf-parse@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.npmjs.org/@types/pdf-parse/-/pdf-parse-1.1.5.tgz"
+  integrity sha512-kBfrSXsloMnUJOKi25s3+hRmkycHfLK6A09eRGqF/N8BkQoPUmaCr+q8Cli5FnfohEz/rsv82zAiPz/LXtOGhA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/qs@*":
   version "6.14.0"
