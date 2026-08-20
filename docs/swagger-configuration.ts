@@ -24,6 +24,10 @@ export const setupPlatformDocs = (app: INestApplication) => {
     .setTitle('CertifikEdu Platform API')
     .setDescription('CertifikEdu Platform API Documentation')
     .setVersion('1.0.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   const swaggerOptions: SwaggerDocumentOptions = {
@@ -80,6 +84,10 @@ export const setupApiDocs = (app: INestApplication) => {
     .setTitle('CertifikEdu API')
     .setDescription('CertifikEdu API Documentation')
     .setVersion('1.0.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'access-token',
+    )
     .build();
 
   const swaggerOptions: SwaggerDocumentOptions = {
