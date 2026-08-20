@@ -8,15 +8,7 @@ import { setupDocs } from '../docs/swagger-configuration';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.enableCors({
-    origin: true,
-    credentials: true,
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-Requested-With', 'x-api-key', 'request-id'],
-    exposedHeaders: ['Content-Disposition', 'Content-Type', 'Authorization'],
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
-  });
+  app.enableCors({ credentials: true, origin: true });
   setupDocs(app);
   app.use(cookieParser());
   app.use(json({ limit: '50mb' }));
@@ -25,6 +17,6 @@ async function bootstrap() {
   const port = process.env.PORT || 3001;
   await app.listen(port);
   console.log(`🚀 CertifikEDU Backend running on http://localhost:${port}`);
-  console.log(`📚 Interactive Swagger docs at http://localhost:${port}/docs`);
+  console.log(`📚 Swagger docs at http://localhost:${port}/api`);
 }
 bootstrap();
