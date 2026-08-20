@@ -8,7 +8,12 @@ import { setupDocs } from '../docs/swagger-configuration';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.enableCors({ credentials: true, origin: true });
+  app.enableCors({
+    origin: true,
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization, sentry-trace, baggage, X-Requested-With',
+  });
   setupDocs(app);
   app.use(cookieParser());
   app.use(json({ limit: '50mb' }));

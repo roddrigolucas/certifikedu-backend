@@ -27,8 +27,6 @@ jest.config.ts
 prisma/migrations
 *.sql
 *.txt
-*.js
-*.ts
 !src
 !prisma
 !docs
