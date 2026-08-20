@@ -16,70 +16,132 @@ import { CanvasModule } from '../src/canvas/canvas.module';
 import { TemplatesModule } from '../src/templates/templates.module';
 import { AdminModule } from '../src/admin/admin.module';
 import { PdiModule } from '../src/pdi/pdi.module';
+import { ResumesModule } from '../src/resumes/resumes.module';
+import { LearningPathsModule } from '../src/learning-paths/path.module';
 
 import redocExpressMiddleware from 'redoc-express';
 
+const SWAGGER_UI_OPTIONS = {
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    filter: true,
+    docExpansion: 'none',
+    defaultModelsExpandDepth: 1,
+  },
+  customSiteTitle: 'CertifikEdu - Documentação Interativa da API',
+  customCss: `
+    .swagger-ui .topbar { display: none }
+    .swagger-ui .info { margin: 20px 0 }
+    .swagger-ui .info .title { font-family: 'Inter', sans-serif; color: #1e293b; font-weight: 700 }
+    .swagger-ui .btn.authorize { background-color: #2563eb; color: #ffffff; border-color: #2563eb; font-weight: 600 }
+    .swagger-ui .btn.authorize svg { fill: #ffffff }
+  `,
+};
+
 export const setupPlatformDocs = (app: INestApplication) => {
   const platformDocsConfig = new DocumentBuilder()
-    .setTitle('CertifikEdu Platform API')
-    .setDescription('CertifikEdu Platform API Documentation')
+    .setTitle('CertifikEdu - Documentação da API')
+    .setDescription(`
+### 🎓 CertifikEdu Platform & Integration API
+
+Esta é a **documentação interativa oficial** da plataforma CertifikEdu. Você pode testar e simular chamadas de API diretamente nesta página.
+
+---
+
+### 🔑 Como Autenticar e Testar na Prática:
+1. Obtenha seu token JWT efetuando o login através da rota de Autenticação (\`/auth/login\` ou \`/pj/login\`).
+2. Clique no botão **Authorize** 🔓 no canto superior direito desta documentação.
+3. No campo **bearer (http, Bearer)**, digite seu token JWT no formato: \`Bearer SEU_TOKEN_AQUI\`.
+4. Clique em **Authorize** e feche a janela modal.
+5. Escolha qualquer endpoint abaixo, clique em **"Try it out"**, preencha os parâmetros e clique em **Execute** para ver a resposta em tempo real!
+
+---
+    `)
     .setVersion('1.0.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Insira seu token JWT no formato: Bearer <token>',
+        in: 'header',
+      },
+      ('bearer'),
+    )
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-api-key',
+        in: 'header',
+        description: 'Chave de API para integrações externas e webhooks',
+      },
+      'api-key',
+    )
+    .addTag('Auth', 'Autenticação, Login e Gestão de Sessão')
+    .addTag('Institutional -- Learning Paths', 'Gestão de Trilhas de Aprendizagem (PJ)')
+    .addTag('Institutional -- Resumes', 'Upload e Parse de Currículos com IA')
+    .addTag('Institutional -- Certificates', 'Emissão e Gestão de Certificados')
+    .addTag('Institutional -- Templates', 'Modelos e Templates de Certificados')
+    .addTag('Institutional -- Students', 'Gestão de Alunos da Instituição')
+    .addTag('Institutional -- Schools', 'Unidades de Ensino')
+    .addTag('Institutional -- Courses', 'Cursos da Instituição')
     .build();
 
   const swaggerOptions: SwaggerDocumentOptions = {
     operationIdFactory: (_controllerKey: string, methodKey: string) => methodKey,
     include: [
-      // Public
       AuthModule,
       TemplatesModule,
-
-      //Admin
       AdminModule,
-
-      //PF User
       UsersModule,
       AbilitiesModule,
       CertificatesModule,
       BlockchainModule,
       PdiModule,
       CandidateModule,
-
-      //Institutional
       PJInfoModule,
-
-      //Corporate
-      CorporateModule,
-
-      //PJ
       PJUsersModule,
+      CorporateModule,
       CanvasModule,
-
-      //Payments
       PaymentsModule,
-
-      //Canvas
       CanvasPlatformModule,
+      ResumesModule,
+      LearningPathsModule,
     ],
   };
 
   const document = SwaggerModule.createDocument(app, platformDocsConfig, swaggerOptions);
 
-  SwaggerModule.setup('swagger/platform', app, document);
+  // Unified interactive Swagger UI routes for convenience
+  SwaggerModule.setup('docs', app, document, SWAGGER_UI_OPTIONS);
+  SwaggerModule.setup('api-docs', app, document, SWAGGER_UI_OPTIONS);
+  SwaggerModule.setup('swagger/platform', app, document, SWAGGER_UI_OPTIONS);
 
   app.use(
-    '/api-docs/platform',
+    '/api-docs/platform-redoc',
     redocExpressMiddleware({
       title: 'CertifikEdu Platform API Documentation',
-      specUrl: '/swagger/platform-json',
+      specUrl: '/docs-json',
     }),
   );
 };
 
 export const setupApiDocs = (app: INestApplication) => {
   const apiDocsConfig = new DocumentBuilder()
-    .setTitle('CertifikEdu API')
-    .setDescription('CertifikEdu API Documentation')
+    .setTitle('CertifikEdu Integration API')
+    .setDescription('CertifikEdu External API for Third-Party Integrations')
     .setVersion('1.0.0')
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-api-key',
+        in: 'header',
+        description: 'Chave de API para integrações de terceiros',
+      },
+      'api-key',
+    )
     .build();
 
   const swaggerOptions: SwaggerDocumentOptions = {
@@ -89,15 +151,7 @@ export const setupApiDocs = (app: INestApplication) => {
 
   const document = SwaggerModule.createDocument(app, apiDocsConfig, swaggerOptions);
 
-  SwaggerModule.setup('swagger/api', app, document);
-
-  app.use(
-    '/api-docs/api',
-    redocExpressMiddleware({
-      title: 'CertifikEdu API Documentation',
-      specUrl: '/swagger/api-json',
-    }),
-  );
+  SwaggerModule.setup('swagger/api', app, document, SWAGGER_UI_OPTIONS);
 };
 
 export const setupDocs = (app: INestApplication) => {
