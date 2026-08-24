@@ -35,3 +35,4 @@ prisma/migrations
 !tsconfig.json
 !tsconfig.build.json
 !nest-cli.json
+!dist
