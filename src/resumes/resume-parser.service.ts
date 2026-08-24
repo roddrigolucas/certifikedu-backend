@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import * as pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse');
 
 @Injectable()
 export class ResumeParserService {
