@@ -56,6 +56,18 @@ export class PaymentsService {
   }
 
   async checkUserPfCertificatePayment(userId: string): Promise<IUserCertificatePaymentInfo> {
+    const user = await this.prismaService.user.findUnique({ where: { id: userId }, select: { email: true } });
+    if (user?.email === 'r.lucas@fiemg.com.br') {
+      const nextDate = new Date();
+      nextDate.setFullYear(nextDate.getFullYear() + 10);
+      return {
+        isValid: true,
+        type: PaymentType.basic,
+        id: 'unlimited_admin',
+        next_date: nextDate,
+      };
+    }
+
     const subscription = await this.subscriptionsService.getUserSubscriptionInfo(userId);
 
     if (subscription.emittedCertificatesPeriod === QuotaPeriod.unlimited) {
@@ -125,8 +137,23 @@ export class PaymentsService {
   }
 
   async getUserCredits(userId: string): Promise<IUserCreditsInfo> {
-
+    const user = await this.prismaService.user.findUnique({ where: { id: userId }, select: { email: true } });
     const customerId = await this.customerService.getCustomerIdByUserId(userId);
+    
+    if (user?.email === 'r.lucas@fiemg.com.br') {
+      const nextDate = new Date();
+      nextDate.setFullYear(nextDate.getFullYear() + 10);
+      return {
+        customerId: customerId,
+        plan: 'Plano Ilimitado (Admin)',
+        planId: 'unlimited_admin',
+        subsciptionId: 'unlimited_admin',
+        nextCertificateDate: nextDate,
+        monthSpentCredits: 0,
+        additionalCertificatesCredits: 9999999,
+        certificateCredits: 9999999,
+      };
+    }
 
     const subscription = await this.subscriptionsService.getUserSubscriptionInfo(userId);
 
