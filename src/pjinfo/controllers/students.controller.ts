@@ -438,15 +438,15 @@ export class StudentsInstitutionalController {
   @UseGuards(RolesGuard, PJRolesGuard)
   @Roles('enabled')
   @PJRoles('basico')
-  @Delete('/students/:schoolId/')
+  @Delete('/students/:schoolId/:courseId?')
   async deleteStudentAssociation(
-    @GetUser() user: User & { idPF: string },
+    @GetUser() user: User & { idPF?: string },
     @Param('schoolId') schoolId: string,
     @Body() dto: CreateOrDeleteStudentsAssociationPjInfoDto,
     @Param('courseId') courseId?: string,
   ): Promise<{ success: boolean }> {
     const pj = await this.auxService.getPjInfo(user.id);
-    const userId = await this.auxService.getUserIdFromPfId(user.idPF);
+    const actorId = user?.idPF ? (await this.auxService.getUserIdFromPfId(user.idPF)) ?? user.id : user.id;
 
     const school = await this.schoolsService.getSchoolById(schoolId);
 
@@ -458,7 +458,7 @@ export class StudentsInstitutionalController {
       throw new ForbiddenException(`User does not own this school`);
     }
 
-    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, userId);
+    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, actorId);
 
     if (courseId) {
       await this.coursesService.removeStudentFromCourse(courseId, dto.cpfs);

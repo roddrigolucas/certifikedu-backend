@@ -68,15 +68,13 @@ export class AuxService implements OnModuleInit {
   }
 
   async getUserIdFromPfId(pfId: string): Promise<string> {
+    if (!pfId) return null;
     const pf = await this.prismaService.pessoaFisica.findUnique({
       where: { idPF: pfId },
       select: { userId: true },
     });
 
-    console.log("FUCK")
-    console.log(pf)
-
-    return pf.userId;
+    return pf?.userId ?? null;
   }
 
   getCensoredEmail(email: string): string {

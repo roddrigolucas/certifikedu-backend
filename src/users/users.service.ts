@@ -566,6 +566,14 @@ export class UsersService {
       });
     }
 
+    const rawUsersToClear = usersRecords.filter(user => !user.pessoaFisica && user.tempSchool === schoolId);
+    if (rawUsersToClear.length > 0) {
+      await this.prismaService.user.updateMany({
+        where: { id: { in: rawUsersToClear.map(u => u.id) } },
+        data: { tempSchool: null, tempCourse: null },
+      });
+    }
+
     return await this.getUsersPfByDocumentNumbers(usersDocuments);
   }
 
@@ -668,7 +676,7 @@ export class UsersService {
           pjId,
           importId: importId,
           userDocument: user.documentNumber,
-          userEmail: user.documentNumber,
+          userEmail: user.email,
           userName: user.name ?? '',
           userPhone: user.phone ?? '',
           errorOnImport: !user.isValid,
