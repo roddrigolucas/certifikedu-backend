@@ -402,20 +402,22 @@ export class StudentsInstitutionalController {
   @Patch('/students/:schoolId/:courseId?')
   async createStudentAssociation(
     @GetUser('id') userId: string,
+    @Param('pjId') pjId: string,
     @Param('schoolId') schoolId: string,
     @Body() dto: CreateCourseStudentsAssociationPjInfoDto,
     @Param('courseId') courseId?: string,
   ): Promise<{ success: boolean }> {
-    const pj = await this.auxService.getPjInfo(userId);
-
     const school = await this.schoolsService.getSchoolById(schoolId);
 
     if (!school) {
       throw new NotFoundException(`School not found.`);
     }
 
-    if (!(school.ownerUserId == pj.idPJ)) {
-      throw new ForbiddenException(`User does not own this school`);
+    if (school.ownerUserId !== pjId) {
+      const pj = await this.auxService.getPjInfo(userId);
+      if (!pj || school.ownerUserId !== pj.idPJ) {
+        throw new ForbiddenException(`User does not own this school`);
+      }
     }
 
     if (courseId) {
@@ -441,11 +443,11 @@ export class StudentsInstitutionalController {
   @Delete('/students/:schoolId/:courseId?')
   async deleteStudentAssociation(
     @GetUser() user: User & { idPF?: string },
+    @Param('pjId') pjId: string,
     @Param('schoolId') schoolId: string,
     @Body() dto: CreateOrDeleteStudentsAssociationPjInfoDto,
     @Param('courseId') courseId?: string,
   ): Promise<{ success: boolean }> {
-    const pj = await this.auxService.getPjInfo(user.id);
     const actorId = user?.idPF ? (await this.auxService.getUserIdFromPfId(user.idPF)) ?? user.id : user.id;
 
     const school = await this.schoolsService.getSchoolById(schoolId);
@@ -454,11 +456,14 @@ export class StudentsInstitutionalController {
       throw new NotFoundException(`School not found.`);
     }
 
-    if (!(school.ownerUserId == pj.idPJ)) {
-      throw new ForbiddenException(`User does not own this school`);
+    if (school.ownerUserId !== pjId) {
+      const pj = await this.auxService.getPjInfo(user.id);
+      if (!pj || school.ownerUserId !== pj.idPJ) {
+        throw new ForbiddenException(`User does not own this school`);
+      }
     }
 
-    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, actorId);
+    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, actorId, pjId);
 
     if (courseId) {
       await this.coursesService.removeStudentFromCourse(courseId, dto.cpfs);

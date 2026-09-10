@@ -530,6 +530,7 @@ export class UsersService {
     schoolId: string,
     usersDocuments: Array<string>,
     actorId: string,
+    pjId?: string,
   ): Promise<Array<TUserPfWithSchoolsOutput>> {
     const usersRecords = await this.getUsersPfByDocumentNumbers(usersDocuments);
 
@@ -548,10 +549,19 @@ export class UsersService {
         data: { students: { disconnect: disconnects } },
       });
 
+      let auditPjId = pjId;
+      if (!auditPjId) {
+        const school = await this.prismaService.schools.findUnique({
+          where: { schoolId },
+          select: { ownerUserId: true },
+        });
+        auditPjId = school?.ownerUserId;
+      }
+
       await this.auditService.log({
         action: AuditAction.DELETE, 
         actorId: actorId, 
-        pjId: schoolId,   
+        pjId: auditPjId,   
         targetEntity: 'User (Estudante)',
         targetId: disconnects.map(d => d.idPF).join(','),
         description: `Desvinculou ${disconnects.length} alunos da escola`,
