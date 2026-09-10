@@ -538,16 +538,19 @@ export class UsersService {
     actorId: string,
     pjId?: string,
   ): Promise<Array<TUserPfWithSchoolsOutput>> {
-    const usersRecords = await this.getUsersPfByDocumentNumbers(usersDocuments);
+    const cpfs = Array.isArray(usersDocuments) ? usersDocuments : [];
+    if (cpfs.length === 0) return [];
+
+    const usersRecords = await this.getUsersPfByDocumentNumbers(cpfs);
 
     const disconnects = usersRecords
-      .filter(user => user.pessoaFisica)
+      .filter((user) => user?.pessoaFisica)
       .map((user) => {
-        if (user.pessoaFisica.schools.map((school) => school.schoolId).includes(schoolId)) {
+        if (user.pessoaFisica.schools?.map((school) => school.schoolId).includes(schoolId)) {
           return { idPF: user.pessoaFisica.idPF };
         }
       })
-      .filter(id => id !== undefined);
+      .filter((id): id is { idPF: string } => Boolean(id));
 
     if (disconnects.length > 0) {
       await this.prismaService.schools.update({
@@ -564,33 +567,45 @@ export class UsersService {
         auditPjId = school?.ownerUserId;
       }
 
+      if (auditPjId) {
+        const validPj = await this.prismaService.pessoaJuridica.findUnique({
+          where: { idPJ: auditPjId },
+          select: { idPJ: true },
+        });
+        if (!validPj) {
+          auditPjId = null;
+        }
+      }
+
       await this.auditService.log({
-        action: AuditAction.DELETE, 
-        actorId: actorId, 
-        pjId: auditPjId,   
+        action: AuditAction.DELETE,
+        actorId: actorId,
+        pjId: auditPjId,
         targetEntity: 'User (Estudante)',
-        targetId: disconnects.map(d => d.idPF).join(','),
+        targetId: disconnects.map((d) => d.idPF).join(','),
         description: `Desvinculou ${disconnects.length} alunos da escola`,
         metadata: {
           removedCount: disconnects.length,
-          removedDocuments: usersDocuments,
-          snapshot: usersRecords.map(u => ({
-            name: u.pessoaFisica?.nome,
-            email: u.email
-          }))
-        }
+          removedDocuments: cpfs,
+          snapshot: usersRecords.map((u) => ({
+            name: u.pessoaFisica?.nome ?? u.tempName,
+            email: u.email,
+          })),
+        },
       });
     }
 
-    const rawUsersToClear = usersRecords.filter(user => !user.pessoaFisica && user.tempSchool === schoolId);
+    const rawUsersToClear = usersRecords.filter(
+      (user) => !user.pessoaFisica && user.tempSchool === schoolId,
+    );
     if (rawUsersToClear.length > 0) {
       await this.prismaService.user.updateMany({
-        where: { id: { in: rawUsersToClear.map(u => u.id) } },
+        where: { id: { in: rawUsersToClear.map((u) => u.id) } },
         data: { tempSchool: null, tempCourse: null },
       });
     }
 
-    return await this.getUsersPfByDocumentNumbers(usersDocuments);
+    return await this.getUsersPfByDocumentNumbers(cpfs);
   }
 
   async enableUserLTI(userId: string) {

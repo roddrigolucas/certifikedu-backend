@@ -265,15 +265,21 @@ export class CoursesService {
   }
 
   async removeStudentFromCourse(courseId: string, cpfs: Array<string>) {
+    if (!cpfs || cpfs.length === 0) return;
     const foundUsers = await this.findStudents(cpfs);
 
-    const disassociateUsers = foundUsers.map((user) => {
-      if (user.pessoaFisica.courses.map((course) => course.courseId).includes(courseId)) {
-        return user.pessoaFisica.idPF;
-      }
-    });
+    const disassociateUsers = foundUsers
+      .filter((user) => user?.pessoaFisica)
+      .map((user) => {
+        if (user.pessoaFisica.courses?.map((course) => course.courseId).includes(courseId)) {
+          return user.pessoaFisica.idPF;
+        }
+      })
+      .filter((id): id is string => Boolean(id));
 
-    await this.deleteCourseStudentAssociation(courseId, disassociateUsers);
+    if (disassociateUsers.length > 0) {
+      await this.deleteCourseStudentAssociation(courseId, disassociateUsers);
+    }
   }
 
   async getCreateCourseFromArray(subjectsData: Array<ICreateCourse>) {
