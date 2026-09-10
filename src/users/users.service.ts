@@ -145,8 +145,14 @@ export class UsersService {
   }
 
   async getUsersPfByDocumentNumbers(cpfs: Array<string>): Promise<Array<TUserPfWithSchoolsOutput>> {
+    const sanitizedCpfs = Array.from(
+      new Set([
+        ...cpfs,
+        ...cpfs.map((c) => (c ? c.replace(/\D/g, '') : '')).filter(Boolean),
+      ]),
+    );
     return await this.prismaService.user.findMany({
-      where: { numeroDocumento: { in: cpfs } },
+      where: { numeroDocumento: { in: sanitizedCpfs } },
       include: { pessoaFisica: { include: { schools: true } } },
     });
   }

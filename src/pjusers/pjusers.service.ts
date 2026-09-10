@@ -26,8 +26,16 @@ export class PJUsersService {
   }
 
   async getUserByEmailOrDocument(info: string): Promise<TUserPfOutput> {
+    if (!info) return null;
+    const cleanDoc = info.replace(/\D/g, '');
     return await this.prismaService.user.findFirst({
-      where: { OR: [{ email: info }, { numeroDocumento: info }] },
+      where: {
+        OR: [
+          { email: info },
+          { numeroDocumento: info },
+          ...(cleanDoc ? [{ numeroDocumento: cleanDoc }] : []),
+        ],
+      },
       include: { pessoaFisica: true },
     });
   }
