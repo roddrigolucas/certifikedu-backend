@@ -144,21 +144,36 @@ export class AuxService implements OnModuleInit {
   }
 
   formatDate(date: string): Date {
-    let sepString: string;
+    if (!date) return null;
 
     try {
+      let sepString: string;
       if (date.includes('-')) {
         sepString = '-';
-      } else {
+      } else if (date.includes('/')) {
         sepString = '/';
+      } else {
+        const d = new Date(date);
+        return isNaN(d.getTime()) ? null : d;
       }
 
-      const day = parseInt(date.split(sepString)[0]);
-      // Date Object for js starts indexing at 0 ... !!!
-      const month = parseInt(date.split(sepString)[1]) - 1;
-      const year = parseInt(date.split(sepString)[2]);
+      const parts = date.split('T')[0].split(sepString);
+      if (parts.length !== 3) return null;
 
-      return new Date(year, month, day);
+      let day: number, month: number, year: number;
+
+      if (parts[0].length === 4) {
+        year = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10) - 1;
+        day = parseInt(parts[2], 10);
+      } else {
+        day = parseInt(parts[0], 10);
+        month = parseInt(parts[1], 10) - 1;
+        year = parseInt(parts[2], 10);
+      }
+
+      const d = new Date(year, month, day);
+      return isNaN(d.getTime()) ? null : d;
     } catch (e) {
       return null;
     }

@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length, MinLength, ValidateNested } from 'class-validator';
 
 export class PfUserDto {
   @IsString()
-  @Length(3)
+  @MinLength(3)
   nome: string;
 
   @IsString()
