@@ -93,11 +93,15 @@ export class AuthService {
 
   async signUpPjUser(data: TUserCreateInput, passwordString: string): Promise<TUserPjOutput> {
     await this.createAuthCredentials(data.email, passwordString, 'PJ');
-    const isMock = this.auxService.isLocal || process.env.PAGARME_MOCK === 'true';
-    if (isMock) {
-      data.status = 'ENABLED';
-    }
-    return this.createUserPjRecord(data);
+    // Usuários PJ devem ser imediatamente ativados e disponibilizados em toda a solução
+    data.status = 'ENABLED';
+    const user = await this.createUserPjRecord(data);
+    // Inicializar infra de pagamentos (subscription basica)
+    await this.paymentsService.createRawUserSubscription(user.id);
+    // Notificar admin sobre novo cadastro PJ
+    const pjName = user.pessoaJuridica?.nomeFantasia ?? user.pessoaJuridica?.razaoSocial ?? data.email;
+    this.sesService.sendRawEmail(pjName, data.email);
+    return user;
   }
 
   async signUpPfUserWithoutCognito(data: TUserCreateInput) {
