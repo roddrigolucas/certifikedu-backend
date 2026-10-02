@@ -134,6 +134,7 @@ export class UsersService {
         pessoaJuridica: { select: { nomeFantasia: true } },
       },
       orderBy: { createdAt: 'desc' },
+      take: 5000,
     });
   }
 
