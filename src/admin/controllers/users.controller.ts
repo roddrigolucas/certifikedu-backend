@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserStatus } from '@prisma/client';
 import { JwtGuard } from '../../auth/guard';
@@ -11,7 +11,16 @@ import { Roles } from '../../users/decorators';
 import { RolesGuard } from '../../users/guards';
 import { TPessoaFisicaUpdateInput, TPessoaJuridicaUpdateInput } from '../../users/types/user.types';
 import { UsersService } from '../../users/users.service';
+import { AuthService } from '../../auth/auth.service';
+import { PaymentsService } from '../../payments/services/payments.service';
 import {
+  TPessoaFisicaCreateWoUserInput,
+  TPessoaJuridicaCreateWoUserInput,
+  TSocioCreateWoPjInput,
+  TUserCreateInput,
+} from '../../auth/types/auth.types';
+import {
+  AdminCreateUserDto,
   AdminUpdatePfInfoDto,
   AdminUpdatePjInfoDto,
   UpdateUserDocumentPictureStatusAdminParamDto,
@@ -38,7 +47,95 @@ export class UsersAdminController {
     private readonly sesService: SESService,
     private readonly s3Service: S3Service,
     private readonly cognitoService: CognitoService,
+    private readonly authService: AuthService,
+    private readonly paymentsService: PaymentsService,
   ) { }
+
+  @Roles('admin')
+  @Post()
+  async adminCreateUser(@Body() dto: AdminCreateUserDto): Promise<{ success: boolean; user: any }> {
+    const cleanEmail = dto.email.trim().toLowerCase();
+    const cleanDoc = dto.documentNumber.replace(/\D/g, '') || dto.documentNumber.trim();
+
+    const checkUser = await this.authService.checkUser(cleanDoc, cleanEmail);
+    if (checkUser.exist) {
+      throw new BadRequestException(checkUser.errorMessage);
+    }
+
+    const passwordString = dto.password?.trim() || this.auxService.generateRandomPassword();
+    const type = dto.type || (cleanDoc.length > 11 ? 'PJ' : 'PF');
+    const status = dto.status || UserStatus.ENABLED;
+
+    let createdUser: any;
+
+    if (type === 'PJ') {
+      const socio: TSocioCreateWoPjInput = {
+        CPF: '00000000000',
+        nome: dto.name,
+        telefone: dto.phone || '',
+        dataDeNascimento: '1990-01-01T00:00:00.000Z',
+        cepNumber: '00000000',
+        estado: 'UF',
+        cidade: 'Cidade',
+        bairro: 'Bairro',
+        rua: 'Rua',
+        numero: '0',
+        complemento: '',
+      };
+
+      const pj: TPessoaJuridicaCreateWoUserInput = {
+        razaoSocial: dto.name,
+        nomeFantasia: dto.name,
+        telefone: dto.phone || '',
+        dataDeFundacao: '2020-01-01T00:00:00.000Z',
+        segmento: 'Geral',
+        numeroDeFuncionarios: 10,
+        socios: { create: socio },
+      };
+
+      const userData: TUserCreateInput = {
+        numeroDocumento: cleanDoc,
+        email: cleanEmail,
+        type: 'PJ',
+        status: status,
+        pessoaJuridica: { create: pj },
+      };
+
+      await this.authService.createAuthCredentials(cleanEmail, passwordString, 'PJ');
+      createdUser = await this.authService.createUserPjRecord(userData);
+      await this.paymentsService.createRawUserSubscription(createdUser.id);
+    } else {
+      const pf: TPessoaFisicaCreateWoUserInput = {
+        nome: dto.name,
+        telefone: dto.phone || '',
+        dataDeNascimento: '1990-01-01T00:00:00.000Z',
+        cepNumber: '00000000',
+        estado: 'UF',
+        cidade: 'Cidade',
+        bairro: 'Bairro',
+        rua: 'Rua',
+        numero: '0',
+        complemento: '',
+      };
+
+      const userData: TUserCreateInput = {
+        numeroDocumento: cleanDoc,
+        email: cleanEmail,
+        type: 'PF',
+        status: status,
+        pessoaFisica: { create: pf },
+      };
+
+      await this.authService.createAuthCredentials(cleanEmail, passwordString, 'PF');
+      createdUser = await this.authService.createUserPfRecord(userData);
+      if (status === UserStatus.ENABLED) {
+        await this.certificateService.addUserCertificates(createdUser.id, cleanDoc, dto.name);
+      }
+      await this.paymentsService.addNewUserToPaymentsInfra(createdUser);
+    }
+
+    return { success: true, user: createdUser };
+  }
 
 
   @Roles('enabled')

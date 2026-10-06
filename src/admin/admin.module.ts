@@ -6,6 +6,7 @@ import { CredentialsModule } from '../credentials-api/credentials.module';
 import { AbilitiesModule } from '../abilities/abilities.module';
 import { UsersModule } from '../users/users.module';
 import { PaymentsModule } from '../payments/payments.module';
+import { AuthModule } from '../auth/auth.module';
 
 //CONTROLLERS
 import { UsersAdminController } from './controllers/users.controller';
@@ -38,6 +39,7 @@ import { RequestsModule } from '../requests/requests.module';
     UsersModule,
     CertificatesModule,
     PaymentsModule,
+    AuthModule,
   ],
   providers: [],
   controllers: [

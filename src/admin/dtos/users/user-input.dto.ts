@@ -1,6 +1,34 @@
 import { CertificateStatus, UserStatus } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsDate, IsDateString, IsEmail, IsEnum, IsString, ValidateNested } from "class-validator";
+import { IsDate, IsDateString, IsEmail, IsEnum, IsOptional, IsString, ValidateNested } from "class-validator";
+
+export class AdminCreateUserDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  documentNumber: string;
+
+  @IsString()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  password?: string;
+
+  @IsOptional()
+  @IsString()
+  type?: 'PF' | 'PJ';
+
+  @IsOptional()
+  @IsEnum(UserStatus)
+  status?: UserStatus;
+}
+
 
 export class AdminAddressDto {
   @IsString()
