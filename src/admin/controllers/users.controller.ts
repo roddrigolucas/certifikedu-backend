@@ -340,6 +340,24 @@ export class UsersAdminController {
   }
 
   @Roles('admin')
+  @Patch(':userId/reset-password')
+  async resetUserPassword(@Param('userId') userId: string): Promise<{ success: boolean }> {
+    const user = await this.userService.getUserWithPfAndPjById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const passwordString = this.auxService.generateRandomPassword();
+    await this.authService.updateUserPassword(user.email, passwordString);
+
+    const userName = user.pessoaFisica?.nome ?? user.pessoaJuridica?.nomeFantasia ?? user.tempName ?? '';
+    await this.sesService.sendNewUserPassword(user.email, passwordString, userName);
+
+    return { success: true };
+  }
+
+  @Roles('admin')
   @Patch('pf/:userId')
   async updateUserPfInfo(
     @Param('userId') userId: string,
