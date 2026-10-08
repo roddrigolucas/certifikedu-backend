@@ -84,7 +84,20 @@ ${text.substring(0, 30000)}
 
       const response = await model.generateContent(prompt);
       const resultText = response.response.text();
-      const parsedJson = JSON.parse(resultText);
+      
+      // Limpar blocos de markdown e espaços em branco ao redor
+      let cleanText = resultText.trim();
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.substring(7);
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.substring(3);
+      }
+      if (cleanText.endsWith('```')) {
+        cleanText = cleanText.substring(0, cleanText.length - 3);
+      }
+      cleanText = cleanText.trim();
+
+      const parsedJson = JSON.parse(cleanText);
 
       return parsedJson;
 
