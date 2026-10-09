@@ -341,6 +341,28 @@ export class UsersAdminController {
   }
 
   @Roles('admin')
+  @Patch(':userId/moodle-lti/enable')
+  async enableMoodleLTI(@Param('userId') userId: string): Promise<{ success: boolean }> {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userService.enableUserMoodleLTI(userId);
+    return { success: true };
+  }
+
+  @Roles('admin')
+  @Patch(':userId/moodle-lti/disable')
+  async disableMoodleLTI(@Param('userId') userId: string): Promise<{ success: boolean }> {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userService.disableUserMoodleLTI(userId);
+    return { success: true };
+  }
+
+  @Roles('admin')
   @Patch(':userId/reset-password')
   async resetUserPassword(
     @Param('userId') userId: string,
