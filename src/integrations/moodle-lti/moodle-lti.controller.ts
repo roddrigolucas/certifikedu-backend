@@ -12,7 +12,9 @@ import { RolesGuard } from '../../users/guards';
 import { Roles } from '../../users/decorators';
 import { PJRoles } from '../../pjinfo/decorators/roles-pj.decorator';
 
-@ApiTags('moodle-lti')
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Integrações (Moodle LTI, Canvas LTI)')
 @Controller('moodle-lti')
 export class MoodleLtiController {
   constructor(
@@ -22,6 +24,8 @@ export class MoodleLtiController {
     private readonly jwtService: JwtService,
   ) {}
 
+  @ApiOperation({ summary: 'LTI Login Initialization (OIDC)' })
+  @ApiResponse({ status: 307, description: 'Redireciona para o fluxo OIDC (Plataforma/LMS Moodle/Canvas)' })
   @Post('login')
   async login(@Body() body: any, @Res() res: Response) {
     try {
@@ -34,6 +38,8 @@ export class MoodleLtiController {
   }
 
   @UseGuards(MoodleLTIAuthGuard)
+  @ApiOperation({ summary: 'LTI Launch URL (Autenticação via Tool)' })
+  @ApiResponse({ status: 307, description: 'Single Sign-On realizado. Redireciona para a interface autenticada da CertifikEDU com token provisório.' })
   @Post('launch')
   async launch(
     @GetMoodleLtiLaunchInfo() ltiLaunchInfo: any,
@@ -101,6 +107,8 @@ export class MoodleLtiController {
     res.status(HttpStatus.TEMPORARY_REDIRECT).redirect(`${frontUrl}/moodle/auth?accessToken=${accessToken}&refreshToken=${refreshToken}`);
   }
 
+  @ApiOperation({ summary: 'Endpoint de Chaves Públicas JWKS' })
+  @ApiResponse({ status: 200, description: 'Retorna a chave pública para validação de assinatura OIDC.' })
   @Get('jwks.json')
   jwks() {
     return this.ltiService.getPublicJwks();
@@ -109,6 +117,7 @@ export class MoodleLtiController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles('enabled')
   @PJRoles('medio')
+  @ApiOperation({ summary: 'Obter configuração atual da integração LTI do Cliente PJ' })
   @Get('config')
   async getConfig(@Req() req: any) {
     const pjId = req.user.pessoaJuridica.idPJ;
@@ -121,6 +130,7 @@ export class MoodleLtiController {
   @UseGuards(JwtGuard, RolesGuard)
   @Roles('enabled')
   @PJRoles('medio')
+  @ApiOperation({ summary: 'Atualizar ou salvar configuração da integração LTI do Cliente PJ' })
   @Post('config')
   async updateConfig(@Req() req: any, @Body() body: any) {
     const pjId = req.user.pessoaJuridica.idPJ;

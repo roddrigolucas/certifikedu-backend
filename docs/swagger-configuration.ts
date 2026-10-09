@@ -16,6 +16,7 @@ import { CanvasModule } from '../src/canvas/canvas.module';
 import { TemplatesModule } from '../src/templates/templates.module';
 import { AdminModule } from '../src/admin/admin.module';
 import { PdiModule } from '../src/pdi/pdi.module';
+import { MoodleLtiModule } from '../src/integrations/moodle-lti/moodle-lti.module';
 
 import redocExpressMiddleware from 'redoc-express';
 
@@ -63,6 +64,9 @@ export const setupPlatformDocs = (app: INestApplication) => {
 
       //Canvas
       CanvasPlatformModule,
+      
+      //Integrations
+      MoodleLtiModule,
     ],
   };
 
