@@ -7,6 +7,10 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { MoodleLTIAuthGuard } from './auth/guards/moodle-lti.guard';
 import { GetMoodleLtiLaunchInfo, GetMoodleLtiConfig } from './auth/decorators/get-moodle-lti-user.decorator';
 import { JwtService } from '@nestjs/jwt';
+import { JwtGuard } from '../../auth/guard';
+import { RolesGuard } from '../../users/guards';
+import { Roles } from '../../users/decorators';
+import { PJRoles } from '../../pjinfo/decorators/roles-pj.decorator';
 
 @ApiTags('moodle-lti')
 @Controller('moodle-lti')
@@ -101,5 +105,45 @@ export class MoodleLtiController {
   @Get('jwks.json')
   jwks() {
     return this.ltiService.getPublicJwks();
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles('enabled')
+  @PJRoles('medio')
+  @Get('config')
+  async getConfig(@Req() req: any) {
+    const pjId = req.user.pessoaJuridica.idPJ;
+    const config = await this.prismaService.moodleLtiConfiguration.findUnique({
+      where: { pjId },
+    });
+    return config || {};
+  }
+
+  @UseGuards(JwtGuard, RolesGuard)
+  @Roles('enabled')
+  @PJRoles('medio')
+  @Post('config')
+  async updateConfig(@Req() req: any, @Body() body: any) {
+    const pjId = req.user.pessoaJuridica.idPJ;
+
+    const data = {
+      clientId: body.clientId,
+      deploymentId: body.deploymentId,
+      issuer: body.issuer,
+      authUrl: body.authUrl || '',
+      tokenUrl: body.tokenUrl || '',
+      jwksUrl: body.jwksUrl || '',
+    };
+
+    const config = await this.prismaService.moodleLtiConfiguration.upsert({
+      where: { pjId },
+      update: data,
+      create: {
+        ...data,
+        pjId,
+      },
+    });
+
+    return config;
   }
 }
