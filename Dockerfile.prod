@@ -1,17 +1,30 @@
-# Produção (Build local transferido via deploy-vps.ps1)
+# Build stage
+FROM node:20-slim AS build
+
+RUN apt-get update -y && apt-get install -y openssl libssl-dev
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+COPY prisma ./prisma/
+RUN npm ci
+
+COPY . .
+RUN npx prisma generate
+RUN npm run build
+
+# Production stage
 FROM node:20-slim
 
 RUN apt-get update -y && apt-get install -y openssl libssl-dev
 WORKDIR /usr/src/app
 
-# Instala apenas dependências de produção para salvar memória
 COPY package*.json ./
 COPY prisma ./prisma/
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 RUN npx prisma generate
 
-# Copia os arquivos gerados localmente (pelo deploy-vps.ps1)
-COPY dist ./dist
+# Copia os arquivos gerados no stage de build
+COPY --from=build /usr/src/app/dist ./dist
 
 EXPOSE 3001
 
