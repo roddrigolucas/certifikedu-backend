@@ -5,6 +5,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  HttpException,
   NotFoundException,
   Param,
   Patch,
@@ -448,28 +449,39 @@ export class StudentsInstitutionalController {
     @Body() dto: CreateOrDeleteStudentsAssociationPjInfoDto,
     @Param('courseId') courseId?: string,
   ): Promise<{ success: boolean }> {
-    const actorId = user?.idPF ? (await this.auxService.getUserIdFromPfId(user.idPF)) ?? user.id : user.id;
+    try {
+      const actorId = user?.idPF ? (await this.auxService.getUserIdFromPfId(user.idPF)) ?? user.id : user?.id;
 
-    const school = await this.schoolsService.getSchoolById(schoolId);
+      const school = await this.schoolsService.getSchoolById(schoolId);
 
-    if (!school) {
-      throw new NotFoundException(`School not found.`);
-    }
-
-    if (school.ownerUserId !== pjId) {
-      const pj = await this.auxService.getPjInfo(user.id);
-      if (!pj || school.ownerUserId !== pj.idPJ) {
-        throw new ForbiddenException(`User does not own this school`);
+      if (!school) {
+        throw new NotFoundException(`Unidade (escola) não encontrada.`);
       }
+
+      if (school.ownerUserId !== pjId) {
+        const pj = await this.auxService.getPjInfo(user?.id);
+        if (!pj || school.ownerUserId !== pj.idPJ) {
+          throw new ForbiddenException(`Esta instituição não é dona desta unidade.`);
+        }
+      }
+
+      const cpfs = (Array.isArray(dto?.cpfs) ? dto.cpfs : []).filter(Boolean);
+      if (cpfs.length === 0) {
+        throw new BadRequestException('Nenhum documento (CPF) informado para remoção.');
+      }
+
+      await this.usersService.disassociateUsersFromSchool(schoolId, cpfs, actorId, pjId);
+
+      if (courseId) {
+        await this.coursesService.removeStudentFromCourse(courseId, cpfs);
+      }
+
+      return { success: true };
+    } catch (err) {
+      if (err instanceof HttpException) throw err;
+      console.error('[DeleteStudentAssociation] Erro inesperado:', { pjId, schoolId, courseId, cpfs: dto?.cpfs }, err);
+      throw new BadRequestException(`Falha ao remover aluno: ${err?.message ?? 'erro desconhecido'}`);
     }
-
-    await this.usersService.disassociateUsersFromSchool(schoolId, dto.cpfs, actorId, pjId);
-
-    if (courseId) {
-      await this.coursesService.removeStudentFromCourse(courseId, dto.cpfs);
-    }
-
-    return { success: true };
   }
 
   @UseGuards(RolesGuard, PJRolesGuard)

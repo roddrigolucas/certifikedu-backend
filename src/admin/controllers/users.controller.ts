@@ -341,20 +341,40 @@ export class UsersAdminController {
 
   @Roles('admin')
   @Patch(':userId/reset-password')
-  async resetUserPassword(@Param('userId') userId: string): Promise<{ success: boolean }> {
+  async resetUserPassword(
+    @Param('userId') userId: string,
+  ): Promise<{ success: boolean; email: string; temporaryPassword: string; emailSent: boolean }> {
     const user = await this.userService.getUserWithPfAndPjById(userId);
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    if (!user.email) {
+      throw new BadRequestException('Usuário não possui e-mail cadastrado.');
     }
 
     const passwordString = this.auxService.generateRandomPassword();
-    await this.authService.updateUserPassword(user.email, passwordString);
 
-    const userName = user.pessoaFisica?.nome ?? user.pessoaJuridica?.nomeFantasia ?? user.tempName ?? '';
-    await this.sesService.sendNewUserPassword(user.email, passwordString, userName);
+    // Upsert: cria as credenciais caso o usuario tenha sido migrado/importado sem registro em AuthCredentials
+    try {
+      await this.authService.createAuthCredentials(user.email, passwordString, user.type ?? 'PF');
+    } catch (err) {
+      console.error('[ResetPassword] Falha ao gravar credenciais:', err);
+      throw new BadRequestException('Não foi possível gravar a nova senha no banco de dados.');
+    }
 
-    return { success: true };
+    // Envio de e-mail nunca deve impedir o reset (SMTP pode estar indisponivel)
+    let emailSent = true;
+    try {
+      const userName = user.pessoaFisica?.nome ?? user.pessoaJuridica?.nomeFantasia ?? user.tempName ?? '';
+      await this.sesService.sendNewUserPassword(user.email, passwordString, userName);
+    } catch (err) {
+      emailSent = false;
+      console.error('[ResetPassword] Falha ao enviar e-mail:', err);
+    }
+
+    return { success: true, email: user.email, temporaryPassword: passwordString, emailSent };
   }
 
   @Roles('admin')
