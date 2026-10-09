@@ -24,6 +24,7 @@ model PessoaFisica {
   corporateAdmins CorporateAdmins[]
 
   canvasUser CanvasUser?
+  moodleUser MoodleUser?
 
   schools     Schools[]             @relation("SchoolsToStudents")
   courses     CourseStudents[]

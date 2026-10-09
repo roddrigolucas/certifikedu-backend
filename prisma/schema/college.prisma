@@ -60,6 +60,8 @@ model Course {
 
   canvasCourse   CanvasCourse?
   canvasCourseId Int?
+  
+  moodleCourse MoodleCourse?
 }
 
 model Curriculum {

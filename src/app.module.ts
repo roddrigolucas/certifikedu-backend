@@ -48,6 +48,7 @@ import { MetabaseModule } from './metabase/metabase.module';
 import { InverseModule } from './inverse/inverse.module';
 import { LevelingModule } from './leveling/leveling.module';
 import { AuditModule } from './audit/audit.module';
+import { MoodleLtiModule } from './integrations/moodle-lti/moodle-lti.module';
 
 @Module({
   providers: [
@@ -107,6 +108,7 @@ import { AuditModule } from './audit/audit.module';
     InverseModule,
     LevelingModule,
     AuditModule,
+    MoodleLtiModule,
   ],
   controllers: [AppController],
 })

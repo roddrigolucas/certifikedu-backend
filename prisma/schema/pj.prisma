@@ -8,6 +8,9 @@ model PessoaJuridica {
   email            String                  @unique
   user             User                    @relation(fields: [userId, CNPJ, email], references: [id, numeroDocumento, email], onDelete: Cascade, onUpdate: Cascade)
   ltiConfiguration CanvasLTIConfiguration?
+  
+  hasMoodleIntegration   Boolean                 @default(false)
+  moodleLtiConfiguration MoodleLtiConfiguration?
 
   razaoSocial          String
   nomeFantasia         String

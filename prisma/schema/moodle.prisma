@@ -1,0 +1,54 @@
+model MoodleLtiConfiguration {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  issuer       String @unique
+  clientId     String
+  deploymentId String
+  authUrl      String
+  tokenUrl     String
+  jwksUrl      String
+
+  idPJ String         @unique
+  pj   PessoaJuridica @relation(fields: [idPJ], references: [idPJ], onDelete: Cascade)
+
+  moodleUsers MoodleUser[]
+  moodleCourses MoodleCourse[]
+
+  @@unique([issuer, clientId])
+}
+
+model MoodleUser {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  moodleUserId String // This is usually the "sub" from the JWT
+  email        String
+
+  moodleLtiId String
+  moodleLti   MoodleLtiConfiguration @relation(references: [id], fields: [moodleLtiId], onDelete: Cascade)
+
+  idPF String?       @unique
+  pf   PessoaFisica? @relation(fields: [idPF], references: [idPF], onDelete: Cascade)
+
+  @@unique([moodleUserId, moodleLtiId])
+}
+
+model MoodleCourse {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  moodleCourseId String
+  courseName     String
+
+  moodleLtiId String
+  moodleLti   MoodleLtiConfiguration @relation(references: [id], fields: [moodleLtiId], onDelete: Cascade)
+
+  courseId String @unique
+  course   Course @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@unique([moodleCourseId, moodleLtiId])
+}

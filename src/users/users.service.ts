@@ -623,6 +623,20 @@ export class UsersService {
     });
   }
 
+  async enableUserMoodleLTI(userId: string) {
+    await this.prismaService.pessoaJuridica.update({
+      where: { userId: userId },
+      data: { hasMoodleIntegration: true },
+    });
+  }
+
+  async disableUserMoodleLTI(userId: string) {
+    await this.prismaService.pessoaJuridica.update({
+      where: { userId: userId },
+      data: { hasMoodleIntegration: false },
+    });
+  }
+
   createUniqueDocumentPictureHash(userId: string, createdAt: Date): string {
     const stringHash = `${userId}${createdAt}`;
     return createHash('sha256').update(stringHash).digest('hex');

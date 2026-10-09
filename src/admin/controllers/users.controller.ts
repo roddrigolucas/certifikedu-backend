@@ -204,6 +204,7 @@ export class UsersAdminController {
           freeCertificates: user.freeCertificates,
           pictureId: user.document?.at(0)?.documentId ?? null,
           apiEnabled: user.apiEnabled,
+          hasMoodleIntegration: user.pessoaJuridica?.hasMoodleIntegration ?? false,
           //documentPictures: user.document.map((docPicture) => {
           //  return {
           //    pictureId: docPicture.documentId,

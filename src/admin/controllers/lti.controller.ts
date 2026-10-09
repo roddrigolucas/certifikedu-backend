@@ -40,4 +40,32 @@ export class LtiAdminController {
 
     return { success: true };
   }
+
+  @Roles('admin')
+  @Patch('/moodle/enable/:userId')
+  async enableUserMoodleLTI(@Param('userId') userId: string): Promise<{ success: boolean }> {
+    const pj = await this.auxService.getPjInfo(userId);
+
+    if (!pj) {
+      throw new NotFoundException('User Not found');
+    }
+
+    await this.usersService.enableUserMoodleLTI(userId);
+
+    return { success: true };
+  }
+
+  @Roles('admin')
+  @Patch('/moodle/disable/:userId')
+  async disableUserMoodleLTI(@Param('userId') userId: string): Promise<{ success: boolean }> {
+    const pj = await this.auxService.getPjInfo(userId);
+
+    if (!pj) {
+      throw new NotFoundException('User Not found');
+    }
+
+    await this.usersService.disableUserMoodleLTI(userId);
+
+    return { success: true };
+  }
 }
