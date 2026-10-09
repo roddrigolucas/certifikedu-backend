@@ -55,10 +55,9 @@ export class MoodleLtiController {
     let userId = pf?.userId;
     
     if (!pf) {
-      // Find user if they have an AuthCredentials table record
-      const authCreds = await this.prismaService.authCredentials.findUnique({ where: { email }});
-      if (authCreds) {
-        userId = authCreds.userId;
+      const userRecord = await this.prismaService.user.findUnique({ where: { email }});
+      if (userRecord) {
+        userId = userRecord.id;
       }
     }
 
@@ -114,7 +113,7 @@ export class MoodleLtiController {
   async getConfig(@Req() req: any) {
     const pjId = req.user.pessoaJuridica.idPJ;
     const config = await this.prismaService.moodleLtiConfiguration.findUnique({
-      where: { pjId },
+      where: { idPJ: pjId },
     });
     return config || {};
   }
@@ -136,11 +135,11 @@ export class MoodleLtiController {
     };
 
     const config = await this.prismaService.moodleLtiConfiguration.upsert({
-      where: { pjId },
+      where: { idPJ: pjId },
       update: data,
       create: {
         ...data,
-        pjId,
+        idPJ: pjId,
       },
     });
 

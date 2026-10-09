@@ -18,7 +18,7 @@ export type TUserPfAndPjAndDocumentOutput = Prisma.UserGetPayload<{
   include: {
     document: true;
     pessoaFisica: true;
-    pessoaJuridica: { select: { nomeFantasia: true } };
+    pessoaJuridica: { select: { nomeFantasia: true; hasMoodleIntegration: true } };
   };
 }>;
 
