@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, HttpStatus, Res, UseGuards, Req } from '@nestjs/common';
 import { MoodleLtiService } from './moodle-lti.service';
 import { Response, Request } from 'express';
-import { ApiTags } from '@nestjs/swagger';
+
 import { CustomLogger } from '../../logger/custom-logger.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MoodleLTIAuthGuard } from './auth/guards/moodle-lti.guard';
